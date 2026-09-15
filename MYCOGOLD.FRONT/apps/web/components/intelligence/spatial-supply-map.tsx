@@ -1,0 +1,1 @@
+export function SpatialSupplyMap() { return <div style={{ minHeight: 220, padding: 24, background: "#dcebd9", borderRadius: 10 }}>Regional supply map placeholder · connect Mapbox through lib/integrations/mapbox.ts</div>; }

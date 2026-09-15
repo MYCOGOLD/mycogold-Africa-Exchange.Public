@@ -1,0 +1,3 @@
+const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:3001";
+export async function getMarketSnapshot() { const response = await fetch(`${API_URL}/market/snapshot`, { next: { revalidate: 60 } }); if (!response.ok) throw new Error("Unable to load market snapshot"); return response.json(); }
+export async function parseListing(message: string) { const response = await fetch(`${API_URL}/tusk/parse-listing`, { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ message }) }); if (!response.ok) throw new Error("Unable to parse listing"); return response.json(); }

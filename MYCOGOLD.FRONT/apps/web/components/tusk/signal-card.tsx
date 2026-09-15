@@ -1,0 +1,1 @@
+export function SignalCard({ title, detail }: { title: string; detail: string }) { return <article style={{ background: "white", padding: 16, borderRadius: 10, border: "1px solid #d9e2d5" }}><strong>{title}</strong><p>{detail}</p></article>; }
