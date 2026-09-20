@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>MycoGold Africa Exchange | V2.0 Autonomous</title>
+<style>
+:root{--bg:#070a0e;--card:#11151c;--green:#00ff88;--gold:#ffb800;--dim:#7a8599;--border:#1e2633}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:#e8eef8;font-family:'Inter',monospace;overflow-x:hidden}
+.nav{position:sticky;top:0;z-index:10;background:rgba(7,10,14,0.9);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);display:flex;justify-content:space-between;padding:16px 32px;align-items:center}
+.logo{font-weight:900;letter-spacing:2px}.logo span{color:var(--gold)}
+.badge{border:1px solid var(--green);color:var(--green);padding:4px 10px;border-radius:20px;font-size:11px}
+.hero{padding:48px 32px;display:grid;grid-template-columns:1.2fr 0.8fr;gap:24px}
+.h-title{font-size:42px;font-weight:800;line-height:1.1}.h-title gold{color:var(--gold)}
+.h-sub{color:var(--dim);margin:16px 0 24px;line-height:1.6}
+.btns{display:flex;gap:12px}.btn{padding:12px 22px;border-radius:8px;border:1px solid var(--border);background:var(--card);color:#fff;cursor:pointer;font-weight:600}
+.btn-primary{background:var(--green);color:#000;border-color:var(--green)}
+.card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:20px}
+.price{font-size:54px;font-weight:900;color:var(--green)}.price small{font-size:18px;color:var(--dim)}
+.grid{padding:0 32px 32px;display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.kpi{display:flex;justify-content:space-between;margin:10px 0;font-size:13px}.kpi b{color:#fff}
+#chart{width:100%;height:320px;background:#0a0f18;border-radius:12px;border:1px solid var(--border)}
+.tag{display:inline-block;font-size:10px;padding:3px 8px;border-radius:20px;border:1px solid var(--border);margin:4px 4px 0 0;color:var(--dim)}
+.tag.live{border-color:var(--green);color:var(--green)}
+.arch{padding:32px;display:grid;grid-template-columns:repeat(5,1fr);gap:12px}
+.arch div{padding:14px;border-radius:12px;border:1px solid var(--border);background:#0e131c}
+.arch h4{font-size:12px;letter-spacing:1px;margin-bottom:8px}
+.footer{padding:32px;color:var(--dim);font-size:12px;border-top:1px solid var(--border);text-align:center}
+@media(max-width:900px){.hero{grid-template-columns:1fr}.grid{grid-template-columns:1fr}.arch{grid-template-columns:1fr 1fr}}
+</style>
+</head>
+<body>
+<div class="nav"><div class="logo">MYCOGOLD<span>.AFRICA</span> EXCHANGE</div><div class="badge">● V2.0 AUTONOMOUS LIVE</div></div>
+
+<div class="hero">
+<div>
+<div class="h-title">Africa's First <gold>Autonomous</gold><br>Fresh Produce Index</div>
+<div class="h-sub">MFPI ticks every 1 second like Deriv Volatility 25 1s. Base 100 KES • USD Anchor 129 • TUSK AI Guardian blocks >5% manipulation. 5-layer architecture: FRONT + BACK + PVT + FUTURE + OVERAL.</div>
+<div class="btns"><button class="btn btn-primary" onclick="document.getElementById('live').scrollIntoView()">View Live Market</button><button class="btn">Owner: Stanley Maina & John Maina</button></div>
+<div style="margin-top:20px">
+<span class="tag live">● MFPI LIVE 1s</span><span class="tag">CPRNG Engine</span><span class="tag">TUSK Watcher</span><span class="tag">Escrow</span><span class="tag">Derivatives</span>
+</div>
+</div>
+<div class="card" id="live">
+<div style="display:flex;justify-content:space-between"><small style="color:var(--dim)">MFPI INDEX</small><small style="color:var(--green)">● LIVE</small></div>
+<div class="price" id="price">100.0000 <small>KES</small></div>
+<canvas id="chart" width="520" height="320"></canvas>
+<div class="kpi"><span>24h High</span><b id="high">100.42</b></div>
+<div class="kpi"><span>24h Low</span><b id="low">99.71</b></div>
+<div class="kpi"><span>TUSK Status</span><b style="color:var(--green)">GUARD ACTIVE</b></div>
+</div>
+</div>
+
+<div class="grid">
+<div class="card"><h3>🧺 MFPI Basket Weights</h3><div class="kpi"><span>🍄 Mushrooms</span><b>30%</b></div><div class="kpi"><span>🌾 Grains</span><b>25%</b></div><div class="kpi"><span>🥬 Vegetables</span><b>20%</b></div><div class="kpi"><span>🍎 Fruits</span><b>15%</b></div><div class="kpi"><span>🐄 Livestock Feed</span><b>10%</b></div><small style="color:var(--dim)">Weighted formula → MFPI = Σ(price*weight)</small></div>
+<div class="card"><h3>🏦 MYCOGOLD.BACK</h3><small>Autonomous Backend</small><div style="margin-top:12px;line-height:1.8;font-size:13px">• auth - Farmer & buyer auth<br>• escrow - M-Pesa smart escrow<br>• marketplace - Order book<br>• logistics - Cold chain tracker<br>• tusk-watcher - Anti-manipulation<br>• payments - STK Push + settlement</div></div>
+<div class="card"><h3>🔮 MYCOGOLD.FUTURE</h3><small>Derivatives Layer</small><div style="margin-top:12px;line-height:1.8;font-size:13px">• mfpi-engine - CPRNG tick engine (Vol 25 1s model)<br>• derivatives - Futures & options on MFPI<br>• price = realMarket*0.15 + volatility<br>• TUSK validates every tick<br>• Range 80-180 KES</div></div>
+</div>
+
+<div style="padding:0 32px"><div class="card"><h3>🏛️ V2.0 Architecture - 5 Folders</h3>
+<div class="arch">
+<div><h4>MYCOGOLD.FRONT</h4><small>Next.js + Live Chart<br>Farmer Dashboard</small></div>
+<div><h4>MYCOGOLD.BACK</h4><small>Node + Escrow + Auth<br>TUSK AI</small></div>
+<div><h4 style="color:var(--gold)">MYCOGOLD.PVT</h4><small>Secret Formula<br>CPRNG + Keys</small></div>
+<div><h4>MYCOGOLD.FUTURE</h4><small>MFPI Engine<br>Derivatives</small></div>
+<div><h4>MYCO.OVERAL</h4><small>Infra + Docs<br>Contracts + Scripts</small></div>
+</div>
+</div></div>
+
+<div class="footer">MYCOGOLD AFRICA EXCHANGE • V2.0 Autonomous • Built by Stanley Maina & John Maina • 20-09-2026 • Base 100 KES • Anchor 129 • Kericho, Kenya • <span style="color:var(--green)">● SYSTEM LIVE</span></div>
+
+<script>
+let last=100, points=[100], high=100.42, low=99.71;
+let pEl=document.getElementById('price'), highEl=document.getElementById('high'), lowEl=document.getElementById('low');
+let c=document.getElementById('chart'), ctx=c.getContext('2d');
+function resize(){let r=c.getBoundingClientRect(); c.width=r.width*2; c.height=320*2; ctx.scale(2,2)}
+resize();
+function tick(){
+ let change=(Math.random()-0.5)*0.35;
+ let next=last+change;
+ if(next<80) next=81; if(next>180) next=179;
+ next=Number(next.toFixed(4));
+ if(next>high){high=next; highEl.textContent=high.toFixed(2)}
+ if(next<low){low=next; lowEl.textContent=low.toFixed(2)}
+ pEl.innerHTML=next.toFixed(4)+' <small>KES</small>';
+ pEl.style.color=next>last?'#00ff88':'#ff4d4d';
+ points.push(next); if(points.length>150) points.shift();
+ draw(); last=next;
+}
+function draw(){
+ let w=c.getBoundingClientRect().width, h=320;
+ ctx.clearRect(0,0,w,h);
+ ctx.strokeStyle='#111d2c'; ctx.lineWidth=1;
+ for(let i=0;i<4;i++){let y=h*0.2+i*h*0.2; ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(w,y); ctx.stroke();}
+ ctx.strokeStyle='#00ff88'; ctx.lineWidth=2; ctx.beginPath();
+ let min=Math.min(...points), max=Math.max(...points), range=Math.max(max-min,1);
+ points.forEach((v,i)=>{
+  let x=(i/150)*w; let y=h-20-((v-min)/range)*(h-60);
+  if(i==0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+ });
+ ctx.stroke();
+ let grad=ctx.createLinearGradient(0,0,0,h);
+ grad.addColorStop(0,'rgba(0,255,136,0.25)'); grad.addColorStop(1,'rgba(0,255,136,0)');
+ ctx.lineTo(w,h); ctx.lineTo(0,h); ctx.closePath(); ctx.fillStyle=grad; ctx.fill();
+}
+setInterval(tick,1000);
+tick();
+</script>
+</body>
+</html>
