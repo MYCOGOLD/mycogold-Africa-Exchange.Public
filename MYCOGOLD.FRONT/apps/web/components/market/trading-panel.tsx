@@ -1,1 +1,0 @@
-export function TradingPanel() { return <form style={{ display: "grid", gap: 10, maxWidth: 420 }}><label>Product<input name="product" style={{ display: "block", width: "100%" }} /></label><label>Offer price<input name="price" type="number" style={{ display: "block", width: "100%" }} /></label><button type="button">Start negotiation</button></form>; }

@@ -1,4 +1,2 @@
-node_modules/
-.next/
-dist/
+MYCOGOLD.PVT/keys/
 .env

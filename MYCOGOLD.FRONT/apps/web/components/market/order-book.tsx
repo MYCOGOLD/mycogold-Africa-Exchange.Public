@@ -1,1 +1,0 @@
-export function OrderBook() { return <div><p>Informal offers are shown until both parties accept an order.</p><table><tbody><tr><td>Tomatoes · Arusha</td><td>500 kg</td><td>TZS 2,000/kg</td></tr></tbody></table></div>; }

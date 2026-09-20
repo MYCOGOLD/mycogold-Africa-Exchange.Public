@@ -1,1 +1,0 @@
-export function IndexLineChart() { return <div role="img" aria-label="Market index trend chart" style={{ height: 180, background: "linear-gradient(160deg, transparent 55%, #cce7d0 56%, #236b3b 58%, transparent 60%), repeating-linear-gradient(0deg, #fff 0 35px, #e7eee5 36px)" }} />; }

@@ -1,2 +1,0 @@
-import { PageShell } from "../../../components/ui/page-shell";
-export default function LoginPage() { return <PageShell title="Sign in" description="Access your farmer, buyer, or operations workspace."><form style={{ display: "grid", gap: 12, maxWidth: 420 }}><input aria-label="Phone or email" placeholder="Phone or email" /><input aria-label="Password" type="password" placeholder="Password" /><button type="button">Sign in</button></form></PageShell>; }
