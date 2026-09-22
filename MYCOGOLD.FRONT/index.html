@@ -1,110 +1,135 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
+<html><head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>MycoGold Africa Exchange | V2.0 Autonomous</title>
+<title>MycoGold Africa Exchange</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@800;900&family=Manrope:wght@400;700&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#070a0e;--card:#11151c;--green:#00ff88;--gold:#ffb800;--dim:#7a8599;--border:#1e2633}
-*{margin:0;padding:0;box-sizing:border-box}
-body{background:var(--bg);color:#e8eef8;font-family:'Inter',monospace;overflow-x:hidden}
-.nav{position:sticky;top:0;z-index:10;background:rgba(7,10,14,0.9);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);display:flex;justify-content:space-between;padding:16px 32px;align-items:center}
-.logo{font-weight:900;letter-spacing:2px}.logo span{color:var(--gold)}
-.badge{border:1px solid var(--green);color:var(--green);padding:4px 10px;border-radius:20px;font-size:11px}
-.hero{padding:48px 32px;display:grid;grid-template-columns:1.2fr 0.8fr;gap:24px}
-.h-title{font-size:42px;font-weight:800;line-height:1.1}.h-title gold{color:var(--gold)}
-.h-sub{color:var(--dim);margin:16px 0 24px;line-height:1.6}
-.btns{display:flex;gap:12px}.btn{padding:12px 22px;border-radius:8px;border:1px solid var(--border);background:var(--card);color:#fff;cursor:pointer;font-weight:600}
-.btn-primary{background:var(--green);color:#000;border-color:var(--green)}
-.card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:20px}
-.price{font-size:54px;font-weight:900;color:var(--green)}.price small{font-size:18px;color:var(--dim)}
-.grid{padding:0 32px 32px;display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
-.kpi{display:flex;justify-content:space-between;margin:10px 0;font-size:13px}.kpi b{color:#fff}
-#chart{width:100%;height:320px;background:#0a0f18;border-radius:12px;border:1px solid var(--border)}
-.tag{display:inline-block;font-size:10px;padding:3px 8px;border-radius:20px;border:1px solid var(--border);margin:4px 4px 0 0;color:var(--dim)}
-.tag.live{border-color:var(--green);color:var(--green)}
-.arch{padding:32px;display:grid;grid-template-columns:repeat(5,1fr);gap:12px}
-.arch div{padding:14px;border-radius:12px;border:1px solid var(--border);background:#0e131c}
-.arch h4{font-size:12px;letter-spacing:1px;margin-bottom:8px}
-.footer{padding:32px;color:var(--dim);font-size:12px;border-top:1px solid var(--border);text-align:center}
-@media(max-width:900px){.hero{grid-template-columns:1fr}.grid{grid-template-columns:1fr}.arch{grid-template-columns:1fr 1fr}}
+:root{--bg:#000;--line:#222;--gold:#ffcc00;--green:#00ff88;--dim:#888}
+*{margin:0;padding:0;box-sizing:border-box}body{background:#000;color:#eee;font-family:Manrope,Inter,system-ui}
+#top{position:sticky;top:0;z-index:99;background:#000;border-bottom:1px solid var(--line);display:flex;gap:16px;padding:10px 12px;font-size:12px;overflow-x:auto}
+.dot{width:6px;height:6px;background:var(--green);border-radius:50%;display:inline-block;animation:b 1s infinite}@keyframes b{50%{opacity:.3}}
+.layout{display:grid;grid-template-columns:230px 1fr 320px;min-height:100vh}
+@media(max-width:1000px){.layout{grid-template-columns:1fr}.hide{display:none}}
+.side{border-right:1px solid var(--line);padding:14px;position:sticky;top:38px;height:calc(100vh - 38px)}
+.side-i{padding:10px 12px;border-radius:20px;cursor:pointer;color:var(--dim);font-weight:600;margin-bottom:4px}
+.side-i.on{background:#151515;color:#fff}
+/* BOLD ART LOGO */
+.logo-wrap{margin-bottom:18px}
+.logo{font-family:Cinzel,serif;font-weight:900;font-size:19px;letter-spacing:1.5px;line-height:1.1;background:linear-gradient(180deg,#ffeb3b 0%,#ffcc00 40%,#c89600 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;filter:drop-shadow(0 0 12px rgba(255,204,0,0.3))}
+.logo span{font-size:11px;display:block;font-family:Manrope;font-weight:400;letter-spacing:3px;text-transform:uppercase;-webkit-text-fill-color:var(--green);margin-top:2px;opacity:0.9}
+.logo small{display:block;font-size:9.5px;letter-spacing:1.8px;font-weight:400;-webkit-text-fill-color:#888;margin-top:4px;font-style:italic;text-transform:lowercase}
+.center{border-right:1px solid var(--line)}
+.tabs{display:flex;border-bottom:1px solid var(--line);position:sticky;top:38px;background:#000;z-index:5}
+.tabs div{flex:1;text-align:center;padding:12px;font-size:13px;font-weight:700;color:var(--dim);cursor:pointer;border-bottom:2px solid transparent}
+.tabs div.on{color:#fff;border-color:var(--gold)}
+.cats{display:flex;gap:6px;overflow-x:auto;padding:10px 12px;border-bottom:1px solid var(--line)}
+.cat{white-space:nowrap;background:#101010;border:1px solid var(--line);padding:6px 12px;border-radius:18px;font-size:12px;cursor:pointer;flex-shrink:0}
+.cat.on{background:var(--gold);color:#000;font-weight:800;border-color:var(--gold)}
+.feed{border-bottom:1px solid var(--line);padding:12px;display:flex;gap:10px}
+.ava{width:36px;height:36px;border-radius:50%;background:#1a1a1a;display:grid;place-items:center;flex-shrink:0}
+.tag{font-size:10px;padding:2px 6px;border-radius:10px;background:#111;border:1px solid var(--line)}
+.price{color:var(--gold);font-weight:800}
+.chart{height:200px;background:#080808;border:1px solid var(--line);border-radius:12px;margin:10px;display:flex;align-items:end;gap:2px;padding:8px;overflow:hidden}
+.btn{padding:6px 12px;border-radius:18px;border:1px solid var(--line);background:#000;color:#fff;font-size:12px;font-weight:700;cursor:pointer}
+.btn-g{background:var(--gold);color:#000;border:none}
+.stat{padding:8px 12px;background:#0d0d0d;border:1px solid var(--line);border-radius:10px}
 </style>
-</head>
-<body>
-<div class="nav"><div class="logo">MYCOGOLD<span>.AFRICA</span> EXCHANGE</div><div class="badge">● V2.0 AUTONOMOUS LIVE</div></div>
+</head><body>
 
-<div class="hero">
-<div>
-<div class="h-title">Africa's First <gold>Autonomous</gold><br>Fresh Produce Index</div>
-<div class="h-sub">MFPI ticks every 1 second like Deriv Volatility 25 1s. Base 100 KES • USD Anchor 129 • TUSK AI Guardian blocks >5% manipulation. 5-layer architecture: FRONT + BACK + PVT + FUTURE + OVERAL.</div>
-<div class="btns"><button class="btn btn-primary" onclick="document.getElementById('live').scrollIntoView()">View Live Market</button><button class="btn">Owner: Stanley Maina & John Maina</button></div>
-<div style="margin-top:20px">
-<span class="tag live">● MFPI LIVE 1s</span><span class="tag">CPRNG Engine</span><span class="tag">TUSK Watcher</span><span class="tag">Escrow</span><span class="tag">Derivatives</span>
+<div id="top"><div><span class="dot"></span> <b style="color:var(--gold)">MFPI</b> <b id="mfpi">106.55</b> <span id="chg" style="color:var(--green)">▲0.1%</span></div><div id="live">131 Live • Kenya</div><div id="showing" style="color:var(--gold)">Showing: all</div></div>
+
+<div class="layout">
+<div class="side hide">
+<div class="logo-wrap">
+<div class="logo">MYCOGOLD<span>AFRICA</span><small>nature's wealth your health</small></div>
 </div>
+<div style="margin-top:10px">
+<div class="side-i on" onclick="go('market')">🏠 Market</div>
+<div class="side-i" onclick="go('tusk')">🧠 TUSK Insights</div>
+<div class="side-i" onclick="go('weather')">🌧️ Weather</div>
+<div class="side-i" onclick="go('exchange')">📊 Exchange</div>
+<div class="side-i" onclick="go('profile')">👤 Profile</div>
 </div>
-<div class="card" id="live">
-<div style="display:flex;justify-content:space-between"><small style="color:var(--dim)">MFPI INDEX</small><small style="color:var(--green)">● LIVE</small></div>
-<div class="price" id="price">100.0000 <small>KES</small></div>
-<canvas id="chart" width="520" height="320"></canvas>
-<div class="kpi"><span>24h High</span><b id="high">100.42</b></div>
-<div class="kpi"><span>24h Low</span><b id="low">99.71</b></div>
-<div class="kpi"><span>TUSK Status</span><b style="color:var(--green)">GUARD ACTIVE</b></div>
-</div>
+<button style="margin-top:18px;width:100%;padding:11px;border-radius:25px;background:var(--gold);border:none;font-weight:800">+ Post Produce</button>
 </div>
 
-<div class="grid">
-<div class="card"><h3>🧺 MFPI Basket Weights</h3><div class="kpi"><span>🍄 Mushrooms</span><b>30%</b></div><div class="kpi"><span>🌾 Grains</span><b>25%</b></div><div class="kpi"><span>🥬 Vegetables</span><b>20%</b></div><div class="kpi"><span>🍎 Fruits</span><b>15%</b></div><div class="kpi"><span>🐄 Livestock Feed</span><b>10%</b></div><small style="color:var(--dim)">Weighted formula → MFPI = Σ(price*weight)</small></div>
-<div class="card"><h3>🏦 MYCOGOLD.BACK</h3><small>Autonomous Backend</small><div style="margin-top:12px;line-height:1.8;font-size:13px">• auth - Farmer & buyer auth<br>• escrow - M-Pesa smart escrow<br>• marketplace - Order book<br>• logistics - Cold chain tracker<br>• tusk-watcher - Anti-manipulation<br>• payments - STK Push + settlement</div></div>
-<div class="card"><h3>🔮 MYCOGOLD.FUTURE</h3><small>Derivatives Layer</small><div style="margin-top:12px;line-height:1.8;font-size:13px">• mfpi-engine - CPRNG tick engine (Vol 25 1s model)<br>• derivatives - Futures & options on MFPI<br>• price = realMarket*0.15 + volatility<br>• TUSK validates every tick<br>• Range 80-180 KES</div></div>
+<div class="center">
+<div class="tabs"><div class="on" id="tt-market" onclick="go('market')">Market</div><div id="tt-tusk" onclick="go('tusk')">TUSK</div><div id="tt-weather" onclick="go('weather')">Weather</div><div id="tt-exchange" onclick="go('exchange')">Exchange</div><div id="tt-profile" onclick="go('profile')">Profile</div></div>
+
+<div class="cats" id="catBar">
+<div class="cat on" data-c="all">All</div>
+<div class="cat" data-c="mushroom">🍄 Mushroom</div>
+<div class="cat" data-c="potato">🥔 Potatoes</div>
+<div class="cat" data-c="onion">🧅 Onions</div>
+<div class="cat" data-c="kale">🥬 Kales</div>
+<div class="cat" data-c="cabbage">🥬 Cabbage</div>
+<div class="cat" data-c="cereal">🌾 Cereals</div>
+<div class="cat" data-c="beef">🥩 Beef</div>
+<div class="cat" data-c="pork">🥓 Pork</div>
+<div class="cat" data-c="poultry">🍗 Poultry</div>
+<div class="cat" data-c="eggs">🥚 Eggs</div>
+<div class="cat" data-c="fish">🐟 Fisheries</div>
+<div class="cat" data-c="livestock">🐄 Livestock</div>
+<div class="cat" data-c="fresh">🥦 Fresh Produce</div>
 </div>
 
-<div style="padding:0 32px"><div class="card"><h3>🏛️ V2.0 Architecture - 5 Folders</h3>
-<div class="arch">
-<div><h4>MYCOGOLD.FRONT</h4><small>Next.js + Live Chart<br>Farmer Dashboard</small></div>
-<div><h4>MYCOGOLD.BACK</h4><small>Node + Escrow + Auth<br>TUSK AI</small></div>
-<div><h4 style="color:var(--gold)">MYCOGOLD.PVT</h4><small>Secret Formula<br>CPRNG + Keys</small></div>
-<div><h4>MYCOGOLD.FUTURE</h4><small>MFPI Engine<br>Derivatives</small></div>
-<div><h4>MYCO.OVERAL</h4><small>Infra + Docs<br>Contracts + Scripts</small></div>
+<div id="p-market">
+<div class="chart" id="chart"></div>
+<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin:8px 10px">
+<div class="stat"><div style="font-size:10px;color:#888">AVG TUSK • Mush</div><div class="price">110 KES</div></div>
+<div class="stat"><div style="font-size:10px;color:#888">AVG • Potatoes</div><div class="price">42 KES</div></div>
+<div class="stat"><div style="font-size:10px;color:#888">AVG • Onions</div><div class="price">78 KES</div></div>
 </div>
-</div></div>
+<div id="list"></div>
+<div id="lock" style="display:none;text-align:center;padding:18px;border-bottom:1px solid var(--line)"><p style="font-size:13px;color:#888">5 of many shown. Login to unlock all</p><button class="btn btn-g" onclick="login()">Login with Google</button></div>
+</div>
 
-<div class="footer">MYCOGOLD AFRICA EXCHANGE • V2.0 Autonomous • Built by Stanley Maina & John Maina • 20-09-2026 • Base 100 KES • Anchor 129 • Kericho, Kenya • <span style="color:var(--green)">● SYSTEM LIVE</span></div>
+<div id="p-tusk" style="display:none"><div class="feed"><div class="ava">🧠</div><div><b>TUSK</b><br>Substrate guide + global overview</div></div></div>
+<div id="p-weather" style="display:none"><div class="feed"><div class="ava">🌧️</div><div><b>Weather Kenya + Global</b></div></div></div>
+<div id="p-exchange" style="display:none"><div class="feed"><div class="ava">📊</div><div><b>Exchange overview</b></div></div></div>
+<div id="p-profile" style="display:none"><div class="feed"><div class="ava">👤</div><div><b>Profile verified</b></div></div></div>
+
+</div>
+
+<div class="side hide" style="border-left:1px solid var(--line);border-right:none"><h4 style="font-size:12px">TUSK Avg</h4><div style="margin-top:8px;display:grid;gap:5px;font-size:12px"><div class="cat" style="display:flex;justify-content:space-between">🍄 110 <span class="price">KES</span></div></div></div>
+</div>
 
 <script>
-let last=100, points=[100], high=100.42, low=99.71;
-let pEl=document.getElementById('price'), highEl=document.getElementById('high'), lowEl=document.getElementById('low');
-let c=document.getElementById('chart'), ctx=c.getContext('2d');
-function resize(){let r=c.getBoundingClientRect(); c.width=r.width*2; c.height=320*2; ctx.scale(2,2)}
-resize();
-function tick(){
- let change=(Math.random()-0.5)*0.35;
- let next=last+change;
- if(next<80) next=81; if(next>180) next=179;
- next=Number(next.toFixed(4));
- if(next>high){high=next; highEl.textContent=high.toFixed(2)}
- if(next<low){low=next; lowEl.textContent=low.toFixed(2)}
- pEl.innerHTML=next.toFixed(4)+' <small>KES</small>';
- pEl.style.color=next>last?'#00ff88':'#ff4d4d';
- points.push(next); if(points.length>150) points.shift();
- draw(); last=next;
-}
-function draw(){
- let w=c.getBoundingClientRect().width, h=320;
- ctx.clearRect(0,0,w,h);
- ctx.strokeStyle='#111d2c'; ctx.lineWidth=1;
- for(let i=0;i<4;i++){let y=h*0.2+i*h*0.2; ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(w,y); ctx.stroke();}
- ctx.strokeStyle='#00ff88'; ctx.lineWidth=2; ctx.beginPath();
- let min=Math.min(...points), max=Math.max(...points), range=Math.max(max-min,1);
- points.forEach((v,i)=>{
-  let x=(i/150)*w; let y=h-20-((v-min)/range)*(h-60);
-  if(i==0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+const data=[
+{c:'mushroom',icon:'🍄',title:'Oyster 50kg @ 110 KES',user:'Samuel K',region:'Kericho'},
+{c:'mushroom',icon:'🍄',title:'Button 30kg @ 104 KES',user:'Myco Farm',region:'Nakuru'},
+{c:'potato',icon:'🥔',title:'Potatoes 100kg @ 42 KES',user:'Nyandarua',region:'Nyandarua'},
+{c:'potato',icon:'🥔',title:'Potatoes 200kg @ 40 KES',user:'Molo Farm',region:'Molo'},
+{c:'onion',icon:'🧅',title:'Onions 80kg @ 78 KES',user:'Onion Hub',region:'Nairobi'},
+{c:'onion',icon:'🧅',title:'Red Onions 50kg @ 82 KES',user:'Kajiado',region:'Kajiado'},
+{c:'kale',icon:'🥬',title:'Kales 50 bundles @ 25 KES',user:'Akinyi',region:'Nakuru'},
+{c:'cabbage',icon:'🥬',title:'Cabbage 60 heads @ 45 KES',user:'Veggie Farm',region:'Kiambu'},
+{c:'cereal',icon:'🌽',title:'Maize 90kg @ 3200 KES',user:'Trans Nzoia',region:'Kitale'},
+{c:'beef',icon:'🥩',title:'Beef 20kg @ 620 KES/kg',user:'Ranch Ltd',region:'Laikipia'},
+{c:'pork',icon:'🥓',title:'Pork 15kg @ 580 KES/kg',user:'Pig Farm',region:'Kiambu'},
+{c:'poultry',icon:'🍗',title:'Poultry 20 birds @ 800 KES',user:'Kuku Farm',region:'Kericho'},
+{c:'eggs',icon:'🥚',title:'Eggs 30 trays @ 320 KES',user:'Eggs Hub',region:'Nairobi'},
+{c:'fish',icon:'🐟',title:'Tilapia 10kg @ 450 KES/kg',user:'Lake Victoria',region:'Kisumu'},
+{c:'livestock',icon:'🐄',title:'Dairy Cow @ 85k KES',user:'Dairy Farm',region:'Kericho'},
+{c:'fresh',icon:'🥦',title:'Tomatoes 50kg @ 60 KES',user:'Fresh Veg',region:'Kirinyaga'}
+];
+let logged=false; let current='all';
+function render(){
+ let box=document.getElementById('list'); box.innerHTML='';
+ let filtered=current==='all'?data:data.filter(d=>d.c===current);
+ document.getElementById('showing').textContent='Showing: '+current+' ('+filtered.length+')';
+ filtered.forEach((d,i)=>{
+  if(!logged && i>=5) return;
+  box.innerHTML+=`<div class="feed"><div class="ava">${d.icon}</div><div style="flex:1"><b>${d.user}</b> <span class="tag">${d.region}</span><br>${d.title}<br><div style="margin-top:6px"><button class="btn">Chat</button> <button class="btn btn-g">Order</button></div></div></div>`;
  });
- ctx.stroke();
- let grad=ctx.createLinearGradient(0,0,0,h);
- grad.addColorStop(0,'rgba(0,255,136,0.25)'); grad.addColorStop(1,'rgba(0,255,136,0)');
- ctx.lineTo(w,h); ctx.lineTo(0,h); ctx.closePath(); ctx.fillStyle=grad; ctx.fill();
+ document.getElementById('lock').style.display=!logged && filtered.length>5?'block':'none';
 }
-setInterval(tick,1000);
-tick();
+document.querySelectorAll('.cat').forEach(el=>{
+ el.addEventListener('click',()=>{document.querySelectorAll('.cat').forEach(c=>c.classList.remove('on')); el.classList.add('on'); current=el.dataset.c; render();});
+});
+function go(p){['market','tusk','weather','exchange','profile'].forEach(k=>{document.getElementById('p-'+k).style.display=k===p?'block':'none'; document.getElementById('tt-'+k).classList.toggle('on',k===p);}); document.querySelectorAll('.side-i').forEach((s,i)=>{let ks=['market','tusk','weather','exchange','profile']; s.classList.toggle('on',ks[i]===p);});}
+function login(){logged=true; render();}
+render();
+let pv=106.55; setInterval(()=>{pv=+(pv+(Math.random()-0.5)*0.3).toFixed(2); document.getElementById('mfpi').textContent=pv.toFixed(2); let c=(Math.random()*2-1).toFixed(1); let e=document.getElementById('chg'); e.textContent=(c>0?'▲':'▼')+Math.abs(c)+'%'; e.style.color=c>0?'var(--green)':'#ff5a5a'; let ch=document.getElementById('chart'); let d=document.createElement('div'); d.style.flex='1'; d.style.height=(15+Math.random()*140)+'px'; d.style.background=c>0?'var(--green)':'var(--gold)'; d.style.borderRadius='2px'; ch.appendChild(d); if(ch.children.length>50)ch.removeChild(ch.firstChild);},800);
 </script>
-</body>
-</html>
+</body></html>
