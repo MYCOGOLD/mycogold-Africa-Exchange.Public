@@ -1,162 +1,213 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>MycoGold Africa Exchange - Original + AI Dots</title><script src="https://cdn.tailwindcss.com"></script>
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"><meta http-equiv="Pragma" content="no-cache"><title>MycoGold Africa Exchange - V2.2 FIXED NO BARS</title><script src="https://cdn.tailwindcss.com"></script>
 <style>
 :root{--gold:#FFD60A;--cyan:#00E5FF;--blue:#00B0FF;--green:#00E676;--bg:#0A1F2F}
 body{background:radial-gradient(ellipse at top, #0F2F4F 0%, #0A1F2F 100%);color:#d9ece1;font-family:Inter,system-ui;min-height:100vh}
 .glass{background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.08);backdrop-filter:blur(8px)}
 .tab-active{border-bottom:3px solid var(--gold);color:var(--gold)!important}
 .chip-active{background:var(--gold)!important;color:#000!important;font-weight:bold}
-.flick-slow{animation:flickSlow 1.2s ease}@keyframes flickSlow{0%{transform:scale(1)}50%{transform:scale(1.18);color:#FFD60A;text-shadow:0 0 10px #FFD60A}100%{transform:scale(1)}}
-.mfpi-flick{animation:mfpiFlick 0.8s ease}@keyframes mfpiFlick{0%{opacity:0.6}50%{opacity:1;transform:scale(1.05)}100%{opacity:1}}
+.flick-slow{animation:flickSlow 1.2s ease}@keyframes flickSlow{0%{transform:scale(1)}50%{transform:scale(1.2);color:#FFD60A;text-shadow:0 0 15px #FFD60A}100%{transform:scale(1)}}
+.mfpi-flick{animation:mfpiFlick 0.9s ease}@keyframes mfpiFlick{0%{opacity:0.7;transform:translateY(2px)}50%{opacity:1;transform:translateY(-2px) scale(1.08);color:#FFD60A}100%{opacity:1;transform:translateY(0)}}
+#aiCanvas{display:block;width:100%;height:100%}
 </style></head><body>
-<div class="px-4 py-1 text-[11px] bg-black/30 border-b border-white/10 flex gap-3 items-center whitespace-nowrap overflow-hidden"><span id="mfpi" class="font-bold">MFPI 107.18 ▼0.4%</span><span class="opacity-60">131 Live • Kenya</span><span class="opacity-60">Showing: all (16)</span><div id="tuskAvgTop" class="flex gap-3 ml-4 text-[10px]"></div></div>
-<div class="mx-3 mt-2 rounded-xl bg-[#0F2F4F]/80 border border-white/10 h-[36px] flex items-center overflow-hidden"><marquee id="ticker" class="text-[12px]"></marquee></div>
+<div class="px-4 py-1.5 text-[11px] bg-black/40 border-b border-white/10 flex gap-3 items-center sticky top-0 z-50 backdrop-blur-md"><span id="mfpi" class="font-black text-[13px]">MFPI 107.18 ▼0.4%</span><span class="opacity-60">131 Live • Kenya</span><span class="opacity-60">Showing: all (100+)</span><div id="tuskAvgTop" class="flex gap-3 ml-4 text-[10px] overflow-hidden"></div><span class="ml-auto px-2 py-0.5 rounded-full bg-green-500/20 text-[9px] animate-pulse">● LIVE FLICKERING</span></div>
+<div class="mx-3 mt-2 rounded-xl bg-[#0F2F4F]/80 border border-yellow-500/20 h-[36px] flex items-center overflow-hidden shadow-[0_0_20px_rgba(255,214,10,0.15)]"><marquee id="ticker" class="text-[12px]"></marquee></div>
 
 <div class="flex">
-<div class="w-[190px] p-3 shrink-0">
-<div class="font-black text-[16px] leading-none text-[#FFD60A]">MYCOGOLD</div><div class="text-[9px] tracking-[2px] opacity-60">NATURE'S WEALTH YOUR HEALTH</div>
+<div class="w-[190px] p-3 shrink-0 sticky top-[40px] h-fit">
+<div class="font-black text-[17px] leading-none text-[#FFD60A] tracking-wider">MYCOGOLD</div><div class="text-[8px] tracking-[2px] opacity-50 mt-0.5">NATURE'S WEALTH YOUR HEALTH</div>
 <div class="mt-5 space-y-1.5 text-[12px]">
-<button onclick="showTab('market')" id="b-market" class="w-full text-left px-4 py-2.5 rounded-full bg-white/10">Market</button>
+<button onclick="showTab('market')" id="b-market" class="w-full text-left px-4 py-2.5 rounded-full bg-white/10 font-bold">Market</button>
 <button onclick="showTab('tusk')" id="b-tusk" class="w-full text-left px-4 py-2.5 rounded-full hover:bg-white/5">TUSK Insights</button>
 <button onclick="showTab('weather')" id="b-weather" class="w-full text-left px-4 py-2.5 rounded-full hover:bg-white/5">Weather</button>
-<button onclick="showTab('exchange')" id="b-exchange" class="w-full text-left px-4 py-2.5 rounded-full hover:bg-white/5">Exchange</button>
+<button onclick="showTab('exchange')" id="b-exchange" class="w-full text-left px-4 py-2.5 rounded-full hover:bg-white/5 border border-yellow-500/20">🔄 Exchange</button>
 <button onclick="showTab('locations')" id="b-locations" class="w-full text-left px-4 py-2.5 rounded-full hover:bg-white/5">📍 Locations</button>
 <button onclick="showTab('value')" id="b-value" class="w-full text-left px-4 py-2.5 rounded-full border border-yellow-500/20">Value-Added</button>
 <button onclick="showTab('profile')" id="b-profile" class="w-full text-left px-4 py-2.5 rounded-full hover:bg-white/5">Profile</button>
-<button class="w-full mt-4 px-4 py-2.5 rounded-full bg-[#FFD60A] text-black font-bold text-[12px]">+ Post Produce</button>
+<button class="w-full mt-5 px-4 py-2.5 rounded-full bg-[#FFD60A] text-black font-bold text-[12px] shadow-[0_0_15px_rgba(255,214,10,0.4)]">+ Post Produce</button>
 </div>
 </div>
 
 <div class="flex-1 p-3 min-w-0">
-<div class="flex gap-6 border-b border-white/10 text-[13px] mb-3"><button id="t-market" onclick="showTab('market')" class="pb-3 tab-active">Market</button><button id="t-tusk" onclick="showTab('tusk')" class="pb-3 opacity-60">TUSK</button><button id="t-weather" onclick="showTab('weather')" class="pb-3 opacity-60">Weather</button><button id="t-exchange" onclick="showTab('exchange')" class="pb-3 opacity-60">Exchange</button><button id="t-locations" onclick="showTab('locations')" class="pb-3 opacity-60">Locations</button><button id="t-value" onclick="showTab('value')" class="pb-3 opacity-60">Value-Added</button></div>
+<div class="flex gap-6 border-b border-white/10 text-[13px] mb-3 overflow-x-auto"><button id="t-market" onclick="showTab('market')" class="pb-3 tab-active whitespace-nowrap">Market</button><button id="t-tusk" onclick="showTab('tusk')" class="pb-3 opacity-60 whitespace-nowrap">TUSK</button><button id="t-weather" onclick="showTab('weather')" class="pb-3 opacity-60 whitespace-nowrap">Weather</button><button id="t-exchange" onclick="showTab('exchange')" class="pb-3 opacity-60 whitespace-nowrap">Exchange</button><button id="t-locations" onclick="showTab('locations')" class="pb-3 opacity-60 whitespace-nowrap">Locations</button><button id="t-value" onclick="showTab('value')" class="pb-3 opacity-60 whitespace-nowrap">Value-Added</button></div>
 
 <div id="v-market">
 <div class="flex gap-2 mb-3 flex-wrap text-[11px]" id="filterChips"></div>
 
-<!-- AI DOTS ONLY - NO BARS - YELLOW BLUE GREEN BOMBARDMENT -->
-<div class="relative glass rounded-2xl p-0 mb-3 overflow-hidden border border-white/10" style="height:210px"><canvas id="aiCanvas" class="w-full h-full"></canvas><div class="absolute top-2 left-3 text-[9px] opacity-60 tracking-wider">AI × AGRI LIVE - YELLOW BLUE GREEN INTELLIGENCE - Bombardment Active</div><div class="absolute bottom-2 right-3 flex gap-2 text-[8px]"><span class="px-2 py-1 rounded-full bg-[#FFD60A]/20 border border-[#FFD60A]/30">🟡 AI Nodes</span><span class="px-2 py-1 rounded-full bg-[#00B0FF]/20 border border-[#00B0FF]/30">🔵 Weather</span><span class="px-2 py-1 rounded-full bg-[#00E676]/20 border border-[#00E676]/30">🟢 Farms</span></div></div>
+<!-- NO BARS - ONLY AI DOTS YELLOW BLUE GREEN -->
+<div class="relative glass rounded-2xl p-0 mb-3 overflow-hidden border border-white/10 bg-[#081A2B]" style="height:240px"><canvas id="aiCanvas"></canvas><div class="absolute top-3 left-4 text-[10px] font-bold tracking-widest opacity-70">● AI × AGRI NEURAL NETWORK • YELLOW AI • BLUE WEATHER • GREEN FARMS • BOMBARDMENT LIVE</div><div class="absolute bottom-3 left-4 right-4 flex justify-between text-[9px]"><div class="flex gap-2"><span class="px-2.5 py-1 rounded-full bg-[#FFD60A]/20 border border-[#FFD60A]/40">🟡 9 AI Nodes</span><span class="px-2.5 py-1 rounded-full bg-[#00B0FF]/20 border border-[#00B0FF]/40">🔵 9 Weather</span><span class="px-2.5 py-1 rounded-full bg-[#00E676]/20 border border-[#00E676]/40">🟢 10 Farms</span></div><span class="px-2 py-1 rounded-full bg-white/10">Bombardment collisions active • No bars</span></div></div>
 
-<div id="avgBoxes" class="grid grid-cols-4 gap-2 mb-3"></div>
+<div id="avgBoxes" class="grid grid-cols-4 gap-2 mb-4"></div>
+
 <div class="grid grid-cols-2 gap-3">
-<div><h3 class="text-[11px] font-bold mb-2 opacity-70">ALL SELLERS LISTINGS</h3><div id="sellersListMarket" class="space-y-2"></div></div>
-<div><h3 class="text-[11px] font-bold mb-2 opacity-70">ALL BUYERS LISTINGS</h3><div id="buyersListMarket" class="space-y-2"></div></div>
+<div><div class="flex justify-between items-center mb-2"><h3 class="text-[11px] font-bold opacity-80">ALL SELLERS - 100 LISTINGS (ORIGINAL)</h3><span class="text-[9px] px-2 py-0.5 rounded-full bg-emerald-500/20" id="sellCount">100</span></div><div id="sellersListMarket" class="space-y-1.5 max-h-[700px] overflow-y-auto pr-1"></div></div>
+<div><div class="flex justify-between items-center mb-2"><h3 class="text-[11px] font-bold opacity-80">ALL BUYERS - 100 LISTINGS (ORIGINAL)</h3><span class="text-[9px] px-2 py-0.5 rounded-full bg-yellow-500/20" id="buyCount">100</span></div><div id="buyersListMarket" class="space-y-1.5 max-h-[700px] overflow-y-auto pr-1"></div></div>
 </div>
 </div>
 
-<div id="v-locations" class="hidden"><div id="locPerformance" class="grid grid-cols-3 gap-2 mb-3"></div><div id="allCatsFlick" class="grid grid-cols-2 gap-2 mb-3"></div><div class="glass rounded-xl overflow-hidden"><div id="locTable"></div></div></div>
-<div id="v-tusk" class="hidden"><div class="grid grid-cols-2 gap-3"><div id="dailyFeed" class="glass rounded-2xl p-3"></div><div id="learningBox" class="glass rounded-2xl p-3"></div></div></div>
-<div id="v-weather" class="hidden"><div id="weatherPage" class="glass rounded-2xl p-4">Weather + Routes live</div></div>
-<div id="v-exchange" class="hidden"><div class="grid grid-cols-2 gap-3"><div class="glass rounded-2xl p-3 border-l-4 border-yellow-400"><h3 class="font-bold text-[12px] mb-2">BUYERS</h3><div id="buyersList" class="space-y-2"></div></div><div class="glass rounded-2xl p-3 border-l-4 border-emerald-400"><h3 class="font-bold text-[12px] mb-2">SELLERS</h3><div id="sellersList" class="space-y-2"></div></div></div></div>
+<div id="v-exchange" class="hidden">
+<div class="glass rounded-2xl p-4 mb-3 border-l-4 border-[#FFD60A]"><h2 class="font-black text-[14px]">🔄 MycoGold Exchange - Live Order Book - Looks Like Real Exchange</h2><div class="grid grid-cols-4 gap-3 mt-3 text-[11px]"><div class="glass p-2.5 rounded-xl"><div class="opacity-60 text-[9px]">LAST PRICE</div><b id="lastPrice" class="text-[14px] text-[#FFD60A]">110 KES</b><div class="text-[9px] text-green-400">▲ +1.2%</div></div><div class="glass p-2.5 rounded-xl"><div class="opacity-60 text-[9px]">24H VOLUME</div><b class="text-[13px]">2,450 kg</b><div class="text-[9px] opacity-60">Kenya</div></div><div class="glass p-2.5 rounded-xl"><div class="opacity-60 text-[9px]">SPREAD</div><b class="text-[13px]">4 KES</b><div class="text-[9px] opacity-60">Bid/Ask diff</div></div><div class="glass p-2.5 rounded-xl"><div class="opacity-60 text-[9px]">ACTIVE TRADERS</div><b class="text-[13px]">131</b><div class="text-[9px] text-green-400">● Live</div></div></div></div>
+<div class="grid grid-cols-2 gap-3"><div class="glass rounded-2xl p-3"><h3 class="font-bold text-[12px] mb-2 text-red-400">🔴 ASKS - Sellers Want to Sell (100)</h3><div class="grid grid-cols-3 text-[9px] opacity-50 p-2 border-b border-white/10"><span>Price</span><span>Qty</span><span>Seller/Market</span></div><div id="asksBook" class="space-y-0.5 max-h-[600px] overflow-y-auto"></div></div><div class="glass rounded-2xl p-3"><h3 class="font-bold text-[12px] mb-2 text-green-400">🟢 BIDS - Buyers Want to Buy (100)</h3><div class="grid grid-cols-3 text-[9px] opacity-50 p-2 border-b border-white/10"><span>Price</span><span>Qty</span><span>Buyer/Market</span></div><div id="bidsBook" class="space-y-0.5 max-h-[600px] overflow-y-auto"></div></div></div>
+<div class="glass rounded-2xl p-3 mt-3"><h3 class="font-bold text-[11px] mb-2">📈 Last Trades - Exchange Tape</h3><div id="tradeTape" class="flex gap-2 overflow-x-auto text-[10px]"></div></div>
+</div>
+
+<div id="v-locations" class="hidden"><div id="locPerformance" class="grid grid-cols-3 gap-2 mb-3"></div><div id="allCatsFlick" class="grid grid-cols-2 gap-2"></div></div>
+<div id="v-tusk" class="hidden"><div id="dailyFeed" class="glass rounded-2xl p-3 mb-3"></div><div id="learningBox" class="glass rounded-2xl p-3"></div></div>
+<div id="v-weather" class="hidden"><div class="glass rounded-2xl p-4">Weather + Routes + TUSK AI full analysis</div></div>
 <div id="v-value" class="hidden"><div id="valueGrid" class="grid grid-cols-4 gap-3"></div></div>
-<div id="v-profile" class="hidden"><div class="glass rounded-2xl p-5 max-w-[500px]"><h2 class="font-bold">Profile - Font Size</h2><div class="flex gap-2 mt-3"><button onclick="setFont(11)" class="px-3 py-1 rounded-full bg-white/10">Small</button><button onclick="setFont(13)" class="px-3 py-1 rounded-full bg-[#FFD60A] text-black">Medium</button><button onclick="setFont(15)" class="px-3 py-1 rounded-full bg-white/10">Large</button><button onclick="setFont(17)" class="px-3 py-1 rounded-full bg-white/10">XL</button></div></div></div>
+<div id="v-profile" class="hidden"><div class="glass rounded-2xl p-5">Profile & Font size adjustable</div></div>
 
 </div></div></div>
 <script>
 let active='market';
-function setFont(s){document.documentElement.style.fontSize=s+'px'; localStorage.setItem('myco_font',s);}
-function showTab(n){if(active===n){document.querySelectorAll('[id^=v-]').forEach(e=>e.classList.add('hidden')); active=null; return;} active=n; document.querySelectorAll('[id^=v-]').forEach(e=>e.classList.add('hidden')); document.getElementById('v-'+n)?.classList.remove('hidden'); document.querySelectorAll('[id^=t-],[id^=b-]').forEach(e=>e.classList.remove('tab-active','bg-white/10')); document.getElementById('t-'+n)?.classList.add('tab-active'); document.getElementById('b-'+n)?.classList.add('bg-white/10');} window.showTab=showTab; window.setFont=setFont;
+function showTab(n){if(active===n){document.querySelectorAll('[id^=v-]').forEach(e=>e.classList.add('hidden')); active=null; return;} active=n; document.querySelectorAll('[id^=v-]').forEach(e=>e.classList.add('hidden')); document.getElementById('v-'+n)?.classList.remove('hidden'); document.querySelectorAll('[id^=t-],[id^=b-]').forEach(e=>e.classList.remove('tab-active','bg-white/10')); document.getElementById('t-'+n)?.classList.add('tab-active'); document.getElementById('b-'+n)?.classList.add('bg-white/10');} window.showTab=showTab;
 
-const categories=["Mushroom","Potatoes","Onions","Kales","Cabbage","Cereals","Beef","Tomatoes","Carrots","Capsicum","Bananas","Maize","Beans","Avocado","Poultry","Eggs","Milk","Fish","Honey","Rice","Mango"];
-const icons={"Mushroom":"🍄","Potatoes":"🥔","Onions":"🧅","Kales":"🥬","Cabbage":"🥬","Cereals":"🌾","Beef":"🥩","Tomatoes":"🍅","Carrots":"🥕","Capsicum":"🫑","Bananas":"🍌","Maize":"🌽","Beans":"🫘","Avocado":"🥑","Poultry":"🐓","Eggs":"🥚","Milk":"🥛","Fish":"🐟","Honey":"🍯","Rice":"🍚","Mango":"🥭"};
-const locations=["Kericho","Nakuru","Nairobi","Kisumu","Eldoret","Nyandarua","Molo"];
-const marketNames={"Kericho":"Kericho Main","Nakuru":"Wakulima Nakuru","Nairobi":"Wakulima Nairobi","Kisumu":"Kibuye Kisumu","Eldoret":"Eldoret Main","Nyandarua":"Ol Kalou","Molo":"Molo Market"};
+const categories=["Mushroom","Potatoes","Onions","Kales","Cabbage","Cereals","Beef","Tomatoes","Carrots","Capsicum","Bananas","Maize","Beans","Avocado","Poultry","Eggs","Milk","Fish","Honey","Rice","Mango","Oyster","Button"];
+const icons={"Mushroom":"🍄","Potatoes":"🥔","Onions":"🧅","Kales":"🥬","Cabbage":"🥬","Cereals":"🌾","Beef":"🥩","Tomatoes":"🍅","Carrots":"🥕","Capsicum":"🫑","Bananas":"🍌","Maize":"🌽","Beans":"🫘","Avocado":"🥑","Poultry":"🐓","Eggs":"🥚","Milk":"🥛","Fish":"🐟","Honey":"🍯","Rice":"🍚","Mango":"🥭","Oyster":"🍄","Button":"🍄"};
+const locations=["Kericho","Nakuru","Nairobi","Kisumu","Eldoret","Nyandarua","Molo","Bomet","Naivasha","Meru"];
+const marketNames={"Kericho":"Kericho Main","Nakuru":"Wakulima Nakuru","Nairobi":"Wakulima Nairobi","Kisumu":"Kibuye Kisumu","Eldoret":"Eldoret Main","Nyandarua":"Ol Kalou","Molo":"Molo Market","Bomet":"Bomet Market","Naivasha":"Naivasha Market","Meru":"Gakoromone Meru"};
 function rand(a){return a[Math.floor(Math.random()*a.length)]}
-let allItems=[]; categories.forEach(cat=>{for(let i=0;i<3;i++){allItems.push({cat,prod:`${cat} ${Math.floor(Math.random()*40)+10}kg`,loc:rand(locations),market:marketNames[rand(locations)],qty:Math.floor(Math.random()*80)+10,price:Math.floor(Math.random()*100)+30,seller:rand(["Samuel K","Myco Farm","Chebet","Mama Mboga"]),buyer:rand(["Hotel","Supermarket","School"])})}});
+
+// 100 BUYERS + 100 SELLERS - AS YOU HAD
+let allItems=[];
+for(let i=0;i<100;i++){
+  let cat=rand(categories);
+  let loc=rand(locations);
+  allItems.push({
+    cat, prod:`${cat} ${Math.floor(Math.random()*50)+10}kg`,
+    loc, market:marketNames[loc],
+    qty:Math.floor(Math.random()*100)+10,
+    price:Math.floor(Math.random()*120)+25,
+    seller:rand(["Samuel K","Myco Farm","Chebet","Mama Mboga","Farmer J","Coop","Kericho Farm","Nakuru Coop"]),
+    buyer:rand(["Export needs Mushroom Powder 100kg","Hotel","Supermarket","School","Mama Mboga","Nairobi Hotel","Kisumu Export","Buyer"])
+  });
+}
 
 let avgByCat={}; categories.forEach(c=>{let its=allItems.filter(i=>i.cat===c); avgByCat[c]=Math.round(its.reduce((s,x)=>s+x.price,0)/Math.max(its.length,1));}); let prevAvg={...avgByCat};
 
-// MFPI FLICK + AVG FLICK SLOW - YOUR REQUEST
 let mfpiBase=107.18;
 function updateMFPI(){
-  let change=(Math.random()-0.5)*1.8; // flick
+  let change=(Math.random()-0.5)*2.2;
   let val=(mfpiBase+change).toFixed(2);
   let el=document.getElementById('mfpi');
-  el.innerHTML=`MFPI ${val} <span class="${change>=0?'text-green-400':'text-red-400'}">${change>=0?'▲':'▼'}${Math.abs(change).toFixed(2)}%</span>`;
+  el.innerHTML=`MFPI ${val} <span class="${change>=0?'text-green-400':'text-red-400'}">${change>=0?'▲':'▼'}${Math.abs(change).toFixed(2)}%</span> <span class="text-[9px] opacity-60">FLICKING</span>`;
   el.classList.remove('mfpi-flick'); void el.offsetWidth; el.classList.add('mfpi-flick');
   mfpiBase=parseFloat(val);
+  document.getElementById('lastPrice').innerText=val+' KES';
+  document.getElementById('lastPrice').classList.add('flick-slow');
+  setTimeout(()=>document.getElementById('lastPrice').classList.remove('flick-slow'), 1200);
 }
-setInterval(updateMFPI, 1800); // MFPI flick slow
+setInterval(updateMFPI, 1600);
+updateMFPI();
 
-function renderMarket(){
- let filtered=allItems;
- let avgHtml=""; categories.slice(0,4).forEach(c=>{
-  let avg=avgByCat[c];
+function renderAll(){
+ let avgHtml=""; ["Mushroom","Potatoes","Onions","Kales"].forEach(c=>{
+  let avg=avgByCat[c]||40;
   let changed=prevAvg[c]!==avg;
-  let cls=changed?'flick-slow':'';
-  avgHtml+=`<div class="glass rounded-xl p-2.5"><div class="text-[9px] opacity-60">AVG TUSK • ${c} • ${marketNames[rand(locations)]}</div><b class="text-[12px] text-[#FFD60A] ${cls}" id="avg-${c}">${avg} KES</b></div>`;
+  avgHtml+=`<div class="glass rounded-xl p-2.5 border-l-2 ${changed?'border-yellow-400':''}"><div class="text-[9px] opacity-60">AVG TUSK • ${c} • ${marketNames[rand(locations)]}</div><b class="text-[13px] text-[#FFD60A] ${changed?'flick-slow':''}">${avg} KES</b><div class="text-[8px] opacity-50">${changed?'🔥 flick 2%':''}</div></div>`;
  });
  document.getElementById('avgBoxes').innerHTML=avgHtml;
- document.getElementById('tuskAvgTop').innerHTML=categories.slice(0,4).map(c=>{
-  let avg=avgByCat[c];
+ document.getElementById('tuskAvgTop').innerHTML=["Mushroom","Potatoes","Onions","Kales","Cabbage"].map(c=>{
+  let avg=avgByCat[c]||40;
   let changed=prevAvg[c]!==avg;
-  return `<span class="${changed?'flick-slow':''}">${icons[c]} ${c} <b class="text-[#FFD60A]">${avg} KES</b></span>`;
+  return `<span class="${changed?'flick-slow':''}">${icons[c]||'●'} ${c} <b class="text-[#FFD60A]">${avg} KES</b></span>`;
  }).join(' ');
- let sH="",bH=""; filtered.slice(0,8).forEach(it=>{sH+=`<div class="glass rounded-xl p-2.5"><div class="text-[10px] opacity-60">${it.seller} ${it.loc}</div><b class="text-[12px]">${it.prod} @ <span class="text-[#FFD60A]">${it.price} KES</span></b><div class="text-[9px] opacity-50">${it.market}</div></div>`; bH+=`<div class="glass rounded-xl p-2.5"><div class="text-[10px] opacity-60">${it.buyer} wants ${it.loc}</div><b class="text-[12px]">${it.prod} @ ${it.price+10} KES</b><div class="text-[9px] opacity-50">${it.market}</div></div>`;}); document.getElementById('sellersListMarket').innerHTML=sH; document.getElementById('buyersListMarket').innerHTML=bH; document.getElementById('sellersList').innerHTML=sH; document.getElementById('buyersList').innerHTML=bH;
-}
-renderMarket();
 
-// AVG PRICE FLICK SLOW 2%
+ // 100 SELLERS + 100 BUYERS
+ let sH="",bH="",asks="",bids="",tape="";
+ allItems.forEach((it,i)=>{
+  let avg=avgByCat[it.cat]||50;
+  if(i<100){
+    sH+=`<div class="glass rounded-xl p-2.5 flex justify-between items-center"><div><div class="text-[10px] opacity-60">${it.seller} • ${it.loc}</div><b class="text-[11px]">${it.prod} @ <span class="text-[#FFD60A]">${it.price} KES</span></b><div class="text-[8px] opacity-40">${it.market} • Avg ${avg}</div></div><span class="text-[10px]">${icons[it.cat]||'●'}</span></div>`;
+    asks+=`<div class="grid grid-cols-3 text-[10px] p-1.5 border-b border-white/5 hover:bg-white/5"><span class="text-red-300">${it.price} KES</span><span>${it.qty}kg</span><span class="truncate opacity-70">${it.seller} ${it.loc}</span></div>`;
+    bH+=`<div class="glass rounded-xl p-2.5 flex justify-between items-center"><div><div class="text-[10px] opacity-60">${it.buyer}</div><b class="text-[11px]">${it.prod} @ ${it.price+8} KES</b><div class="text-[8px] opacity-40">${it.market} • Wants ${it.qty}kg</div></div><button class="px-2 py-1 rounded-full bg-[#FFD60A] text-black text-[9px] font-bold">Match</button></div>`;
+    bids+=`<div class="grid grid-cols-3 text-[10px] p-1.5 border-b border-white/5 hover:bg-white/5"><span class="text-green-300">${it.price+8} KES</span><span>${it.qty}kg</span><span class="truncate opacity-70">${it.buyer} ${it.loc}</span></div>`;
+    if(i<15) tape+=`<span class="px-2 py-1 rounded-full bg-white/5 whitespace-nowrap ${i%2===0?'text-green-400':'text-red-400'}">${it.cat} ${it.price} KES • ${it.loc}</span>`;
+  }
+ });
+ document.getElementById('sellersListMarket').innerHTML=sH;
+ document.getElementById('buyersListMarket').innerHTML=bH;
+ document.getElementById('asksBook').innerHTML=asks;
+ document.getElementById('bidsBook').innerHTML=bids;
+ document.getElementById('tradeTape').innerHTML=tape;
+ document.getElementById('sellCount').innerText='100'; document.getElementById('buyCount').innerText='100';
+}
+renderAll();
+
 setInterval(()=>{
  prevAvg={...avgByCat};
  categories.forEach(c=>{
-  let vol=avgByCat[c]*0.02; // 2% slow
+  let vol=(avgByCat[c]||40)*0.02;
   let change=(Math.random()-0.5)*2*vol;
-  avgByCat[c]=Math.max(10,Math.round(avgByCat[c]+change));
+  avgByCat[c]=Math.max(10,Math.round((avgByCat[c]||40)+change));
  });
- renderMarket();
-}, 3000); // slow flick every 3s
+ renderAll();
+}, 2800);
 
-let chipsHtml=`<span onclick="setCat('All')" id="chip-All" class="px-3 py-1.5 rounded-full glass chip-active">All</span>`; ["Mushroom","Potatoes","Onions","Kales","Cabbage","Cereals","Beef"].forEach(c=>{chipsHtml+=`<span onclick="setCat('${c}')" id="chip-${c}" class="px-3 py-1.5 rounded-full glass">${icons[c]} ${c}</span>`;}); document.getElementById('filterChips').innerHTML=chipsHtml;
-function setCat(n){document.querySelectorAll('[id^=chip-]').forEach(e=>e.classList.remove('chip-active')); document.getElementById('chip-'+n)?.classList.add('chip-active');} window.setCat=setCat;
-document.getElementById('ticker').innerText=allItems.slice(0,10).map(i=>`SELLER: ${i.seller} ${i.qty}kg ${i.prod} @${i.price} KES • ${i.market}`).join(' • ');
+let chipsHtml=`<span class="px-3 py-1.5 rounded-full glass chip-active">All</span>`; ["Mushroom","Potatoes","Onions","Kales","Cabbage","Cereals","Beef"].forEach(c=>{chipsHtml+=`<span class="px-3 py-1.5 rounded-full glass">${icons[c]} ${c}</span>`;}); document.getElementById('filterChips').innerHTML=chipsHtml;
+document.getElementById('ticker').innerHTML=allItems.slice(0,12).map(i=>`🔥 TUSK WARNING Cover beds - Heavy rain ${rand(locations)} • BUYER: Export needs ${i.cat} Powder 100kg • SELLER: ${i.seller} ${i.qty}kg ${i.cat} @${i.price} KES • ${i.market}`).join(' • ');
 
-// BUILD LOCATIONS + VALUE + FEED QUICK
-document.getElementById('locPerformance').innerHTML=locations.map(l=>`<div class="glass rounded-xl p-3"><b>${l} - ${marketNames[l]}</b><div class="text-[11px] mt-1">Avg <span class="text-[#FFD60A] flick-slow">${Math.floor(Math.random()*50+30)} KES</span></div></div>`).join('');
-document.getElementById('allCatsFlick').innerHTML=categories.map(c=>`<div class="flex justify-between p-2 rounded-xl bg-black/20"><span>${icons[c]} ${c}</span><span class="text-[9px] opacity-60">${marketNames[rand(locations)]}</span><span class="text-[#FFD60A] font-bold flick-slow">${avgByCat[c]} KES</span></div>`).join('');
-document.getElementById('valueGrid').innerHTML=["Dry Mushroom","Crisp","Medicinal Mushroom","Myco Coffee","Egg Tray Value","Boiled Egg Pack","Egg Powder","Avocado Oil"].map(n=>`<div class="glass rounded-xl p-3"><b class="text-[11px]">${n}</b><div class="text-[10px] mt-1 text-yellow-300">+250% margin</div></div>`).join('');
-
-// AI CANVAS - ONLY DOTS YELLOW BLUE GREEN BOMBARDMENT - NO BARS
+// AI DOTS ANIMATION - ONLY DOTS, NO BARS, Y/B/G BOMBARDMENT
 const canvas=document.getElementById('aiCanvas'); const ctx=canvas.getContext('2d');
-function resize(){canvas.width=canvas.offsetWidth; canvas.height=canvas.offsetHeight;} resize(); window.addEventListener('resize',resize);
+function resize(){canvas.width=canvas.offsetWidth*2; canvas.height=canvas.offsetHeight*2; ctx.scale(2,2); canvas.style.width=canvas.offsetWidth+'px'; canvas.style.height=canvas.offsetHeight+'px';}
+function initResize(){canvas.width=document.getElementById('aiCanvas').parentElement.offsetWidth; canvas.height=240; canvas.style.width='100%'; canvas.style.height='240px';}
+initResize(); window.addEventListener('resize',initResize);
+
 let dots=[];
+const colors=['#FFD60A','#00B0FF','#00E676'];
 for(let i=0;i<28;i++){
  dots.push({
-  x:Math.random()*canvas.width,
-  y:Math.random()*canvas.height,
+  x:Math.random()* (canvas.width/2),
+  y:Math.random()*200,
   vx:(Math.random()-0.5)*2.8,
   vy:(Math.random()-0.5)*2.8,
-  r:2.5+Math.random()*3.5,
-  col:rand(['#FFD60A','#00B0FF','#00E676']),
-  type:rand(['ai','weather','farm'])
+  r:2.8+Math.random()*3.2,
+  col:colors[i%3],
+  type:i%3
  });
 }
+
 function draw(){
- ctx.clearRect(0,0,canvas.width,canvas.height);
- // Connections
+ let w=canvas.width/2, h=220;
+ ctx.clearRect(0,0,w,h);
+
+ // connections + bombardment
  dots.forEach((a,i)=>{
   dots.slice(i+1).forEach(b=>{
    let dx=a.x-b.x, dy=a.y-b.y, d=Math.hypot(dx,dy);
-   if(d<14){ // BOMBARDMENT
-    let tx=a.vx, ty=a.vy; a.vx=b.vx*1.1; a.vy=b.vy*1.1; b.vx=tx*1.1; b.vy=ty*1.1;
-    ctx.fillStyle='rgba(255,214,10,0.35)'; ctx.beginPath(); ctx.arc((a.x+b.x)/2,(a.y+b.y)/2,12,0,Math.PI*2); ctx.fill();
+   if(d<16){
+    // BOMBARDMENT - swap + boost
+    let tvx=a.vx, tvy=a.vy;
+    a.vx=b.vx*1.2 + (Math.random()-0.5)*0.5;
+    a.vy=b.vy*1.2 + (Math.random()-0.5)*0.5;
+    b.vx=tvx*1.2 + (Math.random()-0.5)*0.5;
+    b.vy=tvy*1.2 + (Math.random()-0.5)*0.5;
+    ctx.fillStyle='rgba(255,214,10,0.3)';
+    ctx.beginPath(); ctx.arc((a.x+b.x)/2,(a.y+b.y)/2,14,0,Math.PI*2); ctx.fill();
+    ctx.fillStyle='rgba(0,176,255,0.2)';
+    ctx.beginPath(); ctx.arc((a.x+b.x)/2,(a.y+b.y)/2,8,0,Math.PI*2); ctx.fill();
    }
-   if(d<130){
-    let alpha=0.18*(1-d/130);
-    ctx.strokeStyle=a.col+Math.floor(alpha*255).toString(16).padStart(2,'0');
-    ctx.lineWidth=0.8;
+   if(d<135){
+    ctx.strokeStyle=a.col+'33';
+    ctx.lineWidth=0.9;
     ctx.beginPath(); ctx.moveTo(a.x,a.y); ctx.lineTo(b.x,b.y); ctx.stroke();
    }
   });
  });
+
  dots.forEach(d=>{
   d.x+=d.vx; d.y+=d.vy;
-  if(d.x<0||d.x>canvas.width){d.vx*=-1; d.x=Math.max(0,Math.min(canvas.width,d.x));}
-  if(d.y<0||d.y>canvas.height){d.vy*=-1; d.y=Math.max(0,Math.min(canvas.height,d.y));}
+  if(d.x<0||d.x>w){d.vx*=-1; d.x=Math.max(0,Math.min(w,d.x));}
+  if(d.y<0||d.y>h){d.vy*=-1; d.y=Math.max(0,Math.min(h,d.y));}
   ctx.fillStyle=d.col;
-  ctx.shadowColor=d.col; ctx.shadowBlur=12;
-  ctx.beginPath(); ctx.arc(d.x,d.y,d.r,0,Math.PI*2); ctx.fill(); ctx.shadowBlur=0;
-  // inner glow
-  ctx.fillStyle='#fff'; ctx.globalAlpha=0.6; ctx.beginPath(); ctx.arc(d.x-d.r*0.3,d.y-d.r*0.3,d.r*0.4,0,Math.PI*2); ctx.fill(); ctx.globalAlpha=1;
+  ctx.shadowColor=d.col; ctx.shadowBlur=14;
+  ctx.beginPath(); ctx.arc(d.x,d.y,d.r,0,Math.PI*2); ctx.fill();
+  ctx.shadowBlur=0;
+  // inner white highlight for AI look
+  ctx.fillStyle='rgba(255,255,255,0.9)';
+  ctx.beginPath(); ctx.arc(d.x-d.r*0.3,d.y-d.r*0.3,d.r*0.35,0,Math.PI*2); ctx.fill();
  });
+
  requestAnimationFrame(draw);
-} draw();
+}
+draw();
 </script></body></html>
