@@ -1,200 +1,162 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta id="vp" name="viewport" content="width=1100"><title>MycoGold Africa V2.1 GENIUS - Market=Exchange+Location Live+TUSK Feed+Value</title><script src="https://cdn.tailwindcss.com"></script>
-<script>if(screen.width<1100){document.getElementById('vp').setAttribute('content','width=1100, initial-scale='+(screen.width/1100));}</script>
-<style>:root{--gold:#FFD60A;--green:#00E676;--blue:#00B0FF;--bg:#081414;--base:13px}html{font-size:var(--base)}body{background:var(--bg);color:#d9ece1;font-family:Inter,system-ui;margin:0;min-width:1100px}.glass{background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.09);backdrop-filter:blur(10px)}.tab-active{border-bottom:3px solid var(--gold);color:var(--gold)!important;opacity:1!important;background:rgba(255,214,10,0.12)}.logo-3d{font-weight:900;color:var(--gold);text-shadow:0 1px 0 #c9a800,0 2px 0 #b89700,0 5px 12px rgba(0,0,0,0.7),0 0 22px rgba(255,214,10,0.45);transform:perspective(200px) rotateX(5deg)}.flick{animation:flicker 0.7s ease}@keyframes flicker{0%{transform:scale(1)}50%{transform:scale(1.18);filter:brightness(1.5)}100%{transform:scale(1)}}.card{transition:all 0.2s}.card:hover{transform:translateY(-2px);box-shadow:0 10px 25px rgba(0,0,0,0.4);border-color:rgba(255,214,10,0.25)}</style></head><body>
-<div class="w-[1100px] mx-auto">
-<div class="px-4 py-1 text-[10px] bg-[#FFD60A]/10 border-b border-yellow-500/20 flex justify-between items-center"><span>🔒 V2.1 GENIUS LOCKED • Market=All Buyers/Sellers • Location Live Flicker • TUSK Feed+Blogs+Learning • Value Real • Bombardment Y/B/G</span><span id="tierBadge" class="font-bold px-3 py-1 rounded-full bg-white/10">FREE</span></div>
-<div class="px-4 py-1.5 text-[11px] flex gap-3 bg-black/60 border-b border-white/10 items-center"><span id="mfpi" class="font-bold">MFPI 107.15</span><div id="tuskAvg" class="flex gap-2 text-[10px] overflow-hidden"></div><span class="ml-auto flex gap-1 items-center"><span class="w-2 h-2 bg-green-400 rounded-full animate-pulse"></span>LIVE 2% VOL</span></div>
-<div class="mx-4 mt-2 rounded-xl bg-[#0f2424] border border-yellow-500/20 h-[34px] flex items-center overflow-hidden"><marquee id="ticker" class="text-[11px]"></marquee></div>
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>MycoGold Africa Exchange - Original Restored + Genius Added</title><script src="https://cdn.tailwindcss.com"></script>
+<style>
+:root{--gold:#FFD60A;--cyan:#00E5FF;--blue:#00B0FF;--green:#00E676;--bg:#0A1F2F}
+body{background:radial-gradient(ellipse at top, #0F2F4F 0%, #0A1F2F 100%);color:#d9ece1;font-family:Inter,system-ui;min-height:100vh}
+.glass{background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.08);backdrop-filter:blur(8px)}
+.tab-active{border-bottom:3px solid var(--gold);color:var(--gold)!important}
+.chip-active{background:var(--gold)!important;color:#000!important;font-weight:bold}
+.flick{animation:flick 0.6s ease}@keyframes flick{50%{transform:scale(1.15);color:#FFD60A}}
+.bar{transition:all 0.5s ease}
+</style></head><body>
+<div class="px-4 py-1 text-[11px] bg-black/30 border-b border-white/10 flex gap-3 items-center overflow-hidden whitespace-nowrap"><span id="mfpi" class="font-bold">MFPI 107.18 ▼0.4%</span><span class="opacity-70">131 Live • Kenya</span><span class="opacity-70">Showing: all (16)</span><div id="tuskAvgTop" class="flex gap-3 ml-4 text-[10px]"></div></div>
+<div class="mx-3 mt-2 rounded-xl bg-[#0F2F4F]/80 border border-white/10 h-[36px] flex items-center overflow-hidden"><marquee id="ticker" class="text-[12px]"></marquee></div>
 
-<div class="flex mt-3 px-4 gap-4"><div class="w-[220px] shrink-0">
-<div class="logo-3d text-[22px]">MYCOGOLD</div><div class="text-[11px] font-extrabold tracking-[3px] text-[#00E676]">AFRICA</div><div class="text-[7px] opacity-50 tracking-[1px]">NATURE'S WEALTH YOUR HEALTH</div>
-<div class="mt-2 h-[2px] bg-gradient-to-r from-[#FFD60A] to-[#00E676] to-[#00B0FF] rounded-full shadow-[0_0_10px_rgba(255,214,10,0.6)]"></div>
-<div class="mt-4 space-y-1 text-[12px]">
-<button onclick="toggleTab('market')" id="btn-market" class="w-full text-left px-4 py-2.5 rounded-full bg-white/10 font-bold tab-active">🏠 Market - All Buyers/Sellers</button>
-<button onclick="toggleTab('locations')" id="btn-locations" class="w-full text-left px-4 py-2.5 rounded-full hover:bg-white/5">📍 Location Performance + Markets</button>
-<button onclick="toggleTab('exchange')" id="btn-exchange" class="w-full text-left px-4 py-2.5 rounded-full hover:bg-white/5">🔄 Exchange Live</button>
-<button onclick="toggleTab('tusk')" id="btn-tusk" class="w-full text-left px-4 py-2.5 rounded-full border border-yellow-500/20">🧠 TUSK AI - Analysis+Feed+Learn</button>
-<button onclick="toggleTab('value')" id="btn-value" class="w-full text-left px-4 py-2.5 rounded-full border border-yellow-500/30 text-yellow-300">✨ Value-Added Real</button>
-<button onclick="toggleTab('profile')" id="btn-profile" class="w-full text-left px-4 py-2.5 rounded-full hover:bg-white/5">👤 Profile & Aa</button>
+<div class="flex">
+<!-- LEFT SIDEBAR - ORIGINAL -->
+<div class="w-[190px] p-3 shrink-0">
+<div class="font-black text-[16px] leading-none text-[#FFD60A]">MYCOGOLD</div><div class="text-[9px] tracking-[2px] opacity-60">NATURE'S WEALTH YOUR HEALTH</div>
+<div class="mt-5 space-y-1.5 text-[12px]">
+<button onclick="showTab('market')" id="b-market" class="w-full text-left px-4 py-2.5 rounded-full bg-white/10">Market</button>
+<button onclick="showTab('tusk')" id="b-tusk" class="w-full text-left px-4 py-2.5 rounded-full hover:bg-white/5">TUSK Insights</button>
+<button onclick="showTab('weather')" id="b-weather" class="w-full text-left px-4 py-2.5 rounded-full hover:bg-white/5">Weather</button>
+<button onclick="showTab('exchange')" id="b-exchange" class="w-full text-left px-4 py-2.5 rounded-full hover:bg-white/5">Exchange</button>
+<button onclick="showTab('locations')" id="b-locations" class="w-full text-left px-4 py-2.5 rounded-full hover:bg-white/5">📍 Locations</button>
+<button onclick="showTab('value')" id="b-value" class="w-full text-left px-4 py-2.5 rounded-full border border-yellow-500/20">Value-Added</button>
+<button onclick="showTab('profile')" id="b-profile" class="w-full text-left px-4 py-2.5 rounded-full hover:bg-white/5">Profile</button>
+<button class="w-full mt-4 px-4 py-2.5 rounded-full bg-[#FFD60A] text-black font-bold text-[12px]">+ Post Produce</button>
 </div>
-<div class="mt-3 glass rounded-xl p-2.5"><div class="text-[9px] opacity-50 font-bold">TUSK SELF-LEARNING 78%</div><div id="tuskLearn" class="text-[10px] mt-1 space-y-1"></div></div>
+<div class="mt-6 glass rounded-xl p-2.5"><div class="text-[9px] opacity-50">TUSK AI • Bombardment Y/B/G</div><canvas id="miniCanvas" class="w-full h-[60px] mt-2 rounded-lg"></canvas></div>
 </div>
 
-<div class="flex-1 min-w-0"><div class="flex gap-5 border-b border-white/10 text-[12px] mb-4 overflow-x-auto"><button id="t-market" onclick="toggleTab('market')" class="pb-3 tab-active whitespace-nowrap">Market - Buyers & Sellers</button><button id="t-locations" onclick="toggleTab('locations')" class="pb-3 opacity-60 whitespace-nowrap">Location Live Flicker</button><button id="t-exchange" onclick="toggleTab('exchange')" class="pb-3 opacity-60 whitespace-nowrap">Exchange</button><button id="t-tusk" onclick="toggleTab('tusk')" class="pb-3 opacity-60 whitespace-nowrap">TUSK AI + Weather + Routes + Feed</button><button id="t-value" onclick="toggleTab('value')" class="pb-3 opacity-60 whitespace-nowrap">Value-Added</button><button id="t-profile" onclick="toggleTab('profile')" class="pb-3 opacity-60 whitespace-nowrap">Profile</button></div>
+<!-- MAIN - ORIGINAL DESIGN + YOUR REQUESTS -->
+<div class="flex-1 p-3 min-w-0">
+<div class="flex gap-6 border-b border-white/10 text-[13px] mb-3"><button id="t-market" onclick="showTab('market')" class="pb-3 tab-active">Market</button><button id="t-tusk" onclick="showTab('tusk')" class="pb-3 opacity-60">TUSK</button><button id="t-weather" onclick="showTab('weather')" class="pb-3 opacity-60">Weather</button><button id="t-exchange" onclick="showTab('exchange')" class="pb-3 opacity-60">Exchange</button><button id="t-locations" onclick="showTab('locations')" class="pb-3 opacity-60">Locations</button><button id="t-value" onclick="showTab('value')" class="pb-3 opacity-60">Value-Added</button></div>
 
-<!-- MARKET TAB - ALL BUYERS AND SELLERS -->
+<!-- MARKET TAB - ORIGINAL + ALL BUYERS/SELLERS -->
 <div id="v-market">
-<div class="relative glass rounded-2xl overflow-hidden mb-4 border border-white/10 shadow-[0_10px_30px_rgba(0,0,0,0.5)]" style="height:220px"><canvas id="aiCanvas" class="w-full h-full"></canvas><div class="absolute top-3 left-4 text-[10px] opacity-70">TUSK BOMBARDMENT - YELLOW AI + BLUE WATER + GREEN FARM - Live Collisions</div><div class="absolute bottom-3 left-4 flex gap-2 text-[9px]"><span class="px-2 py-1 rounded-full bg-[#FFD60A]/20 border border-[#FFD60A]/30">🟡 AI Nodes</span><span class="px-2 py-1 rounded-full bg-[#00B0FF]/20 border border-[#00B0FF]/30">🔵 Water/Weather</span><span class="px-2 py-1 rounded-full bg-[#00E676]/20 border border-[#00E676]/30">🟢 Farms/Buyers</span></div></div>
-
-<div id="filterChips" class="flex gap-2 text-[11px] mb-3 flex-wrap"></div>
-
-<div class="grid grid-cols-2 gap-3 mb-4">
-<div class="glass rounded-2xl p-3 border-l-4 border-yellow-400"><div class="flex justify-between items-center mb-3"><h3 class="font-bold text-[13px]">🟡 BUYERS LISTINGS - All Wants</h3><span class="text-[10px] bg-yellow-500/20 px-2 py-0.5 rounded-full" id="buyCount">40</span></div><div id="buyersListMarket" class="space-y-2 max-h-[500px] overflow-y-auto pr-1"></div></div>
-<div class="glass rounded-2xl p-3 border-l-4 border-emerald-400"><div class="flex justify-between items-center mb-3"><h3 class="font-bold text-[13px]">🟢 SELLERS LISTINGS - All Offers</h3><span class="text-[10px] bg-emerald-500/20 px-2 py-0.5 rounded-full" id="sellCount">40</span></div><div id="sellersListMarket" class="space-y-2 max-h-[500px] overflow-y-auto pr-1"></div></div>
-</div>
-
-<div class="glass rounded-2xl p-3"><h3 class="font-bold text-[12px] mb-2">🔄 COMBINED MARKET EXCHANGE - All Listings Live Flicker 2%</h3><div id="produceGrid" class="grid grid-cols-2 gap-2"></div></div>
-</div>
-
-<!-- LOCATION TAB -->
-<div id="v-locations" class="hidden">
-<div class="grid grid-cols-3 gap-3 mb-4">
-<div class="glass rounded-2xl p-4 border-l-4 border-yellow-400 card"><h3 class="text-[10px] opacity-60">TOTAL MARKETS + LISTINGS</h3><b class="text-2xl" id="totalList">105</b><div class="text-[10px] text-green-400">11 counties • 15 markets • Live</div></div>
-<div class="glass rounded-2xl p-4 border-l-4 border-emerald-400 card"><h3 class="text-[10px] opacity-60">BEST COUNTY + MARKET</h3><b class="text-[13px]" id="bestLoc">Kericho - Kericho Main</b><p class="text-[10px] opacity-70" id="bestStats"></p></div>
-<div class="glass rounded-2xl p-4 border-l-4 border-blue-400 card"><h3 class="text-[10px] opacity-60">TOP CATEGORY TODAY</h3><b class="text-[13px]" id="topProd">Mushroom</b><p class="text-[10px] opacity-70" id="topProdStats"></p></div>
-</div>
-
-<div class="grid grid-cols-2 gap-3 mb-4">
-<div class="glass rounded-2xl p-4"><h3 class="font-bold text-[12px] mb-3">📍 LOCATION PERFORMANCE - All Markets Live Flicker</h3><div id="locAnalysis" class="grid grid-cols-2 gap-2"></div></div>
-<div class="glass rounded-2xl p-4"><h3 class="font-bold text-[12px] mb-3">📊 ALL 21 CATEGORIES LIVE FLICKER 2% + MARKET NAME</h3><div id="priceHeat" class="space-y-1 max-h-[380px] overflow-y-auto pr-1"></div></div>
-</div>
-
-<div class="glass rounded-xl overflow-hidden"><div class="grid grid-cols-7 text-[10px] opacity-60 p-3 border-b border-white/10 bg-white/5"><span>Market Name</span><span>County</span><span>Product</span><span>Qty</span><span>Live Price (2% flick)</span><span>Trend</span><span>Action</span></div><div id="locTable" class="max-h-[450px] overflow-y-auto"></div></div>
-</div>
-
-<!-- EXCHANGE TAB -->
-<div id="v-exchange" class="hidden"><div class="grid grid-cols-2 gap-4"><div class="glass rounded-2xl p-3 border-l-4 border-yellow-400"><h3 class="text-yellow-300 font-bold text-[13px] mb-3">BUYERS LIVE</h3><div id="buyersList" class="space-y-2"></div></div><div class="glass rounded-2xl p-3 border-l-4 border-emerald-400"><h3 class="text-emerald-400 font-bold text-[13px] mb-3">SELLERS LIVE</h3><div id="sellersList" class="space-y-2"></div></div></div></div>
-
-<!-- TUSK AI TAB -->
-<div id="v-tusk" class="hidden">
-<div class="grid grid-cols-3 gap-3 mb-4">
-<div class="glass rounded-2xl p-4 border-l-4 border-blue-400 card"><h3 class="font-bold text-[12px]">⛅ Weather Analysis - All Counties</h3><div id="weatherAI" class="text-[11px] mt-3 space-y-2"></div></div>
-<div class="glass rounded-2xl p-4 border-l-4 border-emerald-400 card"><h3 class="font-bold text-[12px]">🚚 Routes & Logistics - TUSK Optimized</h3><div id="routesAI" class="text-[11px] mt-3 space-y-2"></div></div>
-<div class="glass rounded-2xl p-4 border-l-4 border-yellow-400 card"><h3 class="font-bold text-[12px]">🧠 Full TUSK Analysis</h3><div id="geniusAI" class="text-[11px] mt-3 space-y-2"></div></div>
-</div>
-
-<div class="grid grid-cols-2 gap-3 mb-4">
-<div class="glass rounded-2xl p-4"><h3 class="font-bold text-[12px] mb-3">📰 DAILY FEED & BLOGS - Sure Data (Kenya Agri News)</h3><div id="feedBlogs" class="space-y-2 max-h-[350px] overflow-y-auto"></div></div>
-<div class="glass rounded-2xl p-4"><h3 class="font-bold text-[12px] mb-3">🎓 LEARNING & INSIGHTS - For Learners & Knowledge Gathering</h3><div id="learningInsights" class="space-y-2 max-h-[350px] overflow-y-auto"></div></div>
-</div>
-
+<div class="flex gap-2 mb-3 flex-wrap text-[11px]" id="filterChips"></div>
+<div class="relative glass rounded-2xl p-3 mb-3 overflow-hidden" style="height:210px"><canvas id="aiCanvas" class="w-full h-full"></canvas><div class="absolute top-2 left-3 text-[9px] opacity-50">AI × AGRI LIVE - YELLOW BLUE GREEN BOMBARDMENT</div></div>
+<div id="avgBoxes" class="grid grid-cols-4 gap-2 mb-3"></div>
 <div class="grid grid-cols-2 gap-3">
-<div class="glass rounded-2xl p-4"><h3 class="font-bold text-[12px]">⚠️ Warnings + Auto-Cat Log</h3><div id="warnAI" class="text-[11px] mt-2 space-y-1"></div><div id="autoCatLog" class="text-[10px] mt-3 font-mono opacity-70 space-y-1 bg-black/30 p-2 rounded-xl"></div></div>
-<div class="glass rounded-2xl p-4"><h3 class="font-bold text-[12px]">💡 Smart Recommendations + Profit Moves</h3><div id="tuskReco" class="text-[11px] mt-2 space-y-2"></div></div>
+<div><h3 class="text-[11px] font-bold mb-2 opacity-70">ALL SELLERS LISTINGS</h3><div id="sellersListMarket" class="space-y-2"></div></div>
+<div><h3 class="text-[11px] font-bold mb-2 opacity-70">ALL BUYERS LISTINGS</h3><div id="buyersListMarket" class="space-y-2"></div></div>
 </div>
 </div>
 
-<!-- VALUE ADDED TAB -->
+<!-- LOCATIONS TAB - YOUR REQUEST: Performance + Live Flicker + Market Name -->
+<div id="v-locations" class="hidden">
+<div class="glass rounded-2xl p-3 mb-3"><h3 class="font-bold text-[13px] mb-3">📍 Location Performance - Live Flicker All Products + Market Name</h3><div id="locPerformance" class="grid grid-cols-3 gap-2"></div></div>
+<div class="glass rounded-2xl p-3 mb-3"><h3 class="font-bold text-[12px] mb-2">📊 All Categories Live Flicker 2% + Market Name</h3><div id="allCatsFlick" class="grid grid-cols-2 gap-2"></div></div>
+<div class="glass rounded-xl overflow-hidden"><div class="grid grid-cols-6 text-[10px] opacity-60 p-2 bg-white/5"><span>Market Name</span><span>County</span><span>Product</span><span>Qty</span><span>Live Price (flick)</span><span>Trend</span></div><div id="locTable"></div></div>
+</div>
+
+<!-- TUSK TAB - YOUR REQUEST: Full Analysis + Weather + Routes + Feed + Learning -->
+<div id="v-tusk" class="hidden">
+<div class="grid grid-cols-3 gap-3 mb-3">
+<div class="glass rounded-2xl p-3 border-l-4 border-yellow-400"><h3 class="font-bold text-[12px]">🧠 TUSK Full Analysis</h3><div id="tuskFull" class="text-[11px] mt-2 space-y-1"></div></div>
+<div class="glass rounded-2xl p-3 border-l-4 border-cyan-400"><h3 class="font-bold text-[12px]">⛅ Weather + Routes</h3><div id="weatherRoutes" class="text-[11px] mt-2 space-y-1"></div></div>
+<div class="glass rounded-2xl p-3 border-l-4 border-red-400"><h3 class="font-bold text-[12px]">⚠️ Warnings</h3><div id="warnBox" class="text-[11px] mt-2"></div></div>
+</div>
+<div class="grid grid-cols-2 gap-3">
+<div class="glass rounded-2xl p-3"><h3 class="font-bold text-[12px] mb-2">📰 Daily Feed & Blogs - Sure Data</h3><div id="dailyFeed" class="space-y-2 text-[11px]"></div></div>
+<div class="glass rounded-2xl p-3"><h3 class="font-bold text-[12px] mb-2">🎓 Learning & Insights - Knowledge Gathering</h3><div id="learningBox" class="space-y-2 text-[11px]"></div></div>
+</div>
+</div>
+
+<div id="v-weather" class="hidden"><div id="weatherPage" class="glass rounded-2xl p-4"></div></div>
+<div id="v-exchange" class="hidden"><div class="grid grid-cols-2 gap-3"><div class="glass rounded-2xl p-3 border-l-4 border-yellow-400"><h3 class="font-bold text-[12px] mb-2">BUYERS</h3><div id="buyersList" class="space-y-2"></div></div><div class="glass rounded-2xl p-3 border-l-4 border-emerald-400"><h3 class="font-bold text-[12px] mb-2">SELLERS</h3><div id="sellersList" class="space-y-2"></div></div></div></div>
+
+<!-- VALUE ADDED TAB - YOUR REQUEST: Real Products -->
 <div id="v-value" class="hidden">
-<div class="flex justify-between items-center mb-3"><h2 class="font-bold">✨ Real Value-Added Products - MycoGold Processing</h2><span class="text-[10px] px-3 py-1 rounded-full bg-yellow-500/20">12 products • +200% to +450% margin • Export Ready</span></div>
-<div id="valueGrid" class="grid grid-cols-3 gap-3 mb-4"></div>
-<div class="grid grid-cols-3 gap-3">
-<div class="glass rounded-2xl p-4 border-l-4 border-yellow-400"><h3 class="font-bold text-[12px]">🍄 Mushroom Value Chain</h3><div class="text-[11px] mt-2 space-y-1"><div>• Fresh 1kg = 120 KES</div><div>• Dry 100g = 450 KES <span class="text-yellow-300">+275%</span></div><div>• Crisp 50g = 180 KES <span class="text-green-400">+200%</span></div><div>• Powder 100g = 500 KES</div><div>• Medicinal Capsules 30 = 900 KES <span class="text-yellow-300">+400%</span></div><div>• Myco Coffee 100g = 600 KES</div></div></div>
-<div class="glass rounded-2xl p-4 border-l-4 border-emerald-400"><h3 class="font-bold text-[12px]">🥚 Egg + Poultry Value</h3><div class="text-[11px] mt-2 space-y-1"><div>• Raw Egg tray 30 = 450 KES</div><div>• Boiled & Packed 6 = 180 KES <span class="text-green-400">+60%</span></div><div>• Egg Powder 100g = 350 KES <span class="text-yellow-300">+250%</span></div><div>• Mayonnaise 200ml = 280 KES</div><div>• Poultry Slaughtered 1kg = 450 KES</div><div>• Smoked Chicken 1kg = 750 KES <span class="text-yellow-300">+66%</span></div></div></div>
-<div class="glass rounded-2xl p-4 border-l-4 border-blue-400"><h3 class="font-bold text-[12px]">🥑 Other Value Added</h3><div class="text-[11px] mt-2 space-y-1"><div>• Avocado Oil 100ml = 750 KES <span class="text-yellow-300">+275%</span></div><div>• Dried Tomatoes 100g = 220 KES <span class="text-green-400">+266%</span></div><div>• Banana Flour 1kg = 380 KES</div><div>• Mango Dried 100g = 250 KES</div><div>• Honey Premium Jar 500g = 900 KES</div><div>• Mala Fermented 1L = 300 KES <span class="text-green-400">+233%</span></div></div></div>
-</div>
+<div class="mb-3"><h2 class="font-bold">✨ Real Value-Added - Dry, Crisp, Medicinal, Egg Value etc</h2></div>
+<div id="valueGrid" class="grid grid-cols-4 gap-3"></div>
 </div>
 
-<!-- PROFILE -->
-<div id="v-profile" class="hidden"><div class="glass rounded-2xl p-5 max-w-[560px]"><h2 class="font-bold">👤 Profile & Settings</h2><div class="mt-4 p-3 rounded-xl bg-white/5 border border-white/10"><h3 class="font-bold text-[12px]">⚙️ FONT SIZE</h3><div class="flex gap-2 mt-2"><button onclick="setFont(11)" class="px-3 py-1 rounded-full bg-white/10 text-[10px]">Small</button><button onclick="setFont(13)" class="px-3 py-1 rounded-full bg-[#FFD60A] text-black">Medium</button><button onclick="setFont(15)" class="px-3 py-1 rounded-full bg-white/10">Large</button><button onclick="setFont(17)" class="px-3 py-1 rounded-full bg-white/10">XL</button></div><input type="range" min="10" max="19" value="13" id="fontSlider" oninput="setFont(this.value)" class="w-full mt-2"></div><div class="mt-3 flex justify-between"><span>Tier:</span><b id="profileTier" class="px-3 py-1 rounded-full bg-white/10 text-xs">FREE</b></div><div id="tierDesc" class="text-xs opacity-60 mt-2"></div><div class="mt-3 grid grid-cols-2 gap-2"><button onclick="setTier('free')" class="px-3 py-2 rounded-full bg-white/10 text-xs">Free</button><button onclick="setTier('logged')" class="px-3 py-2 rounded-full bg-emerald-500/20 text-xs">Login</button><button onclick="setTier('verified')" class="px-3 py-2 rounded-full bg-yellow-500/20 text-xs">Verified</button><button onclick="setTier('premium')" class="px-3 py-2 rounded-full bg-[#FFD60A] text-black text-xs font-bold">Premium</button></div><div class="mt-3 text-[10px] opacity-50">Double-tap tab to close • Tap outside to close</div></div></div>
+<div id="v-profile" class="hidden"><div class="glass rounded-2xl p-5 max-w-[500px]"><h2 class="font-bold">Profile - Font Size</h2><div class="flex gap-2 mt-3"><button onclick="setFont(11)" class="px-3 py-1 rounded-full bg-white/10 text-[11px]">Small</button><button onclick="setFont(13)" class="px-3 py-1 rounded-full bg-[#FFD60A] text-black">Medium</button><button onclick="setFont(15)" class="px-3 py-1 rounded-full bg-white/10">Large</button><button onclick="setFont(17)" class="px-3 py-1 rounded-full bg-white/10">XL</button></div><input type="range" min="10" max="19" value="13" id="fontSlider" oninput="setFont(this.value)" class="w-full mt-2"><div class="mt-3 text-[11px] opacity-60">Double-tap tab to close • Tap outside to close • All saved</div></div></div>
 
 </div></div></div>
 <script>
-let activeTab='market'; let USER_TIER=localStorage.getItem('myco_tier')||'free'; let currentFont=parseInt(localStorage.getItem('myco_font')||13);
-function setFont(s){currentFont=parseInt(s); document.documentElement.style.setProperty('--base', s+'px'); localStorage.setItem('myco_font', s); document.getElementById('fontSlider').value=s;} setFont(currentFont);
-function setTier(t){USER_TIER=t; localStorage.setItem('myco_tier',t); updateTierUI(); render();} function updateTierUI(){let b=document.getElementById('tierBadge'),pt=document.getElementById('profileTier'); if(!b) return; b.innerText=USER_TIER.toUpperCase(); if(pt) pt.innerText=USER_TIER.toUpperCase();} updateTierUI();
-function toggleTab(n){if(activeTab===n){document.querySelectorAll('[id^=v-]').forEach(e=>e.classList.add('hidden')); document.querySelectorAll('[id^=t-]').forEach(e=>{e.classList.remove('tab-active');e.classList.add('opacity-60')}); document.querySelectorAll('[id^=btn-]').forEach(e=>e.classList.remove('tab-active','bg-white/10')); activeTab=null;}else{show(n);}} function show(n){activeTab=n; document.querySelectorAll('[id^=v-]').forEach(e=>e.classList.add('hidden')); document.getElementById('v-'+n)?.classList.remove('hidden'); document.querySelectorAll('[id^=t-]').forEach(e=>{e.classList.remove('tab-active');e.classList.add('opacity-60')}); document.querySelectorAll('[id^=btn-]').forEach(e=>e.classList.remove('tab-active','bg-white/10')); document.getElementById('t-'+n)?.classList.add('tab-active'); document.getElementById('t-'+n)?.classList.remove('opacity-60'); document.getElementById('btn-'+n)?.classList.add('tab-active','bg-white/10');} window.toggleTab=toggleTab; window.show=show; window.setTier=setTier; window.setFont=setFont;
+let active='market'; let currentFont=13;
+function setFont(s){document.documentElement.style.fontSize=s+'px'; localStorage.setItem('myco_font',s);}
+function showTab(n){if(active===n){document.querySelectorAll('[id^=v-]').forEach(e=>e.classList.add('hidden')); document.querySelectorAll('[id^=t-],[id^=b-]').forEach(e=>{e.classList.remove('tab-active','bg-white/10'); e.classList.add('opacity-60')}); active=null; return;} active=n; document.querySelectorAll('[id^=v-]').forEach(e=>e.classList.add('hidden')); document.getElementById('v-'+n)?.classList.remove('hidden'); document.querySelectorAll('[id^=t-],[id^=b-]').forEach(e=>{e.classList.remove('tab-active','bg-white/10'); e.classList.add('opacity-60')}); document.getElementById('t-'+n)?.classList.add('tab-active'); document.getElementById('t-'+n)?.classList.remove('opacity-60'); document.getElementById('b-'+n)?.classList.add('tab-active','bg-white/10'); document.getElementById('b-'+n)?.classList.remove('opacity-60');} window.showTab=showTab; window.setFont=setFont;
 
-const categories=["Mushroom","Tomatoes","Onions","Potatoes","Kales","Cabbage","Carrots","Capsicum","Bananas","Maize","Beans","Rice","Avocado","Mango","Beef","Pork","Poultry","Eggs","Milk","Fish","Honey"];
-const icons={"Mushroom":"🍄","Tomatoes":"🍅","Onions":"🧅","Potatoes":"🥔","Kales":"🥬","Cabbage":"🥬","Carrots":"🥕","Capsicum":"🫑","Bananas":"🍌","Maize":"🌽","Beans":"🫘","Rice":"🍚","Avocado":"🥑","Mango":"🥭","Beef":"🥩","Pork":"🐖","Poultry":"🐓","Eggs":"🥚","Milk":"🥛","Fish":"🐟","Honey":"🍯"};
-const locations=["Kericho","Nakuru","Nairobi","Kisumu","Eldoret","Nyandarua","Molo","Naivasha","Meru","Kitale","Bomet"];
-const marketNames={"Kericho":"Kericho Main Market","Nakuru":"Nakuru Wakulima","Nairobi":"Wakulima Nairobi","Kisumu":"Kibuye Kisumu","Eldoret":"Eldoret Main","Nyandarua":"Ol Kalou Market","Molo":"Molo Market","Naivasha":"Naivasha Veg Market","Meru":"Meru Gakoromone","Kitale":"Kitale Suam","Bomet":"Bomet Market"};
+const categories=["Mushroom","Potatoes","Onions","Kales","Cabbage","Cereals","Beef","Tomatoes","Carrots","Capsicum","Bananas","Maize","Beans","Avocado","Poultry","Eggs","Milk","Fish","Honey","Rice","Mango"];
+const icons={"Mushroom":"🍄","Potatoes":"🥔","Onions":"🧅","Kales":"🥬","Cabbage":"🥬","Cereals":"🌾","Beef":"🥩","Tomatoes":"🍅","Carrots":"🥕","Capsicum":"🫑","Bananas":"🍌","Maize":"🌽","Beans":"🫘","Avocado":"🥑","Poultry":"🐓","Eggs":"🥚","Milk":"🥛","Fish":"🐟","Honey":"🍯","Rice":"🍚","Mango":"🥭"};
+const locations=["Kericho","Nakuru","Nairobi","Kisumu","Eldoret","Nyandarua","Molo"];
+const marketNames={"Kericho":"Kericho Main Market","Nakuru":"Nakuru Wakulima","Nairobi":"Wakulima Nairobi","Kisumu":"Kibuye Kisumu","Eldoret":"Eldoret Main Market","Nyandarua":"Ol Kalou Market","Molo":"Molo Market"};
 function rand(a){return a[Math.floor(Math.random()*a.length)]}
-let allItems=[]; categories.forEach(cat=>{for(let i=0;i<6;i++){allItems.push({cat,prod:`${cat} ${Math.floor(Math.random()*50)+10}kg`,loc:rand(locations),market:marketNames[rand(locations)],qty:Math.floor(Math.random()*150)+10,price:Math.floor(Math.random()*120)+30,seller:rand(["Farmer J","Coop","Myco Farm","Mama Mboga"]),buyer:rand(["Hotel","Supermarket","School","Mama Mboga"])})}});
+let allItems=[]; categories.forEach(cat=>{for(let i=0;i<3;i++){allItems.push({cat,prod:`${cat} ${Math.floor(Math.random()*40)+10}kg`,loc:rand(locations),market:marketNames[rand(locations)],qty:Math.floor(Math.random()*80)+10,price:Math.floor(Math.random()*100)+30,seller:rand(["Samuel K","Myco Farm","Chebet","Mama Mboga","Farmer J"]),buyer:rand(["Hotel","Supermarket","School","Mama Mboga"])})}});
 
-let avgByCat={}; categories.forEach(c=>{avgByCat[c]=Math.round(allItems.filter(i=>i.cat===c).reduce((s,x)=>s+x.price,0)/6);}); let prevAvg={...avgByCat};
-function renderTuskAvg(){let h=document.getElementById('tuskAvg'); let html=""; categories.slice(0,7).forEach(c=>{let changed=avgByCat[c]!==prevAvg[c]; let cls=changed?'flick':''; html+=`<span class="${cls}">${icons[c]} ${c}: <b class="text-yellow-300">${avgByCat[c]} KES</b></span>`;}); h.innerHTML=html; prevAvg={...avgByCat};}
-renderTuskAvg();
-setInterval(()=>{categories.forEach(c=>{let vol=avgByCat[c]*0.02; let change=(Math.random()-0.5)*2*vol; avgByCat[c]=Math.max(10,Math.round(avgByCat[c]+change));}); renderTuskAvg(); buildLocations(); render();},2500);
+let avgByCat={}; categories.forEach(c=>{let its=allItems.filter(i=>i.cat===c); avgByCat[c]=Math.round(its.reduce((s,x)=>s+x.price,0)/Math.max(its.length,1));}); let prevAvg={...avgByCat};
+function renderChips(){let h=`<span onclick="setCat('All')" id="chip-All" class="px-3 py-1.5 rounded-full glass cursor-pointer chip-active">All</span>`; ["Mushroom","Potatoes","Onions","Kales","Cabbage","Cereals","Beef"].forEach(c=>{h+=`<span onclick="setCat('${c}')" id="chip-${c}" class="px-3 py-1.5 rounded-full glass cursor-pointer text-[11px]">${icons[c]} ${c}</span>`;}); document.getElementById('filterChips').innerHTML=h;}
+let curFilter='All'; function setCat(n){curFilter=n; document.querySelectorAll('[id^=chip-]').forEach(e=>e.classList.remove('chip-active')); document.getElementById('chip-'+n)?.classList.add('chip-active'); renderMarket();} window.setCat=setCat; renderChips();
 
-function render(f="All"){let filtered=f==="All"?allItems:allItems.filter(i=>i.cat===f); let limit= USER_TIER==='free'?8:60; let html=""; filtered.slice(0,limit).forEach(it=>{let avg=avgByCat[it.cat]; let diff=((it.price-avg)/avg*100).toFixed(1); html+=`<div class="glass rounded-xl p-2.5 flex justify-between items-center card"><div><div class="text-[8px] opacity-50">${it.seller} • ${it.loc} • ${marketNames[it.loc]} • Avg ${avg}</div><b class="text-[12px]">${it.prod}</b><br><span class="text-[11px]">@ <b class="text-yellow-300">${it.price} KES</b> <span class="${diff>0?'text-green-400':'text-red-400'} text-[10px]">${diff>0?'+':''}${diff}%</span></span></div><button class="px-3 py-1 rounded-full bg-[#FFD60A] text-black text-[10px] font-bold">Order</button></div>`;}); document.getElementById('produceGrid').innerHTML=html; let bM="",sM=""; filtered.slice(0,25).forEach(it=>{let avg=avgByCat[it.cat]; bM+=`<div class="bg-black/40 p-2.5 rounded-xl flex justify-between text-[11px] card border border-yellow-500/10"><div><b>${it.buyer} - ${it.loc}</b><div class="opacity-70 text-[10px]">${it.prod} wants @${it.price+12} KES • ${marketNames[it.loc]} • Avg ${avg}</div></div><button class="bg-[#FFD60A] text-black px-2 py-1 rounded-full h-fit font-bold text-[10px]">Match</button></div>`; sM+=`<div class="bg-black/40 p-2.5 rounded-xl flex justify-between text-[11px] card border border-emerald-500/10"><div><b>${it.seller} - ${it.loc}</b><div class="opacity-70 text-[10px]">${it.prod} @${it.price} KES • ${marketNames[it.loc]} • Avg ${avg}</div></div><button class="bg-emerald-400 text-black px-2 py-1 rounded-full h-fit font-bold text-[10px]">Buy</button></div>`;}); document.getElementById('buyersListMarket').innerHTML=bM; document.getElementById('sellersListMarket').innerHTML=sM; document.getElementById('buyersList').innerHTML=bM; document.getElementById('sellersList').innerHTML=sM;}
-let chipsHTML=`<span onclick="setCat('All')" id="chip-All" class="px-3 py-1 rounded-full glass bg-[#FFD60A] text-black">All</span>`; categories.forEach(c=>{chipsHTML+=`<span onclick="setCat('${c}')" id="chip-${c}" class="px-3 py-1 rounded-full glass cursor-pointer">${icons[c]} ${c}</span>`;}); document.getElementById('filterChips').innerHTML=chipsHTML;
-function setCat(n){document.querySelectorAll('[id^=chip-]').forEach(e=>e.classList.remove('bg-[#FFD60A]','text-black')); document.getElementById('chip-'+n)?.classList.add('bg-[#FFD60A]','text-black'); render(n);} window.setCat=setCat; render("All");
-document.getElementById('ticker').innerText=allItems.slice(0,15).map(i=>`${icons[i.cat]} ${i.seller}: ${i.prod} @${i.price} KES • ${marketNames[i.loc]} (Avg ${avgByCat[i.cat]} KES)`).join(' • ');
-
-function buildLocations(){
-  let byLoc={}; locations.forEach(l=>{byLoc[l]=allItems.filter(i=>i.loc===l);});
-  let best=Object.entries(byLoc).sort((a,b)=>b[1].length-a[1].length)[0];
-  document.getElementById('bestLoc').innerText=best[0]+' - '+marketNames[best[0]]; document.getElementById('bestStats').innerText=`${best[1].length} listings • Avg ${Math.round(best[1].reduce((s,x)=>s+x.price,0)/best[1].length)} KES • Market: ${marketNames[best[0]]} • TUSK Score 9.2`;
-  let byProd={}; categories.forEach(c=>{byProd[c]=allItems.filter(i=>i.cat===c);}); let topP=Object.entries(byProd).sort((a,b)=>b[1].length-a[1].length)[0];
-  document.getElementById('topProd').innerText=topP[0]+' '+icons[topP[0]]; document.getElementById('topProdStats').innerText=`${topP[1].length} listings • Avg ${Math.round(topP[1].reduce((s,x)=>s+x.price,0)/topP[1].length)} KES • Live flicker 2%`;
-  let locHTML=""; Object.entries(byLoc).forEach(([loc,items])=>{let avg=Math.round(items.reduce((s,x)=>s+x.price,0)/Math.max(items.length,1)); let vol=((Math.random()-0.5)*4).toFixed(1); locHTML+=`<div class="glass rounded-xl p-3 card"><div class="flex justify-between"><b class="text-[11px]">${loc} - ${marketNames[loc]}</b><span class="text-[8px] px-2 py-0.5 rounded-full ${vol>0?'bg-green-500/20 text-green-300':'bg-red-500/20 text-red-300'}">${vol>0?'+':''}${vol}% flick</span></div><div class="text-[10px] mt-1">Avg: <b class="text-yellow-300 flick">${avg} KES</b> • ${items.length} items • Market active</div><div class="mt-2 w-full bg-black/40 h-1.5 rounded-full overflow-hidden"><div class="h-full bg-gradient-to-r from-yellow-400 to-emerald-400 to-blue-400" style="width:${Math.min(items.length*12,100)}%"></div></div></div>`;}); document.getElementById('locAnalysis').innerHTML=locHTML;
-  let heatHTML=""; categories.forEach(c=>{let avg=avgByCat[c]; let change=((Math.random()-0.5)*4).toFixed(1); let market=marketNames[rand(locations)]; heatHTML+=`<div class="flex justify-between items-center text-[11px] p-2 rounded-xl bg-black/30 border border-white/5"><span class="w-[110px] truncate">${icons[c]} ${c}</span><span class="text-[9px] opacity-60 w-[110px] truncate">${market}</span><span class="text-yellow-300 font-bold flick">${avg} KES</span><span class="${parseFloat(change)>0?'text-green-400':'text-red-400'} w-[50px] text-right">${change>0?'🔼': '🔽'} ${change}%</span></div>`;}); document.getElementById('priceHeat').innerHTML=heatHTML;
-  let tableHTML=""; allItems.slice(0,60).forEach(it=>{let avg=avgByCat[it.cat]; let diff=((it.price-avg)/avg*100).toFixed(1); tableHTML+=`<div class="grid grid-cols-7 text-[11px] p-2.5 border-b border-white/5 hover:bg-white/5"><span class="font-bold truncate">${marketNames[it.loc]}</span><span>${it.loc}</span><span>${icons[it.cat]} ${it.cat}</span><span>${it.qty}kg</span><span class="text-yellow-300 font-bold flick">${it.price} KES <span class="text-[8px] opacity-50">avg ${avg}</span></span><span class="${parseFloat(diff)>0?'text-green-400':'text-red-400'}">${diff>0?'+':''}${diff}%</span><button class="text-[10px] px-2 py-0.5 rounded-full bg-white/10">Buy</button></div>`;}); document.getElementById('locTable').innerHTML=tableHTML; document.getElementById('totalList').innerText=allItems.length;
+function renderMarket(){
+ let filtered=curFilter==='All'?allItems:allItems.filter(i=>i.cat===curFilter);
+ // AVG BOXES + BARS - ORIGINAL LOOK
+ let avgHtml=""; categories.slice(0,4).forEach(c=>{let avg=avgByCat[c]; let cls=prevAvg[c]!==avg?'flick':''; avgHtml+=`<div class="glass rounded-xl p-2.5"><div class="text-[9px] opacity-60">AVG TUSK • ${c}</div><b class="text-[12px] text-[#FFD60A] ${cls}">${avg} KES</b><div class="text-[9px] opacity-50">${marketNames[rand(locations)]}</div></div>`;}); document.getElementById('avgBoxes').innerHTML=avgHtml;
+ // SELLERS & BUYERS - ALL LISTINGS (your request)
+ let sH="",bH=""; filtered.slice(0,12).forEach(it=>{sH+=`<div class="glass rounded-xl p-2.5 flex justify-between items-center"><div><div class="text-[10px] opacity-60">${it.seller} ${it.loc}</div><b class="text-[12px]">${it.prod} @ ${it.price} KES</b><div class="text-[9px] opacity-50">${it.market}</div></div><span class="text-[10px] px-2 py-1 rounded-full bg-white/10">${icons[it.cat]}</span></div>`; bH+=`<div class="glass rounded-xl p-2.5 flex justify-between items-center"><div><div class="text-[10px] opacity-60">${it.buyer} wants ${it.loc}</div><b class="text-[12px]">${it.prod} @ ${it.price+10} KES</b><div class="text-[9px] opacity-50">${it.market}</div></div><button class="px-2 py-1 rounded-full bg-[#FFD60A] text-black text-[10px] font-bold">Match</button></div>`;}); document.getElementById('sellersListMarket').innerHTML=sH; document.getElementById('buyersListMarket').innerHTML=bH; document.getElementById('sellersList').innerHTML=sH; document.getElementById('buyersList').innerHTML=bH;
 }
-buildLocations();
+renderMarket();
 
-// VALUE GRID - REAL VALUE ADDED
+// LOCATION PERFORMANCE - YOUR REQUEST
+function buildLocations(){
+ let byLoc={}; locations.forEach(l=>{byLoc[l]=allItems.filter(i=>i.loc===l);});
+ let perf=""; Object.entries(byLoc).forEach(([loc,items])=>{let avg=Math.round(items.reduce((s,x)=>s+x.price,0)/Math.max(items.length,1)); let flickCls=Math.random()>0.5?'flick':''; perf+=`<div class="glass rounded-xl p-3"><b class="text-[11px]">${loc} - ${marketNames[loc]}</b><div class="text-[11px] mt-1">Avg: <span class="text-[#FFD60A] font-bold ${flickCls}">${avg} KES</span> • ${items.length} listings</div><div class="mt-2 w-full bg-black/40 h-1.5 rounded-full overflow-hidden"><div class="h-full bg-gradient-to-r from-yellow-400 to-cyan-400" style="width:${Math.min(items.length*14,100)}%"></div></div><div class="text-[8px] opacity-50 mt-1">Market: ${marketNames[loc]} • Live flicker</div></div>`;}); document.getElementById('locPerformance').innerHTML=perf;
+ let cats=""; categories.forEach(c=>{let avg=avgByCat[c]; cats+=`<div class="flex justify-between items-center p-2 rounded-xl bg-black/20 border border-white/5"><span class="text-[11px]">${icons[c]} ${c}</span><span class="text-[9px] opacity-60">${marketNames[rand(locations)]}</span><span class="text-[11px] font-bold text-[#FFD60A] flick">${avg} KES</span></div>`;}); document.getElementById('allCatsFlick').innerHTML=cats;
+ let table=""; allItems.slice(0,40).forEach(it=>{let avg=avgByCat[it.cat]; table+=`<div class="grid grid-cols-6 text-[11px] p-2 border-b border-white/5"><span class="truncate">${it.market}</span><span>${it.loc}</span><span>${it.cat}</span><span>${it.qty}kg</span><span class="text-[#FFD60A] font-bold flick">${it.price} KES (avg ${avg})</span><span class="${it.price>avg?'text-green-400':'text-red-400'}">${it.price>avg?'🔼': '🔽'} ${(Math.random()*4).toFixed(1)}%</span></div>`;}); document.getElementById('locTable').innerHTML=table;
+} buildLocations();
+
+// TUSK FULL + FEED + LEARNING - YOUR REQUEST
+document.getElementById('tuskFull').innerHTML=`<div>📈 Learned: Tomatoes +12% when Nairobi rains 2 days - 87% acc</div><div class="mt-1">🤖 Predicted: Mushroom peak Friday 4pm - stock +22%</div><div class="mt-1">💡 Tip: Move Kericho→Nairobi +18% margin</div><div class="mt-1">🔄 Auto-cat: 105→21 cats, Swahili NLP active</div>`;
+document.getElementById('weatherRoutes').innerHTML=`<div>🌧️ Kericho Main: Rain 80% 48h - Cover beds, price +15%</div><div class="mt-1">☀️ Nakuru Wakulima: Sunny 28°C - Best drying</div><div class="mt-1">🚚 Kericho→Nairobi: 280km, Cost 15 KES/kg, +18 KES profit</div><div class="mt-1">🚚 Molo→Nakuru: 45km, Cost 5 KES/kg, Buy @60 sell @85 +41%</div>`;
+document.getElementById('warnBox').innerHTML=`⚠️ Heavy rain Kericho - fungal risk<br>⚠️ Fake seeds Eldoret<br>📉 Onion glut next week - sell now`;
+document.getElementById('dailyFeed').innerHTML=[
+{date:"Today 9am", title:"Kericho rains boost mushroom prices +15% - KALRO", src:"KALRO Sure Data"},
+{date:"Today 8am", title:"Nakuru Wakulima: Tomato glut ends, price up 12%", src:"Nakuru Agri Office"},
+{date:"Yesterday", title:"Avocado oil demand Dubai +22% - HCD", src:"HCD"},
+{date:"Yesterday", title:"MycoGold medicinal capsules KEBS approved", src:"MycoGold"}
+].map(f=>`<div class="p-2 rounded-xl bg-black/30"><div class="flex justify-between text-[9px] opacity-60"><span>${f.date}</span><span>✓ ${f.src}</span></div><b class="text-[11px]">${f.title}</b></div>`).join('');
+document.getElementById('learningBox').innerHTML=[
+{title:"How to Dry Mushroom for 275% profit", desc:"Sun vs solar dryer, 8h, store 6 months", level:"Beginner"},
+{title:"Medicinal Mushroom Capsule Making", desc:"Reishi, Lion's Mane - KEBS standards", level:"Advanced"},
+{title:"Egg Powder Processing 250% margin", desc:"Pasteurize, spray dry, pack 100g=350 KES", level:"Intermediate"},
+{title:"TUSK Auto-cat 105→21 - Swahili NLP", desc:"Matomoko→Mushroom, Nyanya→Tomatoes", level:"All"}
+].map(l=>`<div class="p-2 rounded-xl bg-emerald-500/10 border border-emerald-500/10"><b class="text-[11px]">${l.title} <span class="text-[8px] px-1 py-0.5 rounded-full bg-white/10">${l.level}</span></b><div class="text-[10px] opacity-70">${l.desc}</div></div>`).join('');
+
+// VALUE ADDED REAL - YOUR REQUEST
 document.getElementById('valueGrid').innerHTML=[
-{ name:"Dry Mushroom", raw:120, final:450, margin:"+275%", icon:"🍄", type:"Dried" },
-{ name:"Mushroom Crisp", raw:80, final:280, margin:"+250%", icon:"🍟", type:"Snack" },
-{ name:"Medicinal Mushroom", raw:100, final:900, margin:"+400%", icon:"💊", type:"Medicinal" },
-{ name:"Myco Coffee", raw:150, final:600, margin:"+300%", icon:"☕", type:"Beverage" },
-{ name:"Mushroom Powder", raw:120, final:500, margin:"+316%", icon:"✨", type:"Powder" },
-{ name:"Egg Tray Value", raw:450, final:720, margin:"+60%", icon:"🥚", type:"Egg" },
-{ name:"Boiled Egg Pack 6", raw:90, final:180, margin:"+100%", icon:"🥚", type:"Egg Value" },
-{ name:"Egg Powder 100g", raw:100, final:350, margin:"+250%", icon:"🥚", type:"Egg Value" },
-{ name:"Smoked Chicken", raw:450, final:750, margin:"+66%", icon:"🐓", type:"Poultry" },
-{ name:"Avocado Oil 100ml", raw:200, final:750, margin:"+275%", icon:"🥑", type:"Oil" },
-{ name:"Dried Tomatoes 100g", raw:60, final:220, margin:"+266%", icon:"🍅", type:"Dried" },
-{ name:"Mala Fermented 1L", raw:90, final:300, margin:"+233%", icon:"🥛", type:"Dairy" }
-].map(p=>`<div class="glass rounded-2xl p-3 card border-l-2 border-yellow-400"><div class="h-14 bg-gradient-to-br from-yellow-500/10 to-emerald-500/10 to-blue-500/10 rounded-xl flex items-center justify-center text-2xl">${p.icon}</div><b class="text-[11px] mt-2 block">${p.name}</b><div class="text-[8px] px-2 py-0.5 rounded-full bg-white/10 inline-block mt-1">${p.type}</div><div class="mt-2 text-[10px] space-y-0.5"><div class="flex justify-between"><span>Raw</span><span>${p.raw} KES</span></div><div class="flex justify-between font-bold text-yellow-300"><span>Value</span><span>${p.final} KES</span></div><div class="flex justify-between text-green-400"><span>Margin</span><span>${p.margin}</span></div></div><button class="mt-2 w-full bg-[#FFD60A] text-black py-1.5 rounded-full text-[10px] font-bold">Order / Process</button></div>`).join('');
+{ name:"Dry Mushroom 100g", raw:120, final:450, margin:"+275%", icon:"🍄" },
+{ name:"Mushroom Crisp 50g", raw:80, final:280, margin:"+250%", icon:"🍟" },
+{ name:"Medicinal Capsules 30", raw:100, final:900, margin:"+400%", icon:"💊" },
+{ name:"Myco Coffee 100g", raw:150, final:600, margin:"+300%", icon:"☕" },
+{ name:"Egg Tray Value", raw:450, final:720, margin:"+60%", icon:"🥚" },
+{ name:"Boiled Egg Pack 6", raw:90, final:180, margin:"+100%", icon:"🥚" },
+{ name:"Egg Powder 100g", raw:100, final:350, margin:"+250%", icon:"🥚" },
+{ name:"Smoked Chicken 1kg", raw:450, final:750, margin:"+66%", icon:"🐓" },
+{ name:"Avocado Oil 100ml", raw:200, final:750, margin:"+275%", icon:"🥑" },
+{ name:"Dried Tomatoes", raw:60, final:220, margin:"+266%", icon:"🍅" },
+{ name:"Banana Flour", raw:120, final:380, margin:"+216%", icon:"🍌" },
+{ name:"Mala Fermented", raw:90, final:300, margin:"+233%", icon:"🥛" }
+].map(p=>`<div class="glass rounded-2xl p-3 border-l-2 border-yellow-400"><div class="h-12 bg-yellow-500/10 rounded-xl flex items-center justify-center text-xl">${p.icon}</div><b class="text-[11px] mt-2 block">${p.name}</b><div class="text-[10px] mt-1"><span class="opacity-60">Raw ${p.raw}</span> → <b class="text-yellow-300">${p.final} KES</b> <span class="text-green-400">${p.margin}</span></div><button class="mt-2 w-full bg-[#FFD60A] text-black py-1 rounded-full text-[10px] font-bold">Order</button></div>`).join('');
 
-// TUSK FEED + LEARNING
-document.getElementById('feedBlogs').innerHTML=[
-{ date:"Today 9am", title:"Kericho rains boost mushroom prices +15% - KALRO", source:"KALRO Sure Data", tag:"Market" },
-{ date:"Today 8am", title:"Nakuru Wakulima market: Tomato glut ends, price up 12%", source:"Nakuru County Agri Office", tag:"Price" },
-{ date:"Yesterday", title:"Export: Kenyan avocado oil demand Dubai +22% - HCD", source:"Horticulture Crops Directorate", tag:"Export" },
-{ date:"Yesterday", title:"Weather Alert: Heavy rains Kericho 48h - Cover beds", source:"Kenya Met Dept", tag:"Weather" },
-{ date:"2 days ago", title:"MycoGold launches medicinal mushroom capsules - KEBS approved", source:"MycoGold Official", tag:"Value" }
-].map(f=>`<div class="p-2.5 rounded-xl bg-black/30 border border-white/5 card"><div class="flex justify-between"><span class="text-[9px] opacity-60">${f.date}</span><span class="text-[8px] px-2 py-0.5 rounded-full bg-yellow-500/20">${f.tag}</span></div><b class="text-[11px] block mt-1">${f.title}</b><div class="text-[9px] opacity-50 mt-1">Source: ${f.source} ✓ Sure Data</div></div>`).join('');
+// TICKER + MFPI + FLICKER 2%
+document.getElementById('ticker').innerText=allItems.slice(0,10).map(i=>`SELLER: ${i.seller} ${i.qty}kg ${i.prod} @${i.price} KES • ${i.market} • ${i.cat} demand +${(Math.random()*12).toFixed(0)}% ${i.loc}`).join(' • ');
+function updateMFPI(){document.getElementById('mfpi').innerText=`MFPI ${(107+Math.random()).toFixed(2)} ▼${(Math.random()*0.8).toFixed(1)}%`; document.getElementById('tuskAvgTop').innerHTML=categories.slice(0,5).map(c=>`${icons[c]} ${c} <b class="text-yellow-300 flick">${avgByCat[c]} KES</b>`).join(' ');} setInterval(()=>{categories.forEach(c=>{let vol=avgByCat[c]*0.02; avgByCat[c]=Math.max(10,Math.round(avgByCat[c]+(Math.random()-0.5)*2*vol));}); prevAvg={...avgByCat}; updateMFPI(); renderMarket(); buildLocations();},2500); updateMFPI();
 
-document.getElementById('learningInsights').innerHTML=[
-{ title:"How to Dry Mushroom for 275% profit", level:"Beginner", time:"5 min", desc:"Sun vs solar dryer, 8h, store 6 months" },
-{ title:"Medicinal Mushroom: Benefits & Capsule making", level:"Advanced", time:"12 min", desc:"Reishi, Lion's Mane - KEBS standards" },
-{ title:"Egg Powder Processing - 250% margin", level:"Intermediate", time:"8 min", desc:"Pasteurize, spray dry, pack 100g = 350 KES" },
-{ title:"TUSK AI: How we auto-cat 105->21 categories", level:"All", time:"6 min", desc:"Swahili NLP: Matomoko->Mushroom, Nyanya->Tomatoes" },
-{ title:"Route Optimization: Kericho->Nairobi +18% profit", level:"Logistics", time:"4 min", desc:"Cost 15 KES/kg, profit 18 KES/kg, TUSK map" }
-].map(l=>`<div class="p-2.5 rounded-xl bg-black/30 border border-emerald-500/10 card"><div class="flex justify-between"><b class="text-[11px]">${l.title}</b><span class="text-[8px] px-2 py-0.5 rounded-full bg-emerald-500/20">${l.level}</span></div><div class="text-[10px] opacity-70 mt-1">${l.desc}</div><div class="text-[9px] opacity-50 mt-1">⏱️ ${l.time} • 🎓 Knowledge gathering</div></div>`).join('');
-
-document.getElementById('weatherAI').innerHTML=`<div>🌧️ Kericho Main Market: Rain 80% 48h - Cover beds, price +15% expected</div><div class="mt-2">☀️ Nakuru Wakulima: Sunny 28°C - Best drying tomatoes, TUSK says +15% if dry today</div><div class="mt-2">💨 Kisumu Kibuye: Wind 12km/h - Delay fish, sell tomorrow</div>`;
-document.getElementById('routesAI').innerHTML=`<div>🚚 Kericho->Nairobi: 280km, Cost 15 KES/kg, TUSK profit +18 KES/kg • Matatu + Lorry</div><div class="mt-2">🚚 Molo->Nakuru: 45km, Cost 5 KES/kg, Buy @60 sell @85 +41% margin</div><div class="mt-2">🚚 Eldoret->Kitale: 75km, Cost 7 KES/kg, Maize move best</div><div class="mt-2 p-2 bg-blue-500/10 rounded-xl text-[10px]">TUSK optimized: Fuel + time + market demand live</div>`;
-document.getElementById('geniusAI').innerHTML=`<div>📈 Learned: Tomatoes +12% when Nairobi rains 2 days - 87% accuracy</div><div class="mt-2">🤖 Predicted: Mushroom peak Friday 4pm - stock now +22%</div><div class="mt-2">💡 Move 20% Kericho Main → Wakulima Nairobi = +18% margin</div>`;
-document.getElementById('warnAI').innerHTML=`⚠️ Heavy rain Kericho - fungal risk<br>⚠️ Fake seeds Eldoret - verified only<br>📉 Onion glut next week - sell now`;
-document.getElementById('autoCatLog').innerHTML=`[09:12] 105 raw → 21 cats ✓<br>[09:12] Swahili NLP active<br>[09:12] 2% vol engine slow flick<br>[09:13] Markets mapped 11 counties<br>[09:13] Weather merged`;
-document.getElementById('tuskReco').innerHTML=`<div class="p-2 bg-yellow-500/10 rounded-xl border border-yellow-500/20"><b>🚀 Top:</b> Buy Molo @60, sell Nairobi @85 +41%</div><div class="mt-2 p-2 bg-emerald-500/10 rounded-xl"><b>💰 Best:</b> Mushroom → Powder 120→500 +316%</div>`;
-document.getElementById('tuskLearn').innerHTML=`🔄 Auto-cat 105→21 ✓<br>📊 2% flick live<br>🌦️ Weather live<br>🚚 Routes 3 active<br>📰 Feed 5 daily`;
-
-let base=107.15; setInterval(()=>{let ch=(Math.random()-0.5)*1.2; let val=(base+ch).toFixed(2); document.getElementById('mfpi').innerHTML=`MFPI ${val} <span class="${ch>=0?'text-green-400':'text-red-400'}">${ch>=0?'▲':'▼'}${Math.abs(ch).toFixed(2)}%</span>`;},2000);
-
-// BOMBARDMENT ANIMATION - YELLOW + BLUE + GREEN RANDOM
-const canvas=document.getElementById('aiCanvas'); const ctx=canvas.getContext('2d');
-function resize(){canvas.width=canvas.offsetWidth; canvas.height=canvas.offsetHeight;} resize(); window.addEventListener('resize',resize);
-let dots=[]; for(let i=0;i<22;i++){dots.push({x:Math.random()*canvas.width,y:Math.random()*canvas.height,vx:(Math.random()-0.5)*2.5,vy:(Math.random()-0.5)*2.5,r:3+Math.random()*3,color:rand(['yellow','blue','green'])})}
+// ANIMATION - YELLOW BLUE GREEN BOMBARDMENT RANDOM - ORIGINAL BARS + DOTS
+const canvas=document.getElementById('aiCanvas'); const ctx=canvas.getContext('2d'); function resize(){canvas.width=canvas.offsetWidth; canvas.height=canvas.offsetHeight;} resize();
+let bars=[{h:60,c:'#FFD60A'},{h:95,c:'#00E5FF'},{h:40,c:'#FFD60A'},{h:120,c:'#FFD60A'},{h:55,c:'#00E5FF'},{h:105,c:'#FFD60A'},{h:95,c:'#00E5FF'}];
+let dots=[]; for(let i=0;i<18;i++){dots.push({x:Math.random()*800,y:Math.random()*180,vx:(Math.random()-0.5)*2.2,vy:(Math.random()-0.5)*2.2,r:2+Math.random()*2.5,col:rand(['#FFD60A','#00B0FF','#00E676'])})}
 function draw(){
-  ctx.clearRect(0,0,canvas.width,canvas.height);
-  // bombardment collisions
-  dots.forEach((a,i)=>{
-    dots.slice(i+1).forEach(b=>{
-      let dx=a.x-b.x, dy=a.y-b.y, d=Math.hypot(dx,dy);
-      if(d<12){ // bombard
-        let tx=a.vx, ty=a.vy; a.vx=b.vx; a.vy=b.vy; b.vx=tx; b.vy=ty;
-        // explosion effect
-        ctx.fillStyle='rgba(255,214,10,0.3)'; ctx.beginPath(); ctx.arc((a.x+b.x)/2,(a.y+b.y)/2,8,0,Math.PI*2); ctx.fill();
-      }
-      if(d<140){ctx.strokeStyle=`rgba(${a.color==='yellow'? '255,214,10' : a.color==='blue'? '0,176,255' : '0,230,118'},${0.15*(1-d/140)})`; ctx.lineWidth=1; ctx.beginPath(); ctx.moveTo(a.x,a.y); ctx.lineTo(b.x,b.y); ctx.stroke();}
-    });
-  });
-  dots.forEach(d=>{
-    d.x+=d.vx; d.y+=d.vy;
-    if(d.x<0||d.x>canvas.width) d.vx*=-1;
-    if(d.y<0||d.y>canvas.height) d.vy*=-1;
-    ctx.fillStyle=d.color==='yellow'? '#FFD60A' : d.color==='blue'? '#00B0FF' : '#00E676';
-    ctx.shadowColor=ctx.fillStyle; ctx.shadowBlur=10;
-    ctx.beginPath(); ctx.arc(d.x,d.y,d.r,0,Math.PI*2); ctx.fill(); ctx.shadowBlur=0;
-  });
-  // running trail line
-  ctx.strokeStyle='rgba(255,214,10,0.35)'; ctx.setLineDash([6,6]); ctx.lineDashOffset=-Date.now()*0.05; ctx.lineWidth=1.5; ctx.beginPath(); ctx.moveTo(0,canvas.height*0.65); for(let x=0;x<canvas.width;x+=18){ctx.lineTo(x,canvas.height*0.65+Math.sin(x*0.012+Date.now()*0.001)*12)} ctx.stroke(); ctx.setLineDash([]);
-  requestAnimationFrame(draw);
+ ctx.clearRect(0,0,canvas.width,canvas.height);
+ // BARS ORIGINAL YELLOW/BLUE
+ let bw=canvas.width/bars.length*0.7; bars.forEach((b,i)=>{b.h+= (Math.random()-0.5)*2; b.h=Math.max(20,Math.min(150,b.h)); ctx.fillStyle=b.c; ctx.fillRect(i*(canvas.width/bars.length)+10, canvas.height-b.h-20, bw, b.h);});
+ // DOTS BOMBARDMENT Y/B/G
+ dots.forEach((a,i)=>{dots.slice(i+1).forEach(b=>{let dx=a.x-b.x,dy=a.y-b.y,d=Math.hypot(dx,dy); if(d<15){let tvx=a.vx,tvy=a.vy;a.vx=b.vx;a.vy=b.vy;b.vx=tvx;b.vy=tvy; ctx.fillStyle='rgba(255,214,10,0.25)'; ctx.beginPath(); ctx.arc((a.x+b.x)/2,(a.y+b.y)/2,10,0,Math.PI*2); ctx.fill();} if(d<120){ctx.strokeStyle=a.col+'22'; ctx.lineWidth=1; ctx.beginPath(); ctx.moveTo(a.x,a.y); ctx.lineTo(b.x,b.y); ctx.stroke();}});});
+ dots.forEach(d=>{d.x+=d.vx; d.y+=d.vy; if(d.x<0||d.x>canvas.width) d.vx*=-1; if(d.y<0||d.y>canvas.height) d.vy*=-1; ctx.fillStyle=d.col; ctx.shadowColor=d.col; ctx.shadowBlur=8; ctx.beginPath(); ctx.arc(d.x,d.y,d.r,0,Math.PI*2); ctx.fill(); ctx.shadowBlur=0;});
+ requestAnimationFrame(draw);
 } draw();
+const mini=document.getElementById('miniCanvas'); const mctx=mini.getContext('2d'); mini.width=160; mini.height=60; let mdots=[]; for(let i=0;i<8;i++){mdots.push({x:Math.random()*160,y:Math.random()*60,vx:(Math.random()-0.5)*1.5,vy:(Math.random()-0.5)*1.5,c:rand(['#FFD60A','#00B0FF','#00E676'])})} function mdraw(){mctx.clearRect(0,0,160,60); mdots.forEach(d=>{d.x+=d.vx; d.y+=d.vy; if(d.x<0||d.x>160) d.vx*=-1; if(d.y<0||d.y>60) d.vy*=-1; mctx.fillStyle=d.c; mctx.beginPath(); mctx.arc(d.x,d.y,2.5,0,Math.PI*2); mctx.fill();}); requestAnimationFrame(mdraw);} mdraw();
 </script></body></html>
