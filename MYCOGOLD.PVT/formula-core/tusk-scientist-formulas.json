@@ -1,0 +1,25 @@
+{
+  "maths": {
+    "bayes_categorization": "P(cat|product) = P(product|cat)*P(cat)/P(product)",
+    "tfidf_similarity": "Similarity = cos(TF-IDF(product), TF-IDF(category))",
+    "kmeans_clustering": "Cluster = k-means(price, qty, location, freshness) → 21 cats from 105",
+    "swahili_nlp": "Matomoko→Mushroom 0.94, Nyanya→Tomatoes 0.97, Sukuma Wiki→Kales 0.98"
+  },
+  "physics": {
+    "freshness_decay": "Freshness(t) = F0 * e^(-λt), λ ambient=0.15/day, λ cold=0.03/day",
+    "market_gravity": "F = G * (Supply * Demand) / Distance², G=market constant",
+    "price_momentum": "p' = p + v*Δt + ½aΔt², v=demand velocity, a=seasonality",
+    "mycelium_growth": "G = G0 * (1 - e^(-kt)), k=0.12, T optimal 24°C"
+  },
+  "psychology": {
+    "trust_score": "Trust = 0.5*Verified + 0.3*History + 0.2*SocialProof",
+    "urgency_scarcity": "Urgency = 1 - (stock/avg_stock), scarcity heuristic",
+    "anchoring": "Buyer bid = avg_price * (1 + 0.1*scarcity) if scarcity>0.7",
+    "social_proof": "P(buy|n listings) = 1 - e^(-0.05*n), n=number of similar listings"
+  },
+  "services": {
+    "vet_health": "Health(t)=H0*e^(-λt), λ disease rate 0.02/day",
+    "hatch_rate": "Hatch = 85% if Temp 37.5°C Humidity 60%",
+    "ai_success": "P=0.65, Genetic Gain = h²*SelectionDiff, h²=0.3"
+  }
+}
