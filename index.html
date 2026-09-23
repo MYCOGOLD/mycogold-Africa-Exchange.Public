@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MycoGold Africa Exchange</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+body{background:#081414;color:#d9ece1;font-family:Inter,system-ui}
+.gold{color:#FFD60A}.gold-bg{background:#FFD60A}
+.glass{background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.08)}
+.ticker-track{animation:scroll 50s linear infinite}
+@keyframes scroll{0%{transform:translateX(20%)}100%{transform:translateX(-100%)}}
+.tab-active{border-bottom:3px solid #FFD60A;color:#FFD60A}
+</style>
+</head>
+<body>
+<!-- MFPI TOP - SAME AS YOURS -->
+<div class="px-4 py-2 text-xs flex gap-4 bg-black/30 border-b border-white/10">
+<span>MFPI 107.18 <span class="text-red-400">▼0.4%</span></span><span>131 Live • Kenya</span><span class="opacity-60">Showing: all (16)</span>
+</div>
+
+<!-- BIG SPACE AWAY FROM MFPI - BUYER/SELLER POP TICKER -->
+<div class="mx-4 mt-6 rounded-xl bg-[#0f2424] border border-yellow-500/20 overflow-hidden relative h-[44px] flex items-center">
+<span class="absolute left-2 bg-[#0f2424] px-2 text-[10px] tracking-widest flex items-center gap-1 z-10"><span class="w-2 h-2 bg-green-400 rounded-full animate-pulse"></span>LIVE PULSE</span>
+<div class="ticker-track whitespace-nowrap flex gap-12 text-sm mt-1">
+<span>🔥 BUYER: Nairobi Hotel 200kg Oyster @120 KES URGENT</span>
+<span>🟢 SELLER: Samuel K Kericho 50kg @110 KES</span>
+<span>⚠️ TUSK WARNING: Cover beds - Heavy rain Nakuru</span>
+<span>💰 BUYER: Export needs Mushroom Powder 100kg</span>
+<span>📦 SELLER: Myco Farm 30kg Button @104 KES</span>
+<span>📈 Onions demand +12% Kisumu</span>
+</div>
+</div>
+
+<div class="flex">
+<!-- LEFT SIDE - SAME AS YOURS -->
+<div class="w-[210px] p-4 hidden md:block">
+<h1 class="font-black leading-none text-[#FFD60A]">MYCOGOLD<br><span class="text-[#00E676] text-[11px]">AFRICA</span><br><span class="text-[7px] text-white/40">NATURE'S WEALTH YOUR HEALTH</span></h1>
+<div class="mt-8 space-y-2 text-sm">
+<button onclick="show('market')" class="w-full text-left px-3 py-2 rounded-full bg-white/10">🏠 Market</button>
+<button onclick="show('tusk')" class="w-full text-left px-3 py-2 rounded-full hover:bg-white/10">🧠 TUSK Insights</button>
+<button onclick="show('weather')" class="w-full text-left px-3 py-2 rounded-full hover:bg-white/10">⛅ Weather</button>
+<button onclick="show('exchange')" class="w-full text-left px-3 py-2 rounded-full hover:bg-white/10">🔄 Exchange</button>
+<button onclick="show('value')" class="w-full text-left px-3 py-2 rounded-full hover:bg-white/10 border border-yellow-500/30 text-yellow-300">✨ Value-Added</button>
+<button onclick="show('profile')" class="w-full text-left px-3 py-2 rounded-full hover:bg-white/10">👤 Profile</button>
+</div>
+<button class="mt-6 w-full gold-bg text-black font-bold py-2.5 rounded-full text-sm">+ Post Produce</button>
+</div>
+
+<!-- MAIN - SAME TABS -->
+<div class="flex-1 p-4">
+<div class="flex gap-6 border-b border-white/10 text-sm mb-4">
+<button id="t-market" onclick="show('market')" class="pb-3 tab-active">Market</button>
+<button id="t-tusk" onclick="show('tusk')" class="pb-3 opacity-60">TUSK</button>
+<button id="t-weather" onclick="show('weather')" class="pb-3 opacity-60">Weather</button>
+<button id="t-exchange" onclick="show('exchange')" class="pb-3 opacity-60">Exchange</button>
+<button id="t-value" onclick="show('value')" class="pb-3 opacity-60">Value-Added</button>
+</div>
+
+<!-- MARKET - KEEP YOUR FORMAT -->
+<div id="v-market">
+<div class="flex gap-2 text-xs mb-4 overflow-x-auto"><span class="px-3 py-1.5 rounded-full gold-bg text-black">All</span><span class="px-3 py-1.5 rounded-full glass">🍄 Mushroom</span><span class="px-3 py-1.5 rounded-full glass">🥔 Potatoes</span><span class="px-3 py-1.5 rounded-full glass">🧅 Onions</span><span class="px-3 py-1.5 rounded-full glass">🥬 Kales</span><span class="px-3 py-1.5 rounded-full glass">🥬 Cabbage</span><span class="px-3 py-1.5 rounded-full glass">🌾 Cereals</span><span class="px-3 py-1.5 rounded-full glass">🥩 Beef</span></div>
+<div class="h-[180px] glass rounded-xl mb-4 flex items-end gap-[2px] p-2">
+<div class="flex-1 bg-yellow-400 h-[40%]"></div><div class="flex-1 bg-emerald-400 h-[55%]"></div><div class="flex-1 bg-yellow-400 h-[30%]"></div><div class="flex-1 bg-yellow-400 h-[85%]"></div><div class="flex-1 bg-emerald-400 h-[45%]"></div><div class="flex-1 bg-yellow-400 h-[75%]"></div><div class="flex-1 bg-emerald-400 h-[65%]"></div><div class="flex-1 bg-yellow-400 h-[35%]"></div><div class="flex-1 bg-emerald-400 h-[70%]"></div><div class="flex-1 bg-yellow-400 h-[60%]"></div>
+</div>
+<div class="grid grid-cols-3 gap-2 mb-4 text-xs"><div class="glass p-2 rounded-xl">AVG TUSK • Mush<br><b class="gold">110 KES</b></div><div class="glass p-2 rounded-xl">AVG • Potatoes<br><b class="gold">42 KES</b></div><div class="glass p-2 rounded-xl">AVG • Onions<br><b class="gold">78 KES</b></div></div>
+<div class="space-y-2"><div class="glass rounded-xl p-3 flex justify-between"><div><b>Samuel K</b> <span class="text-xs opacity-60">Kericho</span><br><span class="text-sm">Oyster 50kg @ 110 KES</span></div><div class="flex gap-2 items-center"><button class="px-3 py-1 rounded-full bg-white/10 text-xs">Chat</button><button class="px-3 py-1 rounded-full gold-bg text-black text-xs">Order</button></div></div><div class="glass rounded-xl p-3 flex justify-between"><div><b>Myco Farm</b> <span class="text-xs opacity-60">Nakuru</span><br><span class="text-sm">Button 30kg @ 104 KES</span></div><div class="flex gap-2 items-center"><button class="px-3 py-1 rounded-full bg-white/10 text-xs">Chat</button><button class="px-3 py-1 rounded-full gold-bg text-black text-xs">Order</button></div></div></div>
+</div>
+
+<!-- EXCHANGE - NEW TANGLE TWO GROUPS -->
+<div id="v-exchange" class="hidden">
+<h2 class="font-bold">Exchange Tangle</h2><p class="text-xs opacity-60 mb-3">Buyers left • Sellers right - Most on top</p>
+<div class="grid md:grid-cols-2 gap-4">
+<div class="glass rounded-2xl p-3 border-l-4 border-yellow-400"><h3 class="gold font-bold text-sm mb-2">BUYERS WANTING</h3>
+<div class="space-y-2 text-sm"><div class="bg-black/40 p-3 rounded-xl flex justify-between"><div><b>City Hotel NBO</b><br><span class="text-xs">200kg Oyster daily @120 KES</span><br><span class="text-[10px] text-red-300">URGENT</span></div><button class="gold-bg text-black px-3 py-1 rounded-full text-xs h-fit">Match</button></div><div class="bg-black/40 p-3 rounded-xl"><b>Export Ltd</b><br><span class="text-xs">Mushroom Powder 100kg @450 KES</span></div></div></div>
+<div class="glass rounded-2xl p-3 border-l-4 border-emerald-400"><h3 class="text-emerald-400 font-bold text-sm mb-2">SELLERS OFFERING</h3>
+<div class="space-y-2 text-sm"><div class="bg-black/40 p-3 rounded-xl flex justify-between"><div><b>Samuel K</b><br><span class="text-xs">Oyster 50kg @110 KES • Kericho</span></div><button class="bg-emerald-400 text-black px-3 py-1 rounded-full text-xs h-fit">Sell</button></div><div class="bg-black/40 p-3 rounded-xl"><b>Myco Farm</b><br><span class="text-xs">Button 30kg @104 KES • Nakuru</span></div></div></div>
+</div>
+</div>
+
+<!-- TUSK INSIGHTS - WARNINGS PDF BLOG TEACHING -->
+<div id="v-tusk" class="hidden">
+<h2 class="font-bold">TUSK Insights</h2><p class="text-xs opacity-60 mb-3">Warnings • Guides • Teaching & Research</p>
+<div class="grid md:grid-cols-3 gap-3">
+<div class="glass rounded-xl p-4 border-l-4 border-red-500"><h3 class="text-red-400 font-bold text-sm">⚠️ Warnings</h3><ul class="text-xs mt-2 space-y-1"><li>• Heavy rain - cover outdoor beds</li><li>• Fake seeds Eldoret</li><li>• Onion price drop next week</li></ul></div>
+<div class="glass rounded-xl p-4 border-l-4 border-yellow-400"><h3 class="gold font-bold text-sm">ℹ️ Guides</h3><ul class="text-xs mt-2 space-y-1"><li>• Store Oyster 7 days fresh</li><li>• Best transport packaging</li><li>• MFPI explained</li></ul></div>
+<div class="glass rounded-xl p-4 border-l-4 border-emerald-400"><h3 class="text-emerald-400 font-bold text-sm">📚 Teaching & Research</h3><ul class="text-xs mt-2 space-y-2"><li>📄 <a class="underline" href="#">Mushroom Yield PDF - KALRO</a></li><li>📝 Blog: Mycelium is Gold</li><li>📄 Value Addition Manual PDF</li><li>📝 Blog: Export Standards</li></ul></div>
+</div>
+<div class="mt-4 glass rounded-xl p-4 text-xs">Latest: <b>Maize stalks to 300% profit</b> - Full PDF + video guide inside TUSK. <button class="ml-2 gold-bg text-black px-2 py-1 rounded-full">Open PDF</button></div>
+</div>
+
+<!-- VALUE ADDED - INDEPENDENT TAB -->
+<div id="v-value" class="hidden">
+<h2 class="font-bold gold">✨ Value-Added Products - Independent</h2><p class="text-xs opacity-60 mb-3">Powders, crisps, extracts - away from raw MFPI</p>
+<div class="grid grid-cols-2 md:grid-cols-4 gap-3 text-sm">
+<div class="glass rounded-xl p-3"><div class="h-20 bg-yellow-500/20 rounded-xl flex items-center justify-center mb-2">🍄</div><b>Mushroom Powder</b><br><span class="text-xs opacity-60">500g @450 KES</span><button class="mt-2 w-full gold-bg text-black py-1 rounded-full text-xs">Order</button></div>
+<div class="glass rounded-xl p-3"><div class="h-20 bg-orange-500/20 rounded-xl flex items-center justify-center mb-2">🍟</div><b>Mushroom Crisps</b><br><span class="text-xs opacity-60">100g @150 KES</span><button class="mt-2 w-full gold-bg text-black py-1 rounded-full text-xs">Order</button></div>
+<div class="glass rounded-xl p-3"><div class="h-20 bg-emerald-500/20 rounded-xl flex items-center justify-center mb-2">☕</div><b>Myco Coffee</b><br><span class="text-xs opacity-60">250g @380 KES</span><button class="mt-2 w-full gold-bg text-black py-1 rounded-full text-xs">Order</button></div>
+<div class="glass rounded-xl p-3 border border-yellow-400/30"><div class="h-20 bg-yellow-500/20 rounded-xl flex items-center justify-center mb-2">💊</div><b>Capsules Export</b><br><span class="text-xs opacity-60">60 caps @1200 KES</span><button class="mt-2 w-full bg-emerald-400 text-black py-1 rounded-full text-xs">Enquire</button></div>
+</div>
+</div>
+
+<div id="v-weather" class="hidden">Weather Module loading...</div>
+<div id="v-profile" class="hidden">Profile...</div>
+</div>
+</div>
+<script>
+function show(n){
+document.querySelectorAll('[id^=v-]').forEach(e=>e.classList.add('hidden'));
+document.getElementById('v-'+n).classList.remove('hidden');
+document.querySelectorAll('[id^=t-]').forEach(e=>{e.classList.remove('tab-active');e.classList.add('opacity-60')});
+let t=document.getElementById('t-'+n); if(t){t.classList.add('tab-active');t.classList.remove('opacity-60')}
+}
+</script>
+</body>
+</html>
