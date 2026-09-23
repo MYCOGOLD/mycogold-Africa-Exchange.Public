@@ -1,0 +1,24 @@
+{
+  "project": "MYCOGOLD Africa Exchange",
+  "version": "V2.0.1",
+  "status": "LOCKED",
+  "hash": "MG-V2.0.1-9f3k2-LOCKED",
+  "design": "Dark 3D Gold + AI Canvas + 21 Kenyan Categories + Locations Analysis + TUSK AI Self-Learning",
+  "locked_at": "2026-01-15",
+  "locked_files": ["MYCOGOLD.FRONT/index.html", "index.html"],
+  "upgrade_method": "terminal_only_slow",
+  "upgrade_path": "echo '{\"upgrade\":\"V2.0.2\"}' > MYCOGOLD.PVT/upgrade.json",
+  "tiers": {
+    "free": "5 listings, blur locked, basic MFPI",
+    "logged": "50 listings, weather AI, chat AI agent",
+    "verified": "unlimited, priority match, analytics, TUSK insights",
+    "premium": "export leads, 0% commission, predictive pricing, live agent 24/7, instant match"
+  },
+  "features": {
+    "tusk_ai": ["auto-categorize 105→21 cats", "weather insights merged", "self-learning genius", "autonomous warnings", "location performance"],
+    "animation": "AI × Agri 24/7 canvas - farmer→buyer path",
+    "mfpi": "flick live 1.1s, TUSK avg flick slow 5s",
+    "logo": "MYCOGOLD 3D extruded gold + AFRICA glow"
+  },
+  "protection": "Visual design frozen. Only terminal commands allowed for upgrade. No direct UI editing."
+}
