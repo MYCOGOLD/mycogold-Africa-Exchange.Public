@@ -1,0 +1,8 @@
+{
+  "name": "mycogold-exchange-v2",
+  "version": "2.0.0",
+  "type": "module",
+  "scripts": { "dev": "tsx MYCOGOLD.FUTURE/mfpi-engine/server.ts", "tusk": "tsx MYCOGOLD.BACK/tusk-watcher/watcher.ts" },
+  "dependencies": { "ws": "^8.17.0" },
+  "devDependencies": { "tsx": "^4.7.0", "@types/ws": "^8.5.10", "@types/node": "^20.0.0" }
+}

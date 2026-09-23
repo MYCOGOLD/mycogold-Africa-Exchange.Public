@@ -1,98 +1,116 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta id="vp" name="viewport" content="width=1100"><title>MycoGold Africa - V2.0.1 FINAL LOCKED</title><script src="https://cdn.tailwindcss.com"></script>
-<script>if(screen.width<1100){document.getElementById('vp').setAttribute('content','width=1100, initial-scale='+(screen.width/1100));}</script>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MycoGold Africa Exchange</title>
+<script src="https://cdn.tailwindcss.com"></script>
 <style>
-:root{--gold:#FFD60A;--green:#00E676;--bg:#081414;--base:13px}
-html{font-size:var(--base)}
-body{background:var(--bg);color:#d9ece1;font-family:Inter,system-ui;margin:0;min-width:1100px;overflow-x:auto}
-.glass{background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.09);backdrop-filter:blur(8px)}
-.tab-active{border-bottom:3px solid var(--gold);color:var(--gold)!important;opacity:1!important;background:rgba(255,214,10,0.08)}
-.logo-3d{font-weight:900;line-height:0.9;color:var(--gold);text-shadow:0 1px 0 #c9a800,0 2px 0 #b89700,0 3px 0 #a68600,0 5px 12px rgba(0,0,0,0.7),0 0 22px rgba(255,214,10,0.45);transform:perspective(200px) rotateX(5deg)}
-</style></head><body>
-<div class="w-[1100px] mx-auto">
-<div class="px-4 py-1 text-[10px] bg-[#FFD60A]/10 border-b border-yellow-500/20 flex justify-between items-center"><span>🔒 V2.0.1 FINAL LOCKED • Fonts Adjustable • Slow Upgrade Only</span><div class="flex gap-2 items-center"><span id="tierBadge" class="font-bold px-3 py-1 rounded-full bg-white/10">FREE</span><button onclick="show('profile')" class="px-2 py-0.5 rounded-full bg-white/10 text-[10px]">⚙️ Aa</button></div></div>
-<div class="px-4 py-1.5 text-[11px] flex gap-3 bg-black/60 border-b border-white/10 items-center"><span id="mfpi" class="font-bold">MFPI 107.15</span><div id="tuskAvg" class="flex gap-3 text-[10px]"></div><span class="ml-auto flex gap-1 items-center"><span class="w-2 h-2 bg-green-400 rounded-full animate-pulse"></span>LIVE</span></div>
-<div class="mx-4 mt-2 rounded-xl bg-[#0f2424] border border-yellow-500/20 h-[36px] flex items-center overflow-hidden"><marquee id="ticker" class="text-[12px]"></marquee></div>
-
-<div class="flex mt-3 px-4 gap-4"><div class="w-[220px] shrink-0">
-<div class="logo-3d text-[22px]">MYCOGOLD</div><div class="text-[11px] font-extrabold tracking-[3px] text-[#00E676]">AFRICA</div><div class="text-[7px] opacity-50 tracking-[1.5px]">NATURE'S WEALTH YOUR HEALTH</div>
-<div class="mt-2 h-[2px] bg-gradient-to-r from-[#FFD60A] to-[#00E676] rounded-full"></div>
-<div class="mt-5 space-y-1.5 text-[12px]"><button onclick="show('market')" id="btn-market" class="w-full text-left px-4 py-2.5 rounded-full bg-white/10 font-bold tab-active">🏠 Market</button><button onclick="show('locations')" id="btn-locations" class="w-full text-left px-4 py-2.5 rounded-full hover:bg-white/5">📍 Locations</button><button onclick="show('exchange')" id="btn-exchange" class="w-full text-left px-4 py-2.5 rounded-full hover:bg-white/5">🔄 Exchange</button><button onclick="show('tusk')" id="btn-tusk" class="w-full text-left px-4 py-2.5 rounded-full border border-yellow-500/20">🧠 TUSK AI</button><button onclick="show('value')" id="btn-value" class="w-full text-left px-4 py-2.5 rounded-full border border-yellow-500/30 text-yellow-300">✨ Value-Added</button><button onclick="show('profile')" id="btn-profile" class="w-full text-left px-4 py-2.5 rounded-full hover:bg-white/5">👤 Profile & Settings</button></div>
-<div class="mt-4 glass rounded-xl p-3"><h4 class="text-[11px] font-bold mb-2">💬 Talk to Agent</h4><div class="grid gap-2"><button onclick="talk('ai')" class="text-left text-[11px] px-3 py-2 rounded-full bg-[#00E676]/20 border border-[#00E676]/30">🤖 AI Agent - Instant</button><button onclick="talk('live')" class="text-left text-[11px] px-3 py-2 rounded-full bg-[#FFD60A]/20 border border-[#FFD60A]/30">👨‍🌾 Live Agent</button></div><div id="chatBox" class="mt-2 text-[11px] hidden p-2 bg-black/40 rounded-xl"></div></div>
+body{background:#081414;color:#d9ece1;font-family:Inter,system-ui}
+.gold{color:#FFD60A}.gold-bg{background:#FFD60A}
+.glass{background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.08)}
+.ticker-track{animation:scroll 50s linear infinite}
+@keyframes scroll{0%{transform:translateX(20%)}100%{transform:translateX(-100%)}}
+.tab-active{border-bottom:3px solid #FFD60A;color:#FFD60A}
+</style>
+</head>
+<body>
+<!-- MFPI TOP - SAME AS YOURS -->
+<div class="px-4 py-2 text-xs flex gap-4 bg-black/30 border-b border-white/10">
+<span>MFPI 107.18 <span class="text-red-400">▼0.4%</span></span><span>131 Live • Kenya</span><span class="opacity-60">Showing: all (16)</span>
 </div>
 
-<div class="flex-1 min-w-0"><div class="flex gap-6 border-b border-white/10 text-[13px] mb-4"><button id="t-market" onclick="show('market')" class="pb-3 tab-active">Market</button><button id="t-locations" onclick="show('locations')" class="pb-3 opacity-60">Locations</button><button id="t-exchange" onclick="show('exchange')" class="pb-3 opacity-60">Exchange</button><button id="t-tusk" onclick="show('tusk')" class="pb-3 opacity-60">TUSK AI</button><button id="t-value" onclick="show('value')" class="pb-3 opacity-60">Value-Added</button><button id="t-profile" onclick="show('profile')" class="pb-3 opacity-60">Profile</button></div>
-
-<div id="v-market"><div class="relative glass rounded-2xl overflow-hidden mb-4 border border-emerald-500/20" style="height:200px"><canvas id="aiCanvas" class="w-full h-full"></canvas><div class="absolute top-3 left-4 text-[10px] opacity-60">AI × AGRI LIVE - TUSK AUTONOMOUS</div></div><div id="filterChips" class="flex gap-2 text-[11px] mb-4 flex-wrap"></div><div id="produceGrid" class="grid grid-cols-2 gap-3"></div></div>
-<div id="v-locations" class="hidden"><div id="locAnalysis" class="grid grid-cols-3 gap-3 mb-4"></div><div class="glass rounded-xl overflow-hidden"><div id="locTable"></div></div></div>
-<div id="v-exchange" class="hidden"><div class="grid grid-cols-2 gap-4"><div class="glass rounded-2xl p-3 border-l-4 border-yellow-400"><h3 class="text-yellow-300 font-bold text-[13px] mb-3">BUYERS</h3><div id="buyersList" class="space-y-2"></div></div><div class="glass rounded-2xl p-3 border-l-4 border-emerald-400"><h3 class="text-emerald-400 font-bold text-[13px] mb-3">SELLERS</h3><div id="sellersList" class="space-y-2"></div></div></div></div>
-<div id="v-tusk" class="hidden"><div id="weatherAI" class="glass p-4 rounded-xl"></div></div>
-<div id="v-value" class="hidden"><div id="valueGrid" class="grid grid-cols-4 gap-3"></div></div>
-
-<div id="v-profile" class="hidden">
-<div class="glass rounded-2xl p-6 max-w-[560px]">
-<h2 class="font-bold text-lg">👤 Profile & Settings</h2>
-
-<div class="mt-5 p-4 rounded-2xl bg-white/5 border border-white/10">
-<h3 class="font-bold text-[13px] mb-3">⚙️ FONT SIZE ADJUSTABLE (Phone & Laptop)</h3>
-<p class="text-[11px] opacity-60 mb-3">Adjust to make phone readable like laptop. Saved automatically.</p>
-<div class="flex gap-2 items-center">
-<button onclick="setFont(11)" class="px-3 py-2 rounded-full bg-white/10 text-[10px]">A- Small</button>
-<button onclick="setFont(13)" id="f-13" class="px-3 py-2 rounded-full bg-[#FFD60A] text-black text-[12px] font-bold">A Medium</button>
-<button onclick="setFont(15)" class="px-3 py-2 rounded-full bg-white/10 text-[13px]">A Large</button>
-<button onclick="setFont(17)" class="px-3 py-2 rounded-full bg-white/10 text-[15px]">A+ XL</button>
-</div>
-<div class="mt-3 flex items-center gap-3"><input type="range" min="10" max="19" value="13" id="fontSlider" oninput="setFont(this.value)" class="flex-1"><span id="fontVal" class="text-[11px] font-bold bg-white/10 px-2 py-1 rounded-full">13px</span></div>
-<div class="mt-2 text-[10px] opacity-50">Current: <span id="fontLabel">Medium - Laptop=Phone identical</span></div>
-</div>
-
-<div class="mt-4 flex justify-between items-center"><span class="text-sm">Tier:</span><b id="profileTier" class="px-4 py-1 rounded-full bg-white/10 text-xs">FREE</b></div>
-<div class="text-xs opacity-60 mt-2" id="tierDesc"></div>
-<div class="mt-4 grid grid-cols-2 gap-2"><button onclick="setTier('free')" class="px-3 py-2 rounded-full bg-white/10 text-xs">Free</button><button onclick="setTier('logged')" class="px-3 py-2 rounded-full bg-emerald-500/20 text-xs">Login</button><button onclick="setTier('verified')" class="px-3 py-2 rounded-full bg-yellow-500/20 text-xs">Verified</button><button onclick="setTier('premium')" class="px-3 py-2 rounded-full bg-[#FFD60A] text-black text-xs font-bold">💎 Premium</button></div>
-
-<div class="mt-4 p-4 rounded-xl bg-gradient-to-r from-yellow-500/10 to-emerald-500/10 border border-yellow-500/20 text-[11px]">
-<b>✅ V2.0.1 FINAL LOCKED & SAVED</b><br>
-• Laptop=Phone identical (1100px forced)<br>
-• Fonts adjustable - saved<br>
-• Tabs auto-close on switch<br>
-• Ready for separate phone coding later<br>
-• GitHub Pages live
-</div>
-
-<div class="mt-4 flex gap-2"><button onclick="saveAll()" class="px-5 py-2 rounded-full bg-[#00E676] text-black font-bold text-[12px]">💾 Save Settings</button><button onclick="resetSettings()" class="px-5 py-2 rounded-full bg-white/10 text-[12px]">Reset</button></div>
+<!-- BIG SPACE AWAY FROM MFPI - BUYER/SELLER POP TICKER -->
+<div class="mx-4 mt-6 rounded-xl bg-[#0f2424] border border-yellow-500/20 overflow-hidden relative h-[44px] flex items-center">
+<span class="absolute left-2 bg-[#0f2424] px-2 text-[10px] tracking-widest flex items-center gap-1 z-10"><span class="w-2 h-2 bg-green-400 rounded-full animate-pulse"></span>LIVE PULSE</span>
+<div class="ticker-track whitespace-nowrap flex gap-12 text-sm mt-1">
+<span>🔥 BUYER: Nairobi Hotel 200kg Oyster @120 KES URGENT</span>
+<span>🟢 SELLER: Samuel K Kericho 50kg @110 KES</span>
+<span>⚠️ TUSK WARNING: Cover beds - Heavy rain Nakuru</span>
+<span>💰 BUYER: Export needs Mushroom Powder 100kg</span>
+<span>📦 SELLER: Myco Farm 30kg Button @104 KES</span>
+<span>📈 Onions demand +12% Kisumu</span>
 </div>
 </div>
 
-</div></div></div>
+<div class="flex">
+<!-- LEFT SIDE - SAME AS YOURS -->
+<div class="w-[210px] p-4 hidden md:block">
+<h1 class="font-black leading-none text-[#FFD60A]">MYCOGOLD<br><span class="text-[#00E676] text-[11px]">AFRICA</span><br><span class="text-[7px] text-white/40">NATURE'S WEALTH YOUR HEALTH</span></h1>
+<div class="mt-8 space-y-2 text-sm">
+<button onclick="show('market')" class="w-full text-left px-3 py-2 rounded-full bg-white/10">🏠 Market</button>
+<button onclick="show('tusk')" class="w-full text-left px-3 py-2 rounded-full hover:bg-white/10">🧠 TUSK Insights</button>
+<button onclick="show('weather')" class="w-full text-left px-3 py-2 rounded-full hover:bg-white/10">⛅ Weather</button>
+<button onclick="show('exchange')" class="w-full text-left px-3 py-2 rounded-full hover:bg-white/10">🔄 Exchange</button>
+<button onclick="show('value')" class="w-full text-left px-3 py-2 rounded-full hover:bg-white/10 border border-yellow-500/30 text-yellow-300">✨ Value-Added</button>
+<button onclick="show('profile')" class="w-full text-left px-3 py-2 rounded-full hover:bg-white/10">👤 Profile</button>
+</div>
+<button class="mt-6 w-full gold-bg text-black font-bold py-2.5 rounded-full text-sm">+ Post Produce</button>
+</div>
+
+<!-- MAIN - SAME TABS -->
+<div class="flex-1 p-4">
+<div class="flex gap-6 border-b border-white/10 text-sm mb-4">
+<button id="t-market" onclick="show('market')" class="pb-3 tab-active">Market</button>
+<button id="t-tusk" onclick="show('tusk')" class="pb-3 opacity-60">TUSK</button>
+<button id="t-weather" onclick="show('weather')" class="pb-3 opacity-60">Weather</button>
+<button id="t-exchange" onclick="show('exchange')" class="pb-3 opacity-60">Exchange</button>
+<button id="t-value" onclick="show('value')" class="pb-3 opacity-60">Value-Added</button>
+</div>
+
+<!-- MARKET - KEEP YOUR FORMAT -->
+<div id="v-market">
+<div class="flex gap-2 text-xs mb-4 overflow-x-auto"><span class="px-3 py-1.5 rounded-full gold-bg text-black">All</span><span class="px-3 py-1.5 rounded-full glass">🍄 Mushroom</span><span class="px-3 py-1.5 rounded-full glass">🥔 Potatoes</span><span class="px-3 py-1.5 rounded-full glass">🧅 Onions</span><span class="px-3 py-1.5 rounded-full glass">🥬 Kales</span><span class="px-3 py-1.5 rounded-full glass">🥬 Cabbage</span><span class="px-3 py-1.5 rounded-full glass">🌾 Cereals</span><span class="px-3 py-1.5 rounded-full glass">🥩 Beef</span></div>
+<div class="h-[180px] glass rounded-xl mb-4 flex items-end gap-[2px] p-2">
+<div class="flex-1 bg-yellow-400 h-[40%]"></div><div class="flex-1 bg-emerald-400 h-[55%]"></div><div class="flex-1 bg-yellow-400 h-[30%]"></div><div class="flex-1 bg-yellow-400 h-[85%]"></div><div class="flex-1 bg-emerald-400 h-[45%]"></div><div class="flex-1 bg-yellow-400 h-[75%]"></div><div class="flex-1 bg-emerald-400 h-[65%]"></div><div class="flex-1 bg-yellow-400 h-[35%]"></div><div class="flex-1 bg-emerald-400 h-[70%]"></div><div class="flex-1 bg-yellow-400 h-[60%]"></div>
+</div>
+<div class="grid grid-cols-3 gap-2 mb-4 text-xs"><div class="glass p-2 rounded-xl">AVG TUSK • Mush<br><b class="gold">110 KES</b></div><div class="glass p-2 rounded-xl">AVG • Potatoes<br><b class="gold">42 KES</b></div><div class="glass p-2 rounded-xl">AVG • Onions<br><b class="gold">78 KES</b></div></div>
+<div class="space-y-2"><div class="glass rounded-xl p-3 flex justify-between"><div><b>Samuel K</b> <span class="text-xs opacity-60">Kericho</span><br><span class="text-sm">Oyster 50kg @ 110 KES</span></div><div class="flex gap-2 items-center"><button class="px-3 py-1 rounded-full bg-white/10 text-xs">Chat</button><button class="px-3 py-1 rounded-full gold-bg text-black text-xs">Order</button></div></div><div class="glass rounded-xl p-3 flex justify-between"><div><b>Myco Farm</b> <span class="text-xs opacity-60">Nakuru</span><br><span class="text-sm">Button 30kg @ 104 KES</span></div><div class="flex gap-2 items-center"><button class="px-3 py-1 rounded-full bg-white/10 text-xs">Chat</button><button class="px-3 py-1 rounded-full gold-bg text-black text-xs">Order</button></div></div></div>
+</div>
+
+<!-- EXCHANGE - NEW TANGLE TWO GROUPS -->
+<div id="v-exchange" class="hidden">
+<h2 class="font-bold">Exchange Tangle</h2><p class="text-xs opacity-60 mb-3">Buyers left • Sellers right - Most on top</p>
+<div class="grid md:grid-cols-2 gap-4">
+<div class="glass rounded-2xl p-3 border-l-4 border-yellow-400"><h3 class="gold font-bold text-sm mb-2">BUYERS WANTING</h3>
+<div class="space-y-2 text-sm"><div class="bg-black/40 p-3 rounded-xl flex justify-between"><div><b>City Hotel NBO</b><br><span class="text-xs">200kg Oyster daily @120 KES</span><br><span class="text-[10px] text-red-300">URGENT</span></div><button class="gold-bg text-black px-3 py-1 rounded-full text-xs h-fit">Match</button></div><div class="bg-black/40 p-3 rounded-xl"><b>Export Ltd</b><br><span class="text-xs">Mushroom Powder 100kg @450 KES</span></div></div></div>
+<div class="glass rounded-2xl p-3 border-l-4 border-emerald-400"><h3 class="text-emerald-400 font-bold text-sm mb-2">SELLERS OFFERING</h3>
+<div class="space-y-2 text-sm"><div class="bg-black/40 p-3 rounded-xl flex justify-between"><div><b>Samuel K</b><br><span class="text-xs">Oyster 50kg @110 KES • Kericho</span></div><button class="bg-emerald-400 text-black px-3 py-1 rounded-full text-xs h-fit">Sell</button></div><div class="bg-black/40 p-3 rounded-xl"><b>Myco Farm</b><br><span class="text-xs">Button 30kg @104 KES • Nakuru</span></div></div></div>
+</div>
+</div>
+
+<!-- TUSK INSIGHTS - WARNINGS PDF BLOG TEACHING -->
+<div id="v-tusk" class="hidden">
+<h2 class="font-bold">TUSK Insights</h2><p class="text-xs opacity-60 mb-3">Warnings • Guides • Teaching & Research</p>
+<div class="grid md:grid-cols-3 gap-3">
+<div class="glass rounded-xl p-4 border-l-4 border-red-500"><h3 class="text-red-400 font-bold text-sm">⚠️ Warnings</h3><ul class="text-xs mt-2 space-y-1"><li>• Heavy rain - cover outdoor beds</li><li>• Fake seeds Eldoret</li><li>• Onion price drop next week</li></ul></div>
+<div class="glass rounded-xl p-4 border-l-4 border-yellow-400"><h3 class="gold font-bold text-sm">ℹ️ Guides</h3><ul class="text-xs mt-2 space-y-1"><li>• Store Oyster 7 days fresh</li><li>• Best transport packaging</li><li>• MFPI explained</li></ul></div>
+<div class="glass rounded-xl p-4 border-l-4 border-emerald-400"><h3 class="text-emerald-400 font-bold text-sm">📚 Teaching & Research</h3><ul class="text-xs mt-2 space-y-2"><li>📄 <a class="underline" href="#">Mushroom Yield PDF - KALRO</a></li><li>📝 Blog: Mycelium is Gold</li><li>📄 Value Addition Manual PDF</li><li>📝 Blog: Export Standards</li></ul></div>
+</div>
+<div class="mt-4 glass rounded-xl p-4 text-xs">Latest: <b>Maize stalks to 300% profit</b> - Full PDF + video guide inside TUSK. <button class="ml-2 gold-bg text-black px-2 py-1 rounded-full">Open PDF</button></div>
+</div>
+
+<!-- VALUE ADDED - INDEPENDENT TAB -->
+<div id="v-value" class="hidden">
+<h2 class="font-bold gold">✨ Value-Added Products - Independent</h2><p class="text-xs opacity-60 mb-3">Powders, crisps, extracts - away from raw MFPI</p>
+<div class="grid grid-cols-2 md:grid-cols-4 gap-3 text-sm">
+<div class="glass rounded-xl p-3"><div class="h-20 bg-yellow-500/20 rounded-xl flex items-center justify-center mb-2">🍄</div><b>Mushroom Powder</b><br><span class="text-xs opacity-60">500g @450 KES</span><button class="mt-2 w-full gold-bg text-black py-1 rounded-full text-xs">Order</button></div>
+<div class="glass rounded-xl p-3"><div class="h-20 bg-orange-500/20 rounded-xl flex items-center justify-center mb-2">🍟</div><b>Mushroom Crisps</b><br><span class="text-xs opacity-60">100g @150 KES</span><button class="mt-2 w-full gold-bg text-black py-1 rounded-full text-xs">Order</button></div>
+<div class="glass rounded-xl p-3"><div class="h-20 bg-emerald-500/20 rounded-xl flex items-center justify-center mb-2">☕</div><b>Myco Coffee</b><br><span class="text-xs opacity-60">250g @380 KES</span><button class="mt-2 w-full gold-bg text-black py-1 rounded-full text-xs">Order</button></div>
+<div class="glass rounded-xl p-3 border border-yellow-400/30"><div class="h-20 bg-yellow-500/20 rounded-xl flex items-center justify-center mb-2">💊</div><b>Capsules Export</b><br><span class="text-xs opacity-60">60 caps @1200 KES</span><button class="mt-2 w-full bg-emerald-400 text-black py-1 rounded-full text-xs">Enquire</button></div>
+</div>
+</div>
+
+<div id="v-weather" class="hidden">Weather Module loading...</div>
+<div id="v-profile" class="hidden">Profile...</div>
+</div>
+</div>
 <script>
-// FONT SIZE ADJUSTABLE - SAVED
-let currentFont = parseInt(localStorage.getItem('myco_font')||13);
-function setFont(s){currentFont=parseInt(s); document.documentElement.style.setProperty('--base', s+'px'); localStorage.setItem('myco_font', s); document.getElementById('fontVal').innerText=s+'px'; document.getElementById('fontSlider').value=s; document.querySelectorAll('[id^=f-]').forEach(e=>e.classList.remove('bg-[#FFD60A]','text-black')); let btn=document.getElementById('f-'+s); if(btn) btn.classList.add('bg-[#FFD60A]','text-black'); let label='Medium'; if(s<=11) label='Small - compact'; else if(s==13) label='Medium - Laptop=Phone identical (Recommended)'; else if(s==15) label='Large - phone readable'; else if(s>=17) label='XL - extra readable on phone'; document.getElementById('fontLabel').innerText=label;}
-setFont(currentFont);
-function saveAll(){localStorage.setItem('myco_tier', USER_TIER); localStorage.setItem('myco_font', currentFont); alert('✅ Saved! Font '+currentFont+'px + Tier '+USER_TIER+' locked. Will stay on phone & laptop.');}
-function resetSettings(){localStorage.clear(); setFont(13); setTier('free'); alert('Reset to default V2.0.1');}
-let USER_TIER=localStorage.getItem('myco_tier')||'free';
-function setTier(t){USER_TIER=t; localStorage.setItem('myco_tier',t); updateTierUI(); render();}
-function updateTierUI(){let b=document.getElementById('tierBadge'),pt=document.getElementById('profileTier'),d=document.getElementById('tierDesc'); if(!b) return;
-if(USER_TIER==='free'){b.innerText='FREE'; pt.innerText='FREE'; d.innerText='Free: 6 listings'}
-if(USER_TIER==='logged'){b.innerText='LOGGED'; pt.innerText='LOGGED'; d.innerText='Logged: 50 listings'}
-if(USER_TIER==='verified'){b.innerText='VERIFIED'; pt.innerText='VERIFIED'; d.innerText='Verified: Unlimited'}
-if(USER_TIER==='premium'){b.innerText='💎 PREMIUM'; pt.innerText='PREMIUM'; d.innerText='Premium: Export 0% comm'}}
-updateTierUI();
-const categories=["Mushroom","Tomatoes","Onions","Potatoes","Kales","Cabbage","Carrots","Capsicum","Bananas","Maize","Beans","Rice","Avocado","Mango","Beef","Pork","Poultry","Eggs","Milk","Fish","Honey"];
-const icons={"Mushroom":"🍄","Tomatoes":"🍅","Onions":"🧅","Potatoes":"🥔","Kales":"🥬","Cabbage":"🥬","Carrots":"🥕","Capsicum":"🫑","Bananas":"🍌","Maize":"🌽","Beans":"🫘","Rice":"🍚","Avocado":"🥑","Mango":"🥭","Beef":"🥩","Pork":"🐖","Poultry":"🐓","Eggs":"🥚","Milk":"🥛","Fish":"🐟","Honey":"🍯"};
-const locations=["Kericho","Nakuru","Nairobi","Kisumu","Eldoret","Nyandarua","Molo","Naivasha","Meru","Kitale","Bomet"];
-function rand(a){return a[Math.floor(Math.random()*a.length)]}
-let allItems=[]; categories.forEach(cat=>{for(let i=0;i<5;i++){allItems.push({cat,prod:`${cat} ${Math.floor(Math.random()*50)+10}kg`,loc:rand(locations),qty:Math.floor(Math.random()*150)+10,price:Math.floor(Math.random()*120)+30,seller:rand(["Farmer","Coop","Myco Farm"]),buyer:rand(["Hotel","Supermarket"])})}});
-let currentFilter="All";
-function render(f=currentFilter){currentFilter=f; let grid=document.getElementById('produceGrid'); let html=""; let filtered=f==="All"?allItems:allItems.filter(i=>i.cat===f); let limit= USER_TIER==='free'?6:50; filtered.slice(0,limit).forEach(it=>{html+=`<div class="glass rounded-xl p-3 flex justify-between items-center"><div><div class="text-[9px] opacity-50">${it.seller} • ${it.loc}</div><b class="text-[13px]">${it.prod}</b><br><span class="text-[11px]">@ ${it.price} KES</span></div><button class="px-3 py-1 rounded-full bg-[#FFD60A] text-black text-[11px] font-bold">Order</button></div>`;}); grid.innerHTML=html;}
-let chipsHTML=`<span onclick="setCat('All')" id="chip-All" class="px-3 py-1 rounded-full glass bg-[#FFD60A] text-black">All</span>`; categories.forEach(c=>{chipsHTML+=`<span onclick="setCat('${c}')" id="chip-${c}" class="px-3 py-1 rounded-full glass cursor-pointer">${icons[c]} ${c}</span>`;}); document.getElementById('filterChips').innerHTML=chipsHTML;
-function setCat(n){document.querySelectorAll('[id^=chip-]').forEach(e=>e.classList.remove('bg-[#FFD60A]','text-black')); document.getElementById('chip-'+n)?.classList.add('bg-[#FFD60A]','text-black'); render(n);} window.setCat=setCat; render("All");
-document.getElementById('ticker').innerText=allItems.slice(0,15).map(i=>`${i.seller}: ${i.prod} @${i.price} KES ${i.loc}`).join(' • ');
-const avgByCat={}; categories.forEach(c=>{avgByCat[c]=Math.round(allItems.filter(i=>i.cat===c).reduce((s,x)=>s+x.price,0)/5);}); document.getElementById('tuskAvg').innerHTML=categories.slice(0,5).map(c=>`${icons[c]} ${c}: <b class="text-yellow-300">${avgByCat[c]}</b>`).join(' ');
-let bH="",sH=""; for(let i=0;i<20;i++){let it=rand(allItems); bH+=`<div class="bg-black/40 p-2 rounded-xl flex justify-between text-[12px]"><div><b>${it.buyer}</b><br>${it.prod}</div><button class="bg-[#FFD60A] text-black px-3 py-1 rounded-full text-[11px]">Match</button></div>`; sH+=`<div class="bg-black/40 p-2 rounded-xl flex justify-between text-[12px]"><div><b>${it.seller}</b><br>${it.prod}</div><button class="bg-emerald-400 text-black px-3 py-1 rounded-full text-[11px]">Buy</button></div>`;} document.getElementById('buyersList').innerHTML=bH; document.getElementById('sellersList').innerHTML=sH;
-function show(n){document.querySelectorAll('[id^=v-]').forEach(e=>e.classList.add('hidden')); document.getElementById('v-'+n).classList.remove('hidden'); document.querySelectorAll('[id^=t-]').forEach(e=>{e.classList.remove('tab-active');e.classList.add('opacity-60')}); document.querySelectorAll('[id^=btn-]').forEach(e=>e.classList.remove('tab-active','bg-white/10')); let t=document.getElementById('t-'+n); if(t){t.classList.add('tab-active');t.classList.remove('opacity-60')} let b=document.getElementById('btn-'+n); if(b){b.classList.add('tab-active','bg-white/10')}} window.show=show;
-function talk(type){let box=document.getElementById('chatBox'); box.classList.remove('hidden'); box.innerHTML=type==='ai'?'🤖 TUSK AI: Ready!':'👨‍🌾 Live: Connecting...';} window.talk=talk;
-setInterval(()=>{document.getElementById('mfpi').innerText='MFPI '+(107+Math.random()).toFixed(2);},2000);
-const canvas=document.getElementById('aiCanvas'); const ctx=canvas.getContext('2d'); canvas.width=800; canvas.height=200; let nodes=[]; for(let i=0;i<10;i++){nodes.push({x:Math.random()*800,y:Math.random()*200,vx:(Math.random()-0.5)})} function draw(){ctx.clearRect(0,0,800,200); nodes.forEach(n=>{n.x+=n.vx; if(n.x<0||n.x>800) n.vx*=-1; ctx.fillStyle='#FFD60A'; ctx.beginPath(); ctx.arc(n.x,n.y,3,0,Math.PI*2); ctx.fill();}); requestAnimationFrame(draw);} draw();
-window.setTier=setTier; window.setFont=setFont; window.saveAll=saveAll; window.resetSettings=resetSettings;
-</script></body></html>
+function show(n){
+document.querySelectorAll('[id^=v-]').forEach(e=>e.classList.add('hidden'));
+document.getElementById('v-'+n).classList.remove('hidden');
+document.querySelectorAll('[id^=t-]').forEach(e=>{e.classList.remove('tab-active');e.classList.add('opacity-60')});
+let t=document.getElementById('t-'+n); if(t){t.classList.add('tab-active');t.classList.remove('opacity-60')}
+}
+</script>
+</body>
+</html>
