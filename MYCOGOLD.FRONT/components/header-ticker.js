@@ -1,65 +1,45 @@
-/**
- * MYCOGOLD Header Ticker - Product sits respective on price - Good UI
- * Fixes: Onions / 100 KES aligned vertically
- */
 const TICKER_BOUNDS = {
+  "Mushroom": {icon:"🍄", floor:150, premium:600, sweet:"155-350", mean:252.5},
   "Onions": {icon:"🧅", floor:60, premium:160},
-  "Mushroom": {icon:"🍄", floor:100, premium:350},
-  "Oyster": {icon:"🍄", floor:70, premium:200},
-  "Button": {icon:"🍄", floor:90, premium:320},
   "Potatoes": {icon:"🥔", floor:47, premium:170},
   "Beef": {icon:"🥩", floor:600, premium:809},
-  "Kales": {icon:"🥬", floor:20, premium:80},
-  "Cabbage": {icon:"🥬", floor:25, premium:95}
+  "Oyster": {icon:"🍄", floor:150, premium:600, sweet:"155-350"},
+  "Button": {icon:"🍄", floor:150, premium:600, sweet:"155-350"}
 };
-
 function renderMfpiTicker(liveState) {
-  // liveState = {Onions:100, Mushroom:69...} from your MYCOGOLD.PVT
   const bar = document.getElementById('mfpi-ticker') || document.querySelector('.mfpi-ticker-bar');
   if(!bar) return;
-  bar.innerHTML = '';
-  bar.className = 'mfpi-ticker-bar';
-
-  Object.entries(liveState).forEach(([product, price]) => {
-    const bounds = TICKER_BOUNDS[product] || {icon:"•", floor:0, premium:9999};
-    const pct = ((price - bounds.floor)/(bounds.premium-bounds.floor)*100).toFixed(0);
-    const item = document.createElement('div');
-    item.className = 'ticker-item';
-    item.innerHTML = `
-      <div class="ticker-product"><span>${bounds.icon}</span> ${product}</div>
-      <div class="ticker-price">${price} <small style="font-size:10px">KES</small></div>
-      <div class="ticker-boll">${bounds.floor}-${bounds.premium} • ${pct}%</div>
+  bar.innerHTML=''; bar.className='mfpi-ticker-bar';
+  Object.entries(liveState).forEach(([product, price])=>{
+    const b = TICKER_BOUNDS[product] || {icon:"•", floor:0, premium:9999};
+    const pct = ((price-b.floor)/(b.premium-b.floor)*100).toFixed(0);
+    const inSweet = product.includes("Mushroom") || product=="Oyster" || product=="Button"? (price>=155 && price<=350) : true;
+    const item=document.createElement('div');
+    item.className='ticker-item';
+    item.style.borderColor = inSweet? "#FFD700" : "#222";
+    item.innerHTML=`
+      <div class="ticker-product"><span>${b.icon}</span> ${product}</div>
+      <div class="ticker-price" style="color:${inSweet? '#FFD700' : '#aaa'}">${price} <small>KES</small></div>
+      <div class="ticker-boll">${b.floor}-${b.premium} ${b.sweet?`★ ${b.sweet}`:''} • ${pct}%</div>
     `;
-    // Click filters market - your global product router
-    item.onclick = () => { if(window.filterByProduct) filterByProduct(product); };
-    item.style.cursor = 'pointer';
+    item.onclick=()=>{ if(window.filterByProduct) filterByProduct(product); };
+    item.style.cursor='pointer';
     bar.appendChild(item);
   });
 }
-
-// Auto hook to your LIVE_MARKET_STATE from PVT
-function hookTickerToPvt() {
-  if(window.LIVE_MARKET_STATE) renderMfpiTicker(window.LIVE_MARKET_STATE);
-  // Simulate live from backend json if available
-  const demo = {Onions:100, Mushroom:69, Oyster:95, Button:94, Potatoes:95, Beef:702, Kales:45, Cabbage:50};
+function hookTickerToPvt(){
+  const demo={Mushroom:255, Onions:100, Potatoes:95, Oyster:180, Button:260, Beef:702};
   renderMfpiTicker(demo);
-
-  // Live update every 1s - TUSK light-speed dots
-  setInterval(async () => {
-    try {
-      const res = await fetch('/MYCOGOLD.FRONT/quant_core_essential.json');
+  setInterval(async()=>{
+    try{
+      const res=await fetch('/MYCOGOLD.FRONT/mushroom_index.json');
       if(res.ok){
-        const j = await res.json();
-        if(j.sample_ticks){
-          const state={};
-          j.sample_ticks.forEach(t=> state[t.commodity.replace('MUSHROOM_','').replace('_',' ')] = t.spot_price_kes);
-          // Keep names matching your UI
-          const mapped = {Onions: state.ONIONS||100, Mushroom: state.TOTAL||69, Oyster: state.OYSTER||95, Button: state.BUTTON||94};
-          renderMfpiTicker(mapped);
+        const j=await res.json();
+        if(j.live){
+          renderMfpiTicker({Mushroom:j.live.MUSHROOM, Onions:j.live.ONIONS, Potatoes:j.live.POTATOES, Oyster:j.live.MUSHROOM_OYSTER, Button:j.live.MUSHROOM_BUTTON});
         }
       }
-    } catch(e){ /* keep demo */ }
-  }, 1000);
+    }catch(e){}
+  },1000);
 }
-
 document.addEventListener('DOMContentLoaded', hookTickerToPvt);
