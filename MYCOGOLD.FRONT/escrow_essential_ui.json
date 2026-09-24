@@ -1,0 +1,12 @@
+{
+  "version": "2.0.1",
+  "branding": "MYCOGOLD-Africa Escrow",
+  "total_contracts": 1,
+  "total_gross": 8200.0,
+  "total_fee_3_5_percent": 287.0,
+  "released": 1,
+  "locked": 0,
+  "ui_message": "ESCROW DOTS=TUSK VERIFYING HASH - Yellow LOCKED, Green RELEASED",
+  "essential_only": true,
+  "secret_formulas_hidden": true
+}

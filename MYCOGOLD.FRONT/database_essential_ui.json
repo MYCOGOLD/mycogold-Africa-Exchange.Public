@@ -1,0 +1,33 @@
+{
+  "version": "3.0.0",
+  "branding": "MYCOGOLD-Africa",
+  "total_datasets": 32,
+  "avg_price": 176.81,
+  "top_5_expensive": [
+    {
+      "code": "VALUE_ADD_HONEY",
+      "price": 1000.0
+    },
+    {
+      "code": "BANANA_COOKING",
+      "price": 600.0
+    },
+    {
+      "code": "VALUE_ADD_DRIED_MUSHROOM",
+      "price": 500.0
+    },
+    {
+      "code": "EGGS_LOCAL_TRAY",
+      "price": 450.0
+    },
+    {
+      "code": "WHITE_BUTTON_500G",
+      "price": 380.0
+    }
+  ],
+  "tusk_brain_learnings": 1,
+  "ledger_blocks": 1,
+  "ui_message": "DOTS VISIBLE=TUSK LIVE AI",
+  "essential_only": true,
+  "secret_formulas_hidden": true
+}

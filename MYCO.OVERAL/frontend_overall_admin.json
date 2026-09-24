@@ -1,0 +1,33 @@
+{
+  "type": "MYCO.OVERAL",
+  "desc": "Overall - Admin overview essential only - frontend core locked",
+  "admin_overview": {
+    "total_registered_products": 14,
+    "products": [
+      "Mushroom",
+      "Oyster",
+      "Button",
+      "Potatoes",
+      "Onions",
+      "Kales",
+      "Cabbage",
+      "Cereals",
+      "Sukuma Wiki",
+      "Dhania",
+      "Hoho",
+      "Matomoko",
+      "Zucchini",
+      "Rosemary"
+    ],
+    "mushroom_pricing_genius": {
+      "Oyster_250g": "floor 80 KES premium 140-240",
+      "Button_250g": "floor 145 KES normal 150-250 premium cafe 300-440",
+      "Cremini_250g": "floor 250 KES premium 450",
+      "Portobello_250g": "floor 280 KES premium 480"
+    },
+    "new_variety_flow": "New mushroom variety upon verification -> registerNewProduct() -> chip added -> filterByProduct() works -> TUSK genius understands",
+    "frontend_core_locked": "V2.0.1 FINAL GENIUS LOCKED - tab switcher + product router + IoT hashing + TUSK chat",
+    "site_health": "Frontend 100% \u2022 Strict tab management \u2022 No overlays \u2022 Global auto-routing"
+  },
+  "essential_for_ui": true
+}

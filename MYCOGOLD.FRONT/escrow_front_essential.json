@@ -1,0 +1,14 @@
+{
+  "type": "MYCOGOLD.FRONT",
+  "desc": "Frontend - Only essential escrow UI to view",
+  "essential_ui": {
+    "status": "RELEASED",
+    "gross": 8200.0,
+    "fee_3_5_percent": 287.0,
+    "farmer_net": 7913.0,
+    "tusk_status": "TUSK Escrow Live \u2022 Fetching proof \u2022 Learning via Meta AI",
+    "dots": "Escrow dots = TUSK verifying media hash every 1s",
+    "contract_id": "ESC_1790215805_713210"
+  },
+  "essential_for_ui": true
+}

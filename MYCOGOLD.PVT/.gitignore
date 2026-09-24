@@ -1,0 +1,5 @@
+keys/
+*.key
+*.pem
+secret_*.json
+*.db

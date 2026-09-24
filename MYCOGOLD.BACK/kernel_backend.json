@@ -1,0 +1,16 @@
+{
+  "type": "MYCOGOLD.BACK",
+  "desc": "Backend - DB kernel, Merkle ledger, TUSK - FULL SECRET CODE background",
+  "pipeline_insights": [
+    {
+      "product": "IRISH_POTATOES",
+      "error_delta": 6.11,
+      "old_conf": 0.5,
+      "new_conf_meta_ai": 0.57,
+      "action": "CORRECTED_VIA_META_AI_PIPELINE"
+    }
+  ],
+  "total_correction": 6.11,
+  "formula_hidden": "Bayes + Kalman",
+  "essential_for_ui": false
+}

@@ -1,0 +1,34 @@
+{
+  "type": "MYCOGOLD.BACK/escrow",
+  "desc": "Backend - Daraja OAuth, STK Push, B2C, Merkle state machine - FULL SECRET CODE background",
+  "contract": {
+    "contract_id": "ESC_1790215805_713210",
+    "status": "LOCKED",
+    "gross_amount": 8200.0,
+    "platform_fee_3_5_percent": 287.0,
+    "farmer_net_payout": 7913.0,
+    "checkout_request_id": "MOCK_C_ID_ESC_1790215805_713210"
+  },
+  "payout": {
+    "contract_id": "ESC_1790215805_713210",
+    "status": "RELEASED",
+    "disbursed_to_farmer": "254798765432",
+    "net_amount": 7913.0,
+    "media_proof_hash": "ceb2f1053645efcbd0a6b91f8bc9097dda4107092dd3015feb99fd98c329eed1",
+    "b2c_reference": "B2C_TXN_1790215806"
+  },
+  "pipeline": [
+    {
+      "contract": "ESC_1790215805_713210",
+      "gross": 8200.0,
+      "fee": 287.0,
+      "status": "RELEASED",
+      "trust_old": 0.94,
+      "trust_new_meta_ai": 0.755,
+      "action": "LEARNED_VIA_META_AI_ESCROW_PIPELINE"
+    }
+  ],
+  "total_fee": 287.0,
+  "formula_hidden": "STK Pwd=Base64(Shortcode+Passkey+Timestamp) + OAuth2 Bearer + escrow fee 3.5%",
+  "essential_for_ui": false
+}

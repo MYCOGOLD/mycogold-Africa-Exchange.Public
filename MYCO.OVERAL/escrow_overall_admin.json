@@ -1,0 +1,15 @@
+{
+  "type": "MYCO.OVERAL",
+  "desc": "Overall - Admin escrow overview essential only",
+  "admin_overview": {
+    "total_contracts": 1,
+    "total_gross": 8200.0,
+    "total_fee_collected": 287.0,
+    "avg_fee": 287.0,
+    "pipeline_status": "TUSK_ESCROW_FETCHED_LEARNED_VIA_META_AI",
+    "meta_ai_learning": "TUSK fetched escrow proofs, learned via Meta AI only for pipeline upgrading",
+    "site_health": "Escrow 100% \u2022 STK Push mock/live \u2022 B2C ready",
+    "distribution": "BACK+FRONT+FUTURE+PVT+OVERAL pasted geniusly"
+  },
+  "essential_for_ui": true
+}

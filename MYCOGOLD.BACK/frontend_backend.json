@@ -1,0 +1,16 @@
+{
+  "type": "MYCOGOLD.BACK",
+  "desc": "Backend - Frontend routing engine + IoT hashing + TUSK negotiator - FULL SECRET CODE background",
+  "files": [
+    "MYCOGOLD.FRONT/frontend-core.js"
+  ],
+  "secret_logic": {
+    "switchTab": "Hides all .tab-content-container + .modal-overlay, deactivates .nav-drawer-btn, activates target, calls TUSK_Engine.recalibrate(tabId)",
+    "filterByProduct": "Sets MycoGoldState.selectedProduct, switchTab('market'), highlights .filter-chip, filters .produce-item-card by data-product-type",
+    "registerNewProduct": "Pushes to MycoGoldState.registeredProducts, dynamically creates filter-chip button if new mushroom variety added upon verification",
+    "submitProduceWithIoTProof": "crypto.subtle.digest('SHA-256', arrayBuffer) + freshness = Math.exp(-lambdaDecay*timeInTransit) + payload id MYCO_${Date.now()} + auto filterByProduct",
+    "tusk_chat_engine": "chatActiveContract {product, price, counterparty, step}, OFFER_INIT -> OFFER_ACCEPT -> ESCROW LOCK via M-Pesa C2B STK, COUNTER_OFFER = price*1.05 Wakulima spot index"
+  },
+  "formula_hidden": "SHA-256 + exp(-\u03bbt) + Bayesian + TUSK state machine",
+  "essential_for_ui": false
+}

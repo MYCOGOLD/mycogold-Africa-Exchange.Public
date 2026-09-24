@@ -1,0 +1,12 @@
+{
+  "type": "MYCOGOLD.FRONT",
+  "desc": "Frontend - Only essential to be viewed UI",
+  "essential_ui": {
+    "avg_price_trend": "6.11 KES correction via TUSK Meta AI",
+    "tusk_status": "TUSK Live - Fetching info - Learning via Meta AI pipeline",
+    "dots": "36 dots = TUSK analyzing every 1s - Yellow Market, Blue Physics, Green Trust",
+    "products": 32,
+    "mfpi_shift": -0.023
+  },
+  "essential_for_ui": true
+}

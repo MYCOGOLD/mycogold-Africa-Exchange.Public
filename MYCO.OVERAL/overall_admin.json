@@ -1,0 +1,13 @@
+{
+  "type": "MYCO.OVERAL",
+  "desc": "Overall - Admin overview essential only",
+  "admin_overview": {
+    "total_datasets": 32,
+    "avg_correction": 6.11,
+    "pipeline_status": "TUSK_FETCHED_INFO_LEARNED_VIA_META_AI",
+    "meta_ai_learning": "TUSK fetched info, learned via Meta AI only for pipeline upgrading",
+    "site_health": "100%",
+    "distribution": "BACK+FRONT+FUTURE+PVT+OVERAL"
+  },
+  "essential_for_ui": true
+}

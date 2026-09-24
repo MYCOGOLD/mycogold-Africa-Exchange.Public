@@ -1,0 +1,16 @@
+{
+  "type": "MYCOGOLD.FRONT",
+  "version": "V2.0.1 FINAL GENIUS LOCKED",
+  "desc": "Frontend - Only essential UI to be viewed, rest background code",
+  "core_file": "MYCOGOLD.FRONT/frontend-core.js",
+  "features_essential": {
+    "tab_switcher": "Strict Tab Management - closes active tab before opening new one",
+    "product_router": "Global Product Auto-Routing - clicking any produce item filters Market - TUSK genius",
+    "mushroom_pricing": "Oyster 80 floor 140-240 premium, Button 145 floor 150-250 normal 300-440 cafe, Cremini 250 floor 450 premium, Portobello 280 floor 480 premium - per 250g punnet",
+    "iot_proof": "Post Produce + Buy/Sell Modal with IoT Media Hashing SHA-256 + freshness exp(-\u03bbt)",
+    "tusk_chat": "TUSK Smart Chat & Semi-Autonomous Negotiator - OFFER_INIT, OFFER_ACCEPT, OFFER_COUNTER, ESCROW LOCK"
+  },
+  "essential_for_ui": true,
+  "secret_formulas_hidden": true,
+  "dots": "36 dots = TUSK analyzing every 1s - Yellow Market, Blue Physics, Green Trust - visible in HUD"
+}
