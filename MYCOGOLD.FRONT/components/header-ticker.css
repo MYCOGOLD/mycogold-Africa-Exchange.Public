@@ -1,0 +1,50 @@
+/* MYCOGOLD TICKER - PRODUCT ON PRICE - GOOD UI V3.1 */
+.mfpi-ticker-bar, #mfpi-ticker,.price-ticker {
+  display: flex;
+  overflow-x: auto;
+  gap: 18px;
+  padding: 8px 12px;
+  background: #0a0a0a;
+  border-bottom: 1px solid #222;
+  white-space: nowrap;
+  scrollbar-width: none;
+}
+.mfpi-ticker-bar::-webkit-scrollbar { display: none; }
+
+.ticker-item {
+  display: flex;
+  flex-direction: column; /* product on top of price */
+  align-items: center; /* centered respective */
+  justify-content: center;
+  min-width: 85px;
+  padding: 6px 12px;
+  background: #111;
+  border-radius: 8px;
+  border: 1px solid #222;
+}
+
+.ticker-product {
+  font-size: 12px;
+  color: #aaa;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  line-height: 1;
+}
+
+.ticker-price {
+  font-size: 14px;
+  font-weight: 800;
+  color: #FFD700;
+  line-height: 1.2;
+  margin-top: 2px;
+}
+
+.ticker-price.up { color: #00ff88; }
+.ticker-price.down { color: #ff4444; }
+
+/* floor/premium indicator */
+.ticker-boll {
+  font-size: 9px;
+  color: #666;
+}
