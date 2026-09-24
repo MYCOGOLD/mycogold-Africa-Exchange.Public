@@ -1,0 +1,11 @@
+{
+  "mushroom_index": {"sweet": [155,350], "bands": [150,600], "target": 252.5, "mfpi": 109.92},
+  "hubs": [
+    {"id":"kericho","name":"Kericho","county":"Kericho","type":"Main Hub","mush":255,"button":265,"oyster":180,"potatoes":95,"onions":105,"beef":700,"perf":92,"tusk":88,"vol":"High"},
+    {"id":"molo","name":"Molo","county":"Nakuru","type":"Collection","mush":242,"button":250,"oyster":170,"potatoes":85,"onions":98,"beef":690,"perf":78,"tusk":82,"vol":"Med"},
+    {"id":"wakulima","name":"Wakulima Market","county":"Nairobi","type":"Market","mush":310,"button":320,"oyster":195,"potatoes":110,"onions":115,"beef":750,"perf":95,"tusk":94,"vol":"V.High"},
+    {"id":"nakuru","name":"Nakuru Town","county":"Nakuru","type":"Market","mush":270,"button":280,"oyster":185,"potatoes":95,"onions":105,"beef":710,"perf":84,"tusk":86,"vol":"High"},
+    {"id":"eldoret","name":"Eldoret","county":"Uasin Gishu","type":"Collection","mush":235,"button":245,"oyster":165,"potatoes":88,"onions":100,"beef":695,"perf":76,"tusk":79,"vol":"Med"},
+    {"id":"kisumu","name":"Kisumu","county":"Kisumu","type":"Market","mush":285,"button":295,"oyster":190,"potatoes":102,"onions":108,"beef":720,"perf":81,"tusk":83,"vol":"Med"}
+  ]
+}
