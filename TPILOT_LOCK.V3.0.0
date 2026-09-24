@@ -1,0 +1,11 @@
+
+MYCOGOLD-Africa Exchange V3.0.0 LOCKED AS TPILOT - STABLE PILOT
+Locked: 2026-05-13
+MFPI: 109.84 ▲ 0.87% | 131 Live | 100 listings | TUSK Live
+Core: MYCOGOLD_MUSHROOM_PRICING.PVT
+Bounds: Mushroom Total [150-600] Sweet [155-350] | Button Floor 90 | Oyster Floor 70
+Target: 252.5 | Formula: P(t+1)=P(t)+0.15*(252.5-P)+vol*CPRNG
+Status: SITE LIVE - NO LOCATION INJECTION - PREVIOUS WORKING STATE
+
+This is the rollback point. If site dies, git checkout this tag.
+
