@@ -1,0 +1,31 @@
+/* LOCATION TAB - Performance + Prizing + TUSK */
+.location-dashboard {
+  padding: 16px;
+  background: #0a0a0a;
+  color: #fff;
+  min-height: 80vh;
+}
+.loc-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 14px;
+  margin-top: 14px;
+}
+.loc-card {
+  background: #111;
+  border: 1px solid #222;
+  border-radius: 12px;
+  padding: 12px;
+}
+.loc-card h3 { margin: 0 0 8px 0; font-size: 15px; }
+.loc-header { display:flex; justify-content:space-between; align-items:center; }
+.loc-badge { font-size:10px; padding:2px 6px; border-radius:10px; background:#222; }
+.loc-product-row {
+  display:flex; justify-content:space-between; align-items:center;
+  padding:6px 0; border-bottom:1px solid #1a1a1a; font-size:13px;
+}
+.loc-product-row:last-child { border:none; }
+.loc-price { color:#FFD700; font-weight:700; }
+.loc-tusk { font-size:11px; color:#888; margin-top:6px; }
+.tusk-bar { height:4px; background:#222; border-radius:2px; overflow:hidden; margin-top:4px; }
+.tusk-fill { height:100%; background: linear-gradient(90deg,#FFD700,#00ff88); }
