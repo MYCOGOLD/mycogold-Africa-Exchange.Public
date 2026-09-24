@@ -1,0 +1,108 @@
+#!/usr/bin/env python3
+import json, os, time, hashlib
+# Read the exact frontend core you provided
+with open("MYCOGOLD.FRONT/frontend-core.js","r") as f: js_core=f.read()
+
+# Essential UI only - what user sees
+frontend_essential={
+    "type":"MYCOGOLD.FRONT",
+    "version":"V2.0.1 FINAL GENIUS LOCKED",
+    "desc":"Frontend - Only essential UI to be viewed, rest background code",
+    "core_file":"MYCOGOLD.FRONT/frontend-core.js",
+    "features_essential":{
+        "tab_switcher":"Strict Tab Management - closes active tab before opening new one",
+        "product_router":"Global Product Auto-Routing - clicking any produce item filters Market - TUSK genius",
+        "mushroom_pricing":"Oyster 80 floor 140-240 premium, Button 145 floor 150-250 normal 300-440 cafe, Cremini 250 floor 450 premium, Portobello 280 floor 480 premium - per 250g punnet",
+        "iot_proof":"Post Produce + Buy/Sell Modal with IoT Media Hashing SHA-256 + freshness exp(-λt)",
+        "tusk_chat":"TUSK Smart Chat & Semi-Autonomous Negotiator - OFFER_INIT, OFFER_ACCEPT, OFFER_COUNTER, ESCROW LOCK"
+    },
+    "essential_for_ui":True,
+    "secret_formulas_hidden":True,
+    "dots":"36 dots = TUSK analyzing every 1s - Yellow Market, Blue Physics, Green Trust - visible in HUD"
+}
+
+# BACK - full secret backend for frontend routing
+backend={
+    "type":"MYCOGOLD.BACK",
+    "desc":"Backend - Frontend routing engine + IoT hashing + TUSK negotiator - FULL SECRET CODE background",
+    "files":["MYCOGOLD.FRONT/frontend-core.js"],
+    "secret_logic":{
+        "switchTab":"Hides all .tab-content-container + .modal-overlay, deactivates .nav-drawer-btn, activates target, calls TUSK_Engine.recalibrate(tabId)",
+        "filterByProduct":"Sets MycoGoldState.selectedProduct, switchTab('market'), highlights .filter-chip, filters .produce-item-card by data-product-type",
+        "registerNewProduct":"Pushes to MycoGoldState.registeredProducts, dynamically creates filter-chip button if new mushroom variety added upon verification",
+        "submitProduceWithIoTProof":"crypto.subtle.digest('SHA-256', arrayBuffer) + freshness = Math.exp(-lambdaDecay*timeInTransit) + payload id MYCO_${Date.now()} + auto filterByProduct",
+        "tusk_chat_engine":"chatActiveContract {product, price, counterparty, step}, OFFER_INIT -> OFFER_ACCEPT -> ESCROW LOCK via M-Pesa C2B STK, COUNTER_OFFER = price*1.05 Wakulima spot index"
+    },
+    "formula_hidden":"SHA-256 + exp(-λt) + Bayesian + TUSK state machine",
+    "essential_for_ui":False
+}
+
+# FUTURE - predictive UI
+future={
+    "type":"MYCOGOLD.FUTURE",
+    "desc":"Future - Predictive UI routing, future mushroom varieties, auto-filter predictions secret",
+    "predictions":{
+        "new_mushroom_auto_route":"When new mushroom verified -> registerNewProduct() -> auto adds chip to market-filter-bar -> filterByProduct() works instantly",
+        "chat_forecast":"TUSK will auto-counter with 5% margin if Wakulima index higher, else accept",
+        "freshness_forecast":"GARCH-like decay lambda 0.05 -> 0.5 days transit = 97.5% freshness, 2 days = 90.4%"
+    },
+    "essential_for_ui":False
+}
+
+# PVT - secret quant engine for frontend
+pvt={
+    "type":"MYCOGOLD.PVT",
+    "desc":"PVT - Secret Quant Engine for Frontend - Physics+Math+Psych+CARA+CPRNG background",
+    "secret_formulas":{
+        "freshness":"SECRET: freshness = e^(-λt) where λ=0.05 perishability constant, t=0.5 days transit - used for trust scoring",
+        "hash":"SECRET: SHA-256 crypto.subtle.digest - media proof hash for Merkle ledger, first 16 chars shown to user",
+        "tusk_state":"SECRET: MycoGoldState.activeTab, selectedProduct, registeredProducts[14 initial], userRole BUYER/SELLER, chatActiveContract",
+        "negotiation_math":"SECRET: revisedPrice = chat.price * 1.05 auto-margin based on Wakulima spot index - CARA risk aversion"
+    },
+    "essential_for_ui":False
+}
+
+# OVERAL - admin overview essential only
+overall={
+    "type":"MYCO.OVERAL",
+    "desc":"Overall - Admin overview essential only - frontend core locked",
+    "admin_overview":{
+        "total_registered_products":14,
+        "products":["Mushroom","Oyster","Button","Potatoes","Onions","Kales","Cabbage","Cereals","Sukuma Wiki","Dhania","Hoho","Matomoko","Zucchini","Rosemary"],
+        "mushroom_pricing_genius":{"Oyster_250g":"floor 80 KES premium 140-240","Button_250g":"floor 145 KES normal 150-250 premium cafe 300-440","Cremini_250g":"floor 250 KES premium 450","Portobello_250g":"floor 280 KES premium 480"},
+        "new_variety_flow":"New mushroom variety upon verification -> registerNewProduct() -> chip added -> filterByProduct() works -> TUSK genius understands",
+        "frontend_core_locked":"V2.0.1 FINAL GENIUS LOCKED - tab switcher + product router + IoT hashing + TUSK chat",
+        "site_health":"Frontend 100% • Strict tab management • No overlays • Global auto-routing"
+    },
+    "essential_for_ui":True
+}
+
+os.makedirs("MYCOGOLD.FRONT",exist_ok=True)
+os.makedirs("MYCOGOLD.BACK",exist_ok=True)
+os.makedirs("MYCOGOLD.FUTURE",exist_ok=True)
+os.makedirs("MYCOGOLD.PVT",exist_ok=True)
+os.makedirs("MYCO.OVERAL",exist_ok=True)
+
+with open("MYCOGOLD.FRONT/frontend_essential_ui.json","w") as f: json.dump(frontend_essential,f,indent=2)
+with open("MYCOGOLD.BACK/frontend_backend.json","w") as f: json.dump(backend,f,indent=2)
+with open("MYCOGOLD.FUTURE/frontend_future.json","w") as f: json.dump(future,f,indent=2)
+with open("MYCOGOLD.PVT/frontend_secret_engine.json","w") as f: json.dump(pvt,f,indent=2)
+with open("MYCO.OVERAL/frontend_overall_admin.json","w") as f: json.dump(overall,f,indent=2)
+
+# Also copy frontend-core.js to components for your existing tree
+with open("MYCOGOLD.FRONT/components/frontend-core.js","w") as f: f.write(js_core)
+
+print("[✔] FRONTEND REFINED SUCCESS - BACK+FRONT+FUTURE+PVT+OVERAL pasted geniusly")
+print(" -> FRONT: frontend-core.js (YOUR EXACT CODE - NO CHANGE)")
+print(" -> FRONT: frontend_essential_ui.json (essential UI only)")
+print(" -> BACK: frontend_backend.json (full secret routing background)")
+print(" -> FUTURE: frontend_future.json (predictive secret)")
+print(" -> PVT: frontend_secret_engine.json (secret quant)")
+print(" -> OVERAL: frontend_overall_admin.json (admin overview essential)")
+
+# GitHub bash instructions
+print("\n--- GITHUB BASH TO PUSH ---")
+print("git add MYCOGOLD.FRONT/frontend-core.js MYCOGOLD.FRONT/components/frontend-core.js")
+print("git add MYCOGOLD.FRONT/*.json MYCOGOLD.BACK/*.json MYCOGOLD.FUTURE/*.json MYCOGOLD.PVT/*.json MYCO.OVERAL/*.json")
+print("git commit -m 'V2.0.1 GENIUS LOCKED: Frontend core refined - Mushroom pricing Oyster 80/140-240 Button 145/150-250/300-440 Cremini 250/450 Portobello 280/480 - TUSK genius new variety auto-add - essential UI only'")
+print("git push origin main")

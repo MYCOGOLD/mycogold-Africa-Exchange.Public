@@ -1,0 +1,9 @@
+{
+  "type": "MYCOGOLD.FUTURE",
+  "desc": "Future - Predictive secret",
+  "predictions": {
+    "shift": -0.023,
+    "forecast": "GARCH-like"
+  },
+  "essential_for_ui": false
+}

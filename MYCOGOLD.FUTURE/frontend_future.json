@@ -1,0 +1,10 @@
+{
+  "type": "MYCOGOLD.FUTURE",
+  "desc": "Future - Predictive UI routing, future mushroom varieties, auto-filter predictions secret",
+  "predictions": {
+    "new_mushroom_auto_route": "When new mushroom verified -> registerNewProduct() -> auto adds chip to market-filter-bar -> filterByProduct() works instantly",
+    "chat_forecast": "TUSK will auto-counter with 5% margin if Wakulima index higher, else accept",
+    "freshness_forecast": "GARCH-like decay lambda 0.05 -> 0.5 days transit = 97.5% freshness, 2 days = 90.4%"
+  },
+  "essential_for_ui": false
+}

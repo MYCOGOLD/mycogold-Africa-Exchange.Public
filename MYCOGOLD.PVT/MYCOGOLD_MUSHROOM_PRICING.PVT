@@ -1,0 +1,92 @@
+#!/usr/bin/env python3
+"""
+
+MYCOGOLD_MUSHROOM_PRICING.PVT - BOUNDED PRICING ENGINE V3.2
+Mushroom = All Mushroom Index | floor 155-350 | bands 150-600 | TUSK light-speed
+Refined: executable, autonomous, measurable, CPRNG
+
+"""
+import time, hashlib, secrets, json, os, sys
+from datetime import datetime
+
+COMMODITY_BOUNDS = {
+    "MUSHROOM": {"floor": 150.0, "mean": 155.0, "mean_high": 350.0, "premium": 600.0, "volatility": 1.4, "target": 252.5},
+    "MUSHROOM_TOTAL": {"floor": 150.0, "mean": 155.0, "mean_high": 350.0, "premium": 600.0, "volatility": 1.4, "target": 252.5},
+    "MUSHROOM_BUTTON": {"floor": 150.0, "mean": 225.0, "mean_high": 350.0, "premium": 600.0, "volatility": 1.5, "target": 252.5},
+    "MUSHROOM_OYSTER": {"floor": 150.0, "mean": 120.0, "mean_high": 350.0, "premium": 600.0, "volatility": 1.1, "target": 252.5},
+    "PORTOBELLO": {"floor": 150.0, "mean": 450.0, "mean_high": 350.0, "premium": 600.0, "volatility": 2.2, "target": 252.5},
+    "CREMINI": {"floor": 150.0, "mean": 380.0, "mean_high": 350.0, "premium": 600.0, "volatility": 1.8, "target": 252.5},
+    "POTATOES": {"floor": 47.0, "mean": 95.0, "premium": 170.0, "volatility": 0.8, "target": 95.0},
+    "BEEF": {"floor": 600.0, "mean": 700.0, "premium": 809.0, "volatility": 2.5, "target": 700.0},
+    "ONIONS": {"floor": 60.0, "mean": 105.0, "premium": 160.0, "volatility": 0.9, "target": 105.0},
+}
+LIVE_STATE = {k: v["mean"] for k,v in COMMODITY_BOUNDS.items()}
+
+class TuskCPRNG:
+    def __init__(self, seed="MYCOGOLD_MUSHROOM_INDEX_155_350_150_600_TUSK"):
+        self.state = hashlib.sha256(seed.encode()).hexdigest()
+    def next_float(self):
+        self.state = hashlib.sha256(f"{self.state}{time.time_ns()}{secrets.token_hex(4)}".encode()).hexdigest()
+        return (int(self.state[:8],16)/0xFFFFFFFF)*2.0-1.0
+cprng = TuskCPRNG()
+
+def calculate_next_tusk_tick(commodity, theta=0.15):
+    b = COMMODITY_BOUNDS[commodity]
+    cur = LIVE_STATE[commodity]
+    floor, premium, vol, target = b["floor"], b["premium"], b["volatility"], b["target"]
+    # FORMULA: P(t+1) = P(t) + theta*(target-P) + vol*CPRNG
+    drift = theta * (target - cur)
+    diffusion = vol * cprng.next_float()
+    new_price = cur + drift + diffusion
+    # BOLLINGER HARD COLLAR [floor,premium] = [150,600] for mushroom
+    if new_price > premium: new_price = premium - abs(diffusion*0.5)
+    if new_price < floor: new_price = floor + abs(diffusion*0.5)
+    LIVE_STATE[commodity] = round(new_price,2)
+    boll_pct = (new_price - floor)/(premium - floor)*100 if premium!=floor else 50
+    is_sweet = 155 <= new_price <= 350 if "MUSHROOM" in commodity else True
+    return {
+        "commodity": commodity,
+        "spot": LIVE_STATE[commodity],
+        "floor": floor,
+        "sweet_floor": 155 if "MUSHROOM" in commodity else floor,
+        "sweet_premium": 350 if "MUSHROOM" in commodity else premium,
+        "premium": premium,
+        "boll_pct": round(boll_pct,1),
+        "sweet": is_sweet,
+        "drift": round(drift,3),
+        "diffusion": round(diffusion,3),
+        "formula": "P(t+1)=P(t)+0.15*(252.5-P)+vol*CPRNG [150,600] sweet [155,350]"
+    }
+
+def live_loop():
+    print("==================================================================")
+    print(" MYCOGOLD MUSHROOM PRICING ENGINE - LIVE")
+    print(" Mushroom Index: sweet [155-350] | bands [150-600] | TUSK light-speed")
+    print(" Formula: P(t+1)=P(t)+theta*(252.5-P)+vol*CPRNG clamped")
+    print("==================================================================")
+    try:
+        while True:
+            os.system('clear')
+            print(f"\n[{datetime.now().strftime('%H:%M:%S')}] MFPI LIVE - Mushroom Index Bounded\n")
+            for crop in ["MUSHROOM","MUSHROOM_BUTTON","MUSHROOM_OYSTER","ONIONS","POTATOES","BEEF"]:
+                d = calculate_next_tusk_tick(crop)
+                icon = "★" if d['sweet'] else " "
+                print(f" {icon} {d['commodity']:<18} {d['spot']:>7} KES | Band [{d['floor']:.0f}-{d['premium']:.0f}] Sweet [155-350] | Boll {d['boll_pct']:>5}% | {d['drift']:+.2f}/{d['diffusion']:+.2f}")
+                # write for frontend
+                os.makedirs("MYCOGOLD.FRONT", exist_ok=True)
+                with open("MYCOGOLD.FRONT/live_prices.json","w") as f:
+                    json.dump({"live": LIVE_STATE, "ts": time.time_ns(), "formula": d['formula'], "bounds": COMMODITY_BOUNDS}, f, indent=2)
+            print("\n Press Ctrl+C to stop | Light-speed TUSK CPRNG autonomous measurable")
+            time.sleep(1)
+    except KeyboardInterrupt:
+        print("\n[STOPPED] Engine halted - state saved")
+        with open("MYCOGOLD.FRONT/live_prices.json","w") as f:
+            json.dump({"live": LIVE_STATE, "bounds": COMMODITY_BOUNDS}, f, indent=2)
+
+if __name__ == "__main__":
+    # Single tick demo if arg --once else live loop
+    if "--once" in sys.argv:
+        for c in COMMODITY_BOUNDS:
+            print(calculate_next_tusk_tick(c))
+    else:
+        live_loop()

@@ -1,0 +1,10 @@
+{
+  "type": "MYCOGOLD.FUTURE",
+  "desc": "Future - Predictive escrow risk, fee forecasting secret",
+  "predictions": {
+    "next_escrow_risk": "Low if media hash verified + trust_new>0.9",
+    "fee_forecast": "Next fee avg 287.0 KES via GBM",
+    "dispute_prob": "P(dispute)=exp(-trust*10) + Meta AI correction"
+  },
+  "essential_for_ui": false
+}

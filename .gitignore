@@ -1,3 +1,3 @@
 MYCOGOLD.PVT/keys/
-node_modules/
-.env
+MYCOGOLD_EXCHANGE.db
+*.db

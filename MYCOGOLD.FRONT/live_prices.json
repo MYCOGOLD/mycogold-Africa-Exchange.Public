@@ -1,0 +1,86 @@
+{
+  "live": {
+    "MUSHROOM": 251.24,
+    "MUSHROOM_TOTAL": 155.0,
+    "MUSHROOM_BUTTON": 253.17,
+    "MUSHROOM_OYSTER": 251.51,
+    "PORTOBELLO": 450.0,
+    "CREMINI": 380.0,
+    "POTATOES": 94.12,
+    "BEEF": 696.53,
+    "ONIONS": 105.2
+  },
+  "ts": 1790250602669940293,
+  "formula": "P(t+1)=P(t)+0.15*(252.5-P)+vol*CPRNG [150,600] sweet [155,350]",
+  "bounds": {
+    "MUSHROOM": {
+      "floor": 150.0,
+      "mean": 155.0,
+      "mean_high": 350.0,
+      "premium": 600.0,
+      "volatility": 1.4,
+      "target": 252.5
+    },
+    "MUSHROOM_TOTAL": {
+      "floor": 150.0,
+      "mean": 155.0,
+      "mean_high": 350.0,
+      "premium": 600.0,
+      "volatility": 1.4,
+      "target": 252.5
+    },
+    "MUSHROOM_BUTTON": {
+      "floor": 150.0,
+      "mean": 225.0,
+      "mean_high": 350.0,
+      "premium": 600.0,
+      "volatility": 1.5,
+      "target": 252.5
+    },
+    "MUSHROOM_OYSTER": {
+      "floor": 150.0,
+      "mean": 120.0,
+      "mean_high": 350.0,
+      "premium": 600.0,
+      "volatility": 1.1,
+      "target": 252.5
+    },
+    "PORTOBELLO": {
+      "floor": 150.0,
+      "mean": 450.0,
+      "mean_high": 350.0,
+      "premium": 600.0,
+      "volatility": 2.2,
+      "target": 252.5
+    },
+    "CREMINI": {
+      "floor": 150.0,
+      "mean": 380.0,
+      "mean_high": 350.0,
+      "premium": 600.0,
+      "volatility": 1.8,
+      "target": 252.5
+    },
+    "POTATOES": {
+      "floor": 47.0,
+      "mean": 95.0,
+      "premium": 170.0,
+      "volatility": 0.8,
+      "target": 95.0
+    },
+    "BEEF": {
+      "floor": 600.0,
+      "mean": 700.0,
+      "premium": 809.0,
+      "volatility": 2.5,
+      "target": 700.0
+    },
+    "ONIONS": {
+      "floor": 60.0,
+      "mean": 105.0,
+      "premium": 160.0,
+      "volatility": 0.9,
+      "target": 105.0
+    }
+  }
+}

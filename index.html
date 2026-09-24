@@ -10,8 +10,7 @@ body{background:#000;color:#e9e9d9;font-family:Inter,system-ui;min-width:1100px;
 .mfpiF{animation:mf 1s ease}@keyframes mf{50%{transform:scale(1.12);color:var(--gold)}}
 #aiCanvas{display:block;width:100%;height:100%}
 .adminPulse{animation:pulse 1.5s infinite}@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.5}}
-</style><link rel="stylesheet" href="MYCOGOLD.FRONT/components/location-tab.css">
-</head><body>
+</style></head><body>
 <div class="px-4 py-2.5 bg-[#0A0A00] border-b border-yellow-500/20 flex items-center gap-3 sticky top-0 z-50 text-[12px]"><span id="mfpi" class="font-black gold-text text-[15px]">MFPI 109.84 ▲ 0.87%</span><span class="opacity-60">131 Live • MYCOGOLD-Africa V3.0.0 • TUSK Live</span><div id="avgTop" class="flex gap-3 ml-4 flex-1 overflow-hidden text-[11px]"></div>
 <div class="relative w-[320px]"><input id="globalSearch" oninput="doSearch(this.value)" placeholder="🔍 Search produce, location, seller..." class="w-full px-4 py-2 rounded-full bg-black border border-yellow-500/30 outline-none text-[12px]"><div id="searchDD" class="hidden absolute top-[40px] left-0 right-0 glass-gold rounded-2xl p-2 z-[100] max-h-[380px] overflow-y-auto"></div></div><span class="px-2 py-1 rounded-full bg-[#FFD60A] text-black font-bold text-[9px]">TUSK LIVE • DOTS = AI ANALYSIS</span></div>
 <div class="mx-3 mt-2 rounded-xl bg-[#0F0F00] border border-yellow-500/30 h-[38px] flex items-center"><marquee id="ticker" class="text-[12px]"></marquee></div>
@@ -170,5 +169,4 @@ function drawDots(){let w=canvas.width,h=canvas.height; ctx.clearRect(0,0,w,h); 
  if(d.formulas>20){ctx.fillStyle='#fff'; ctx.font='8px monospace'; ctx.fillText(d.formulas, d.x+6, d.y-6);}}); requestAnimationFrame(drawDots);} drawDots();
 
 document.addEventListener('click',e=>{if(!e.target.closest('#globalSearch') &&!e.target.closest('#searchDD')) document.getElementById('searchDD').classList.add('hidden')});
-<script src="location-fix.js?v=1790257216"></script>
-</body></html>
+</script></body></html>
