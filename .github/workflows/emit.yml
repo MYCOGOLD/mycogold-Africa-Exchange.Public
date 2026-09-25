@@ -1,1 +1,35 @@
 
+name: Single Exchange Emitter
+on:
+  schedule:
+    - cron: "* * * * *"
+  workflow_dispatch:
+
+jobs:
+  emit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: '3.11' }
+      - run: pip install supabase
+      - run: |
+          python3 -c "
+          import time, hashlib
+          from supabase import create_client
+          URL='https://vuwqmuficrrcseoovsnn.supabase.co'
+          KEY='sb_publishable_rJh2PaoJ93y9Qghu7a9H9g_nxX9t...' # REPLACE with full key you copied
+          supa=create_client(URL, KEY)
+          def cprng(loc, tick):
+              raw=hashlib.sha256(f'{loc}{tick}MYCOGOLD_2026_TPILOT_LIGHT_SPEED_SINGLE_EXCHANGE'.encode()).hexdigest()
+              return int(raw[:8],16)/0xFFFFFFFF*2-1, raw[:12]
+          end = time.time()+55
+          while time.time() < end:
+              tick=int(time.time())
+              c,p=cprng('MFPI',tick)
+              mfpi=109.92+c*0.8
+              hubs=[{'name':n,'mush':round(max(150,min(600,252.5+2.8*v*cprng(n,tick)[0])),2)} for n,v in [('Kericho',0.9),('Molo',0.6),('Wakulima Market',1.2),('Nakuru Town',0.8),('Eldoret',0.5),('Kisumu',0.7)]]
+              supa.table('live_prices').upsert({'id':1,'tick':tick,'mfpi':mfpi,'hubs':hubs,'proof':p}).execute()
+              print(f'Pushed {tick} MFPI {mfpi}')
+              time.sleep(1)
+          "
