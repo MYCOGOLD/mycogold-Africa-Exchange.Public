@@ -13,7 +13,11 @@ export default async function handler(request, response) {
     headers: { apikey: key, Authorization: `Bearer ${key}` },
   })
 
-  if (!result.ok) return response.status(502).json({ error: 'Listings unavailable' })
+  if (!result.ok) {
+    const detail = await result.text()
+    console.error('[listings] Supabase query failed', { table: 'public.listings', status: result.status, detail })
+    return response.status(502).json({ error: 'Listings unavailable' })
+  }
   const rows = await result.json()
-  return response.status(200).json({ source: 'Supabase', listings: rows })
+  return response.status(200).json({ source: 'Supabase', table: 'public.listings', listings: rows })
 }
