@@ -1,0 +1,8 @@
+export const BASE_MFPI = 99.06654
+export const BASE_WEIGHTED_PRICE = 52.00
+export type Activity = { id: string; type: 'listing' | 'trade' | 'ai_feed' | 'data_pipeline'; product: string; price: number; kg: number; location: string; created_at: string }
+export function weightedPriceFromActivities(activities: Activity[]): number | null { if (!activities.length) return null; const totalKg = activities.reduce((sum, activity) => sum + activity.kg, 0); if (totalKg === 0) return null; return activities.reduce((sum, activity) => sum + activity.price * activity.kg, 0) / totalKg }
+export function calculateMFPI(activities: Activity[]) { const tick = activities.length; if (!activities.length) return { mfpi: BASE_MFPI, weighted: null, tick: 0, isGenesis: true }; const weighted = weightedPriceFromActivities(activities)!; const delta = ((weighted - BASE_WEIGHTED_PRICE) / BASE_WEIGHTED_PRICE) * 100; return { mfpi: BASE_MFPI + delta, weighted, tick, isGenesis: false } }
+export function mineBlock(prevHash: string, activities: Activity[], mfpi: number) { const data = JSON.stringify({ prevHash, count: activities.length, mfpi: mfpi.toFixed(5), time: Date.now() }); let hash = ''; for (let index = 0; index < data.length; index += 1) hash += data.charCodeAt(index).toString(16); return { index: activities.length === 0 ? 0 : activities.length, hash: hash.slice(0, 16), prevHash, mfpi, activitiesCount: activities.length, minedAt: new Date().toISOString() } }
+export const GENESIS_BLOCK = { index: 0, hash: 'GENESIS-99.06654', prevHash: '', mfpi: BASE_MFPI, activitiesCount: 0, minedAt: new Date(0).toISOString() }
+export type LedgerBlock = ReturnType<typeof mineBlock> | typeof GENESIS_BLOCK
