@@ -1,5 +1,5 @@
 const send = (res, body, status = 200) => res.status(status).setHeader('content-type', 'application/json').send(JSON.stringify(body))
-const dbRows = async (base, key, table, select) => { const r = await fetch(`${base}/rest/v1/${table}?select=${select}`, { headers: { apikey: key, Authorization: `Bearer ${key}` } }); if (r.status === 404 || r.status === 406) return []; if (!r.ok) throw new Error(`${table} unavailable`); return r.json() }
+const dbRows = async (base, key, table, select) => { const r = await fetch(`${base}/rest/v1/${table}?select=${select}`, { headers: { apikey: key, Authorization: `Bearer ${key}` } }); if (!r.ok) { console.error(`[v0] optional ${table} read skipped`, r.status); return [] } return r.json() }
 export default async function handler(req, res) {
   if (req.method !== 'POST') return send(res, { error: 'Method not allowed' }, 405)
   const base = process.env.NEXT_PUBLIC_SUPABASE_URL, key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY

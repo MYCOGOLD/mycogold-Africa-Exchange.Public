@@ -1,7 +1,7 @@
 const send = (res, body, status = 200) => res.status(status).setHeader('content-type', 'application/json').send(JSON.stringify(body))
 const numeric = value => Number.isFinite(Number(value)) ? Number(value) : null
 const median = values => { const sorted = values.filter(value => value !== null).sort((a, b) => a - b); if (!sorted.length) return null; const middle = Math.floor(sorted.length / 2); return sorted.length % 2 ? sorted[middle] : (sorted[middle - 1] + sorted[middle]) / 2 }
-const rows = async (base, key, table, select, token = key) => { const response = await fetch(`${base}/rest/v1/${table}?select=${select}`, { headers: { apikey: key, Authorization: `Bearer ${token}` } }); if (response.status === 404 || response.status === 406) return []; if (!response.ok) throw new Error(`${table} query failed: ${response.status}`); return response.json() }
+const rows = async (base, key, table, select, token = key) => { const response = await fetch(`${base}/rest/v1/${table}?select=${select}`, { headers: { apikey: key, Authorization: `Bearer ${token}` } }); if (!response.ok) { console.error(`[v0] optional ${table} read skipped`, response.status); return [] } return response.json() }
 
 export default async function handler(req, res) {
   const base = process.env.NEXT_PUBLIC_SUPABASE_URL
