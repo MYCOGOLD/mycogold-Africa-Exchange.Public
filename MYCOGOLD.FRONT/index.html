@@ -76,7 +76,7 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--gold);outline-o
 	<div class="sidebar w-[225px] p-3 shrink-0">
 <div class="font-black gold-text leading-none" style="font-size:21px">MYCOGOLD-<br>Africa</div><div class="text-[8px] tracking-[2px] opacity-50 mt-1">NATURE'S WEALTH • YOUR HEALTH</div><div class="nav-stack"><button onclick="tab('market')" id="b-market" class="tab-active">Market</button><button onclick="tab('tusk')" id="b-tusk" class="glass">TUSK AI</button><button onclick="tab('services')" id="b-services" class="glass">Special Services</button><button onclick="tab('weather')" id="b-weather" class="glass">Weather & Routes</button><button onclick="tab('mfpi')" id="b-mfpi" class="glass">MFPI</button><button onclick="tab('profile')" id="b-profile" class="glass">Profile</button><button onclick="document.getElementById('newProd').focus()" class="post-button bg-[#FFD60A] text-black font-black">Post Produce</button></div>
 
-<div class="status-card mt-4 glass rounded-xl p-3"><div class="gold-text font-bold text-[11px]">🔒 Exchange status</div><div id="tuskLiveStatus" class="text-[10px] mt-2 leading-5">Live listings: awaiting first post<br>Market data: connected<br>Weather feed: Open-Meteo</div><div id="adminSignals" class="mt-2 pt-2 border-t border-white/10 text-[9px]"></div></div>
+<div class="status-card mt-4 glass rounded-xl p-3"><div class="gold-text font-bold text-[11px]">Exchange status</div><div id="tuskLiveStatus" class="text-[10px] mt-2 leading-5">Live listings: awaiting first post<br>Market data: connected<br>Weather feed: Open-Meteo</div><div id="adminSignals" class="mt-2 pt-2 border-t border-white/10 text-[9px]"></div></div>
 </div>
 
 <div class="content flex-1 p-3 min-w-0">
@@ -87,8 +87,7 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--gold);outline-o
 
 
 <div class="market-only canvas-panel relative glass-gold rounded-2xl overflow-hidden bg-black border border-yellow-500/30" style="height:250px"><canvas id="aiCanvas"></canvas>
-<div class="legend absolute top-3 left-4 flex gap-2 text-[9px]"><span class="px-2 py-1 rounded-full bg-[#FFD60A]/20 border border-[#FFD60A]/40">🟡 Market Data - Bayes P(cat|prod) - Live</span><span class="px-2 py-1 rounded-full bg-[#00B0FF]/20 border border-[#00B0FF]/40">🔵 Freshness e^(-λt) - Weather</span><span class="px-2 py-1 rounded-full bg-[#00E676]/20 border border-[#00E676]/40">🟢 Trust 0.5*Verif+0.3*Hist - Farms</span></div>
-<div class="absolute top-3 right-4 text-[9px] px-2 py-1 rounded-full bg-green-500/20 text-green-400 border border-green-500/30">● TUSK AI READY</div>
+
 <div class="absolute bottom-3 left-4 right-4 flex justify-between items-center"><div class="text-[10px] opacity-70">Market intelligence powered by live listings, trades, and weather feeds.</div><div id="liveInsights" class="text-[9px] px-2 py-1 rounded-full bg-[#FFD60A]/20 border border-[#FFD60A]/30 gold-text font-bold">Live insights: awaiting real listings and trades</div></div>
 </div>
 
@@ -167,8 +166,7 @@ document.getElementById('weatherGrid').innerHTML='<div class="glass rounded-xl p
 renderMfpi(); renderAll(); renderListingsOnce(); loadListingsOnce(); loadPrices(); loadTuskModules(); loadWeather();
 
 // ================= TUSK LIVE AI - DOTS VISIBLE + FORMULAS ANALYSIS EVERY 1s =================
-// Dots are NOT just dots - they are TUSK AI analysis running, collecting, updating, arranging info
-// Yellow = Market data (Bayes, TF-IDF, k-means) | Blue = Physics (Freshness e^-λt, Market gravity) | Green = Psychology (Trust, Urgency, Social proof)
+
 // Every collision = formula calculation, Every 1s = full platform scan, maintains 1s usage, gives signals to admins, blocked things, private overview
 const canvas=document.getElementById('aiCanvas'); const ctx=canvas.getContext('2d');
 function resize(){canvas.width=canvas.offsetWidth; canvas.height=canvas.offsetHeight} resize(); window.addEventListener('resize',resize);
@@ -217,7 +215,7 @@ function tuskLiveAnalysis(){
 
  secretLog.unshift(adminMsg); if(secretLog.length>20) secretLog.pop();
  document.getElementById('secretLog').innerHTML=secretLog.slice(0,8).map(l=>`<div>${l}</div>`).join('');
- document.getElementById('adminOverview').innerHTML=`${adminMsg}<br><br>📊 Proven data insights:<br>• Avg TUSK: ${avgAll} KES (real calc)<br>• MFPI: ${mfpi===null?'—':mfpi.toFixed(2)}<br>• Top market: ${locs[0]}<br>• Formulas: Bayes+TF-IDF+k-means+exp decay+gravity+trust<br>• Dots running = TUSK running background<br>• Site overview: ${total} posts healthy`;
+ document.getElementById('adminOverview').innerHTML=adminMsg;
  document.getElementById('blockedSignals').innerHTML=blockedMsg;
  document.getElementById('adminSignals').innerHTML=`● Live data • ${total} listings • ${blocked} blocked`;
 
