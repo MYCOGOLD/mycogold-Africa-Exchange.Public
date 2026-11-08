@@ -7,7 +7,7 @@ export default async function handler(req) {
 
   const headers = { apikey: key, Authorization: `Bearer ${key}`, 'Content-Type': 'application/json' }
   if (req.method === 'GET') {
-    const response = await fetch(`${url}/rest/v1/live_prices?id=eq.1&select=id,price,updated_at&limit=1`, { headers })
+    const response = await fetch(`${url}/rest/v1/live_prices?id=eq.1&select=id,mfpi,updated_at&limit=1`, { headers })
     const body = await response.text()
     if (!response.ok) {
       console.error('[v0] MFPI read failed', response.status, body)
@@ -22,7 +22,7 @@ export default async function handler(req) {
     const response = await fetch(`${url}/rest/v1/live_prices?on_conflict=id`, {
       method: 'POST',
       headers: { ...headers, Prefer: 'resolution=merge-duplicates,return=minimal' },
-      body: JSON.stringify({ id: 1, price: Number(payload.price), updated_at: payload.updated_at || new Date().toISOString() }),
+      body: JSON.stringify({ id: 1, mfpi: Number(payload.price), updated_at: payload.updated_at || new Date().toISOString() }),
     })
     if (!response.ok) {
       const body = await response.text()
