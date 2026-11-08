@@ -1,9 +1,9 @@
-const json = (body, status = 200) => ({ status, headers: { 'content-type': 'application/json' }, body: JSON.stringify(body) })
+const send = (res, body, status = 200) => { res.status(status).setHeader('content-type', 'application/json').send(JSON.stringify(body)) }
 
-export default async function handler(req) {
+export default async function handler(req, res) {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL
   const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
-  if (!url || !key) return json({ error: 'Supabase configuration unavailable' }, 503)
+  if (!url || !key) return send(res, { error: 'Supabase configuration unavailable' }, 503)
 
   const headers = { apikey: key, Authorization: `Bearer ${key}`, 'Content-Type': 'application/json' }
   if (req.method === 'GET') {
@@ -11,10 +11,10 @@ export default async function handler(req) {
     const body = await response.text()
     if (!response.ok) {
       console.error('[v0] MFPI read failed', response.status, body)
-      return json({ error: 'MFPI read failed' }, 502)
+      return send(res, { error: 'MFPI read failed' }, 502)
     }
     const rows = JSON.parse(body)
-    return json(rows[0] || null)
+    return send(res, rows[0] || null)
   }
 
   if (req.method === 'POST') {
@@ -27,10 +27,10 @@ export default async function handler(req) {
     if (!response.ok) {
       const body = await response.text()
       console.error('[v0] MFPI write failed', response.status, body)
-      return json({ error: 'MFPI write failed' }, 502)
+      return send(res, { error: 'MFPI write failed' }, 502)
     }
-    return json({ ok: true })
+    return send(res, { ok: true })
   }
 
-  return json({ error: 'Method not allowed' }, 405)
+  return send(res, { error: 'Method not allowed' }, 405)
 }
