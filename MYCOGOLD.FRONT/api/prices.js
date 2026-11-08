@@ -21,10 +21,16 @@ export default async function handler(req, res) {
       const trades = tradeRows.filter(row => recent(row) && (row.product === product || row.category === product)).map(row => numeric(row.trade_price ?? row.price)).filter(value => value !== null)
       const listingMedian = median(listings)
       const tradeMedian = median(trades)
-      const live = tradeMedian !== null ? (listingMedian !== null ? 0.7 * tradeMedian + 0.3 * listingMedian : tradeMedian) : listingMedian
-      return { product, live: live === null ? null : Math.round(live * 100) / 100, tradeCount: trades.length, listingCount: listings.length, updatedAt: new Date().toISOString() }
+      const live = tradeMedian !== null ? tradeMedian : listingMedian
+      const reference = referenceRows.find(row => row.product === product || row.category === product)
+      const wholesale = numeric(reference?.wholesale_price)
+      const retail = numeric(reference?.retail_price)
+      const baseline = wholesale !== null && retail !== null ? (wholesale + retail) / 2 : null
+      const outlier = live !== null && baseline !== null && (live > baseline * 1.4 || live < baseline * 0.6)
+      return { product, live: live === null || outlier ? null : Math.round(live * 100) / 100, outlier, tradeCount: trades.length, listingCount: listings.length, updatedAt: new Date().toISOString() }
     })
-    return send(res, { source: 'Supabase', prices, references: referenceRows, formula: '0.7 median trades + 0.3 median listings; listings only when no trades', counts: { trades: tradeRows.filter(recent).length, listings: listingRows.filter(recent).length } })
+    const locations = [...new Set(listingRows.filter(recent).map(row => row.location).filter(Boolean))].map(location => { const values = listingRows.filter(row => recent(row) && row.location === location).map(row => numeric(row.price)).filter(value => value !== null); const live = median(values); return { location, live: live === null ? null : Math.round(live * 100) / 100, listingCount: values.length, updatedAt: new Date().toISOString() } })
+    return send(res, { source: 'Supabase', prices, references: referenceRows, locations, formula: 'median trade_price when trades exist; otherwise median listing price; outliers beyond 40% of baseline are excluded', counts: { trades: tradeRows.filter(recent).length, listings: listingRows.filter(recent).length } })
   } catch (error) {
     console.error('[v0] price engine failed', error)
     return send(res, { source: 'Supabase', prices: [], references: [], error: 'Real price data unavailable' }, 200)
