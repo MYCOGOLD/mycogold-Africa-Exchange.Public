@@ -56,6 +56,7 @@ The live Supabase project `mycogoldafrica` was inspected on 2026-11-09. The foll
 - `20261109071829_require_manual_verification_for_active_listings.sql`
 - `20261109071933_add_atomic_listing_moderation_audit.sql`
 - `20261109072511_index_listing_moderation_actor.sql`
+- `20261109072740_invalidate_listing_verification_on_phone_change.sql`
 
 The migrations:
 
@@ -119,6 +120,7 @@ The following database checks were executed in temporary transactions and rolled
 - A listing insert with a seller-owned but nonexistent storage object was rejected by the database photo-integrity trigger.
 - Permission checks confirm browser roles cannot set listing status, `seller_verified_at`, or `moderated_at`; a database constraint requires `seller_verified_at` for every active listing.
 - A rollback-based test confirmed approval is rejected without explicit seller-contact confirmation and that an approved listing receives verification timestamps plus a private moderation audit event.
+- A rollback-based test confirmed changing a seller's profile phone automatically returns their active listings to pending and clears the previous manual verification timestamp.
 - A seller could not delete a storage object while a listing referenced it; the image remained present after the blocked delete.
 - Permission checks confirmed browser roles cannot change order price/total/status on insert, listing moderation status, profile balance, or trade rows.
 
