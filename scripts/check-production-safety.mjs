@@ -12,8 +12,7 @@ function walk(directory) {
   return readdirSync(join(root, directory)).flatMap((name) => {
     const path = join(directory, name)
     const stat = statSync(join(root, path))
-    if (stat.isDirectory()) return walk(path)
-    return [path]
+    return stat.isDirectory() ? walk(path) : [path]
   })
 }
 
@@ -36,28 +35,45 @@ check(!/\.from\(['"]trades['"]\)\s*\.\s*(insert|update|delete)/i.test(appSource)
   'Browser code must not insert, update or delete legacy trades.')
 check(/\.from\(['"]orders['"]\)\s*\.\s*insert\(/i.test(tradeConfirm),
   'Trade UI must create an order request, not a fake trade.')
-check(/No payment has been taken|does not reserve payment/i.test(tradeConfirm),
+check(/does not reserve payment|No payment has been taken/i.test(tradeConfirm),
   'Order UI must clearly state that no payment is taken.')
 check(/buyer_id|seller_id/.test(orderPanel) && /accepted|rejected|cancelled/.test(orderPanel),
   'Buyer/seller order request lifecycle UI is missing.')
 check(/auth\.getUser\(token\)/.test(uploadRoute) && /detectImage/.test(uploadRoute),
   'Image upload API must verify the user and inspect image bytes.')
-check(/MAX_IMAGE_BYTES/.test(uploadRoute) && /upsert:\s*false/.test(uploadRoute),
-  'Image upload API must enforce a size limit and non-overwriting object creation.')
+check(uploadRoute.includes('const MAX_IMAGE_BYTES = 4 * 1024 * 1024')
+  && /consume_listing_upload_limit/.test(uploadRoute)
+  && /upsert:\s*false/.test(uploadRoute),
+  'Image upload API must enforce the 4 MB limit, rate limit and non-overwriting object creation.')
 check(/auth\.getUser\(token\)/.test(staffRoute) && /app_metadata/.test(staffRoute),
   'Staff API must verify the JWT and trusted staff role.')
-check(/from \'..\\/lib\\/supabase\'/.test(staffPanel),\n  'Staff panel must use the same authenticated Supabase client as the profile page.')\ncheck(/verify_listing_photo_object/.test(photoIntegrityMigration) && /storage\\.objects/.test(photoIntegrityMigration),\n  'Database must verify that listing photos exist in the seller-owned storage folder.')\ncheck(/SUPABASE_SERVICE_ROLE_KEY/.test(staffRoute) && !/NEXT_PUBLIC_SUPABASE_SERVICE_ROLE_KEY/.test(appSource),
+check(staffPanel.includes("import { createClient } from '../lib/supabase'"),
+  'Staff panel must use the same authenticated Supabase client as the profile page.')
+check(/verify_listing_photo_object/.test(photoIntegrityMigration)
+  && /storage\.objects/.test(photoIntegrityMigration),
+  'Database must verify that listing photos exist in the seller-owned storage folder.')
+check(/SUPABASE_SERVICE_ROLE_KEY/.test(staffRoute)
+  && !/NEXT_PUBLIC_SUPABASE_SERVICE_ROLE_KEY/.test(appSource),
   'Privileged Supabase keys must remain server-side.')
 check(/No live exchange connection|DEMO DATA/.test(staticDemo),
   'Static GitHub Pages page must remain labelled as demo-only.')
-check(/MFPI DEMO/.test(staticDemo) && !/TUSK AI RUNNING/.test(staticDemo),
+check(/MFPI DEMO/.test(staticDemo) && !/TUSK AI RUNNING/i.test(staticDemo),
   'Static demo must not claim live AI or live index data.')
 check(/node_modules\//.test(ignore) && /\.env\.\*/.test(ignore),
   'Git ignore must exclude dependencies and local environment files.')
 check(/SUPABASE_SERVICE_ROLE_KEY=/.test(envExample) && /SUPABASE_SECRET_KEY=/.test(envExample),
   'Environment template must document server-only Supabase key options.')
-check(!/\b(latest|\*|\^|~)\b/.test(JSON.stringify(packageJson.dependencies || {})),
-  'Direct dependencies must be pinned to exact versions.')
+
+const directDependencies = {
+  ...(packageJson.dependencies || {}),
+  ...(packageJson.devDependencies || {}),
+}
+for (const [name, version] of Object.entries(directDependencies)) {
+  check(typeof version === 'string' && !/^(latest|\*|\^|~)/.test(version),
+    `Dependency ${name} must use an exact pinned version.`)
+  check(lock.packages['node_modules/' + name]?.version === version,
+    `Lockfile version for ${name} must match package.json.`)
+}
 check(lock.lockfileVersion >= 3, 'A modern npm lockfile must be committed.')
 
 if (failures.length) {
