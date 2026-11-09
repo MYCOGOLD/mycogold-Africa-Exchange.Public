@@ -1,3 +1,31 @@
 import type { Listing } from './supabase'
-import { validatePriceFloor } from './priceRules'
-export function verifyListing(listing: Partial<Listing> & { photo_url?: string | null }) { const price=Number(listing.price||0); const floor=validatePriceFloor(price,'KES'); if(!floor.ok)return {verified:false,reason:floor.message,network_stamp:null}; const kg=Number(listing.quantity||0); const photo=Boolean(listing.photo_url); const location=Boolean(listing.location?.trim()); const priceInRange=price>0; if(!photo)return {verified:false,reason:'Photo required for verification.',network_stamp:null}; if(!(price>0&&kg>0))return {verified:false,reason:'Price and quantity must be greater than zero.',network_stamp:null}; if(!priceInRange)return {verified:false,reason:'TUSK flagged price outside ±50% of weighted average.',network_stamp:null}; if(!location)return {verified:false,reason:'Location must be a verified hub.',network_stamp:null}; const raw=`${listing.photo_url}|${price}|${kg}|${listing.created_at||new Date().toISOString()}|${listing.seller_id||''}`;let hash='';for(let index=0;index<raw.length;index+=1)hash+=raw.charCodeAt(index).toString(16);return {verified:true,reason:null,network_stamp:`${hash.slice(0,12)} • ${listing.location} Hub • Verified`}}
+
+/**
+ * Client-side completeness checks are not seller, photo, location, or quality
+ * verification. This helper deliberately never emits verified=true or a
+ * verification stamp. A future verification service must validate originals,
+ * provenance, and hub data server-side.
+ */
+export function verifyListing(
+  listing: Partial<Listing> & { photo_url?: string | null },
+) {
+  const price = Number(listing.price)
+  const quantity = Number(listing.quantity)
+  if (!Number.isFinite(price) || price <= 0) {
+    return { verified: false, reason: 'Enter a valid positive price.', network_stamp: null }
+  }
+  if (!Number.isFinite(quantity) || quantity <= 0) {
+    return { verified: false, reason: 'Enter a valid positive quantity.', network_stamp: null }
+  }
+  if (!listing.photo_url) {
+    return { verified: false, reason: 'A listing photo is required.', network_stamp: null }
+  }
+  if (!listing.location?.trim()) {
+    return { verified: false, reason: 'A location is required.', network_stamp: null }
+  }
+  return {
+    verified: false,
+    reason: 'Basic listing details received. Independent photo, seller, location, and quality verification is not available yet.',
+    network_stamp: null,
+  }
+}
