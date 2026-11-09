@@ -44,21 +44,19 @@ export async function GET(request: NextRequest) {
     const admin = createClient(url, serviceKey, {
       auth: { autoRefreshToken: false, persistSession: false, detectSessionInUrl: false },
     })
-    const [listingsResult, tradesResult, priceResult] = await Promise.all([
+    const [listingsResult, tradesResult] = await Promise.all([
       admin.from('listings').select('*').order('created_at', { ascending: false }).limit(100),
       admin.from('trades').select('*').order('created_at', { ascending: false }).limit(100),
-      admin.from('live_prices').select('*').order('tick', { ascending: false }).limit(1).maybeSingle(),
     ])
 
-    if (listingsResult.error || tradesResult.error || priceResult.error) {
-      console.error('Staff workspace data fetch failed:', listingsResult.error || tradesResult.error || priceResult.error)
+    if (listingsResult.error || tradesResult.error) {
+      console.error('Staff workspace data fetch failed:', listingsResult.error || tradesResult.error)
       return response({ error: 'Could not load staff workspace data.' }, 500)
     }
 
     return response({
       listings: listingsResult.data || [],
       trades: tradesResult.data || [],
-      livePrice: priceResult.data || null,
     })
   } catch (error) {
     console.error('Staff workspace request failed:', error)
