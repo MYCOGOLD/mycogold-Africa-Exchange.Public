@@ -12,7 +12,7 @@ select
 from pg_class c
 join pg_namespace n on n.oid = c.relnamespace
 where n.nspname = 'public'
-  and c.relname in ('profiles', 'listings', 'trades', 'orders', 'live_prices', 'test_users')
+  and c.relname in ('profiles', 'listings', 'trades', 'orders', 'live_prices', 'test_users', 'api_rate_limits')
 order by c.relname;
 
 -- 2. List every policy on those tables, including command, roles, USING and WITH CHECK.
@@ -27,7 +27,7 @@ select
   with_check
 from pg_policies
 where schemaname = 'public'
-  and tablename in ('profiles', 'listings', 'trades', 'orders', 'live_prices', 'test_users')
+  and tablename in ('profiles', 'listings', 'trades', 'orders', 'live_prices', 'test_users', 'api_rate_limits')
 order by tablename, policyname;
 
 -- 3. Inspect actual columns and nullability before writing policies or migrations.
@@ -41,7 +41,7 @@ select
   column_default
 from information_schema.columns
 where table_schema = 'public'
-  and table_name in ('profiles', 'listings', 'trades', 'orders', 'live_prices', 'test_users')
+  and table_name in ('profiles', 'listings', 'trades', 'orders', 'live_prices', 'test_users', 'api_rate_limits')
 order by table_name, ordinal_position;
 
 -- 4. Inspect primary keys, foreign keys, unique constraints and check constraints.
@@ -65,7 +65,7 @@ left join information_schema.check_constraints cc
   on tc.constraint_schema = cc.constraint_schema
  and tc.constraint_name = cc.constraint_name
 where tc.constraint_schema = 'public'
-  and tc.table_name in ('profiles', 'listings', 'trades', 'orders', 'live_prices', 'test_users')
+  and tc.table_name in ('profiles', 'listings', 'trades', 'orders', 'live_prices', 'test_users', 'api_rate_limits')
 order by tc.table_name, tc.constraint_type, tc.constraint_name;
 
 -- 5. Review effective table grants for API roles.
@@ -76,7 +76,7 @@ select
   is_grantable
 from information_schema.role_table_grants
 where table_schema = 'public'
-  and table_name in ('profiles', 'listings', 'trades', 'orders', 'live_prices', 'test_users')
+  and table_name in ('profiles', 'listings', 'trades', 'orders', 'live_prices', 'test_users', 'api_rate_limits')
   and grantee in ('anon', 'authenticated', 'service_role')
 order by table_name, grantee, privilege_type;
 
