@@ -20,6 +20,8 @@ const appFiles = [...walk('app'), ...walk('components'), ...walk('lib')]
   .filter((path) => /\.(ts|tsx|js|jsx)$/.test(path))
 const appSource = appFiles.map(read).join('\n')
 const tradeConfirm = read('components/TradeConfirm.tsx')
+const authModal = read('components/auth-modal.tsx')
+const supabaseClient = read('lib/supabase.ts')
 const orderPanel = read('components/OrdersPanel.tsx')
 const uploadRoute = read('app/api/listings/photo/route.ts')
 const staffRoute = read('app/api/staff/listings/route.ts')
@@ -52,7 +54,7 @@ check(/auth\.getUser\(token\)/.test(staffRoute) && /app_metadata/.test(staffRout
   && /sellerContactConfirmed/.test(staffRoute) && /moderate_listing/.test(staffRoute)
   && /seller_verified_at/.test(moderationMigration),
   'Staff API must verify the JWT and trusted staff role.')
-check(staffPanel.includes("import { createClient } from '../lib/supabase'"),
+check(/type="email"/.test(authModal) && /emailRedirectTo/.test(authModal),\n  'New accounts must use a real email for confirmation and recovery.')\ncheck(/@supabase\/ssr/.test(supabaseClient),\n  'Browser Supabase auth must share SSR cookie sessions.')\ncheck(staffPanel.includes("import { createClient } from '../lib/supabase'"),
   'Staff panel must use the same authenticated Supabase client as the profile page.')
 check(/verify_listing_photo_object/.test(photoIntegrityMigration)
   && /storage\.objects/.test(photoIntegrityMigration),
