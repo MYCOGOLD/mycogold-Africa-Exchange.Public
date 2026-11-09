@@ -124,7 +124,7 @@ export function AddProduceModal({
           location,
           price: numericPrice,
           quantity: numericQuantity,
-          photo_url: uploadResult.publicUrl,
+          photo_path: uploadResult.path,
         })
         .select()
         .single()
