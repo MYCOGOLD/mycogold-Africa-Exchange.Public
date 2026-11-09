@@ -31,6 +31,11 @@ The live Supabase project `mycogoldafrica` was inspected on 2026-11-09. The foll
 - `20261109061428_secure_listing_moderation_and_photo_storage.sql`
 - `20261109061503_disable_client_side_trade_writes.sql`
 - `20261109062352_protect_listing_identity_and_photo_paths.sql`
+- `20261109062700_add_safe_order_request_workflow.sql`
+- `20261109062830_serialize_order_quantity_reservations.sql`
+- `20261109062910_secure_global_order_reservation_count.sql`
+- `20261109063000_prevent_listing_quantity_oversell.sql`
+- `20261109063040_consolidate_order_update_policy.sql`
 
 The migrations:
 
@@ -39,6 +44,7 @@ The migrations:
 - Keep public reads for active listings and live market prices.
 - Restrict listing creation to the authenticated seller and listing changes/deletion to the owner or trusted `app_metadata.role` staff/admin.
 - Restrict trade reads to the owner or trusted staff/admin; browser users cannot create, update, or delete trade rows.
+- Add an `orders` request workflow: authenticated buyers can request quantities from active listings; the database derives buyer, seller, unit price and total from trusted context; order terms are immutable; only the buyer can cancel a request and only the seller can accept/reject it. Pending/accepted quantities are reserved under a listing-row lock to prevent overselling.
 - Put new listings into `pending` review state by default. Only the server-side staff moderation route can approve or deactivate them; listing owners cannot write the moderation status.
 - Derive the public seller label from the authenticated seller's profile rather than trusting browser input; restrict photo URLs to that seller's own folder in the public `produce-listings` bucket.
 - Add the public `produce-listings` image bucket (JPEG/PNG/WebP, max 5 MB) with authenticated uploads constrained to each user's own UUID folder.
@@ -67,16 +73,16 @@ The synthetic price emitter and escrow prototype are disabled as described below
 
 ## Exchange settlement and synthetic price feed
 
-The browser-only trade confirmation flow has been disabled and browser roles can no longer insert/update/delete trade rows. MFPI display now reads the live `live_prices` row; the browser's localStorage is not treated as a trade ledger. The legacy `MYCOGOLD_ESCROW.PVT` script has been converted to a fail-closed safety stub: mock STK identifiers and unverified payout/release are disabled. The minute-based synthetic price emitter has also been disabled because it generated pseudo-random prices rather than verified market observations.
+The browser-only trade confirmation flow has been replaced by a non-payment order-request workflow. Browser roles cannot create/update/delete `trades` rows. Buyers can request a quantity; sellers can accept/reject; buyers can cancel. The database derives price and parties and prevents concurrent over-reservation. An accepted request is not a completed sale, payment, escrow, or settlement. MFPI display now reads the live `live_prices` row; the browser's localStorage is not treated as a trade ledger. The legacy `MYCOGOLD_ESCROW.PVT` script has been converted to a fail-closed safety stub: mock STK identifiers and unverified payout/release are disabled. The minute-based synthetic price emitter has also been disabled because it generated pseudo-random prices rather than verified market observations.
 
-The new `/api/staff/listings` route performs staff verification server-side before using a privileged Supabase key. Configure `SUPABASE_SERVICE_ROLE_KEY` or `SUPABASE_SECRET_KEY` only as a server-side deployment secret. Do not expose it through `NEXT_PUBLIC_` variables.
+The `OrdersPanel` in user profiles shows each user's buyer/seller order requests. The new `/api/staff/listings` route performs staff verification server-side before using a privileged Supabase key. Configure `SUPABASE_SERVICE_ROLE_KEY` or `SUPABASE_SECRET_KEY` only as a server-side deployment secret. Do not expose it through `NEXT_PUBLIC_` variables.
 
 ## Verification still required
 
 - Test anon, ordinary authenticated, owner, staff/admin, and service-role behavior against non-production test accounts.
 - Confirm staff users have trusted `app_metadata.role` or are configured in the server-only `STAFF_USER_IDS` variable. The database staff policies use `app_metadata.role`.
 - Verify the live frontend deployment uses the intended Supabase project and environment variables.
-- Check all app pages and flows that create listings/trades; the database intentionally no longer permits browser-side profile balance changes or any browser-side trade writes. The UI now blocks fake client-only trade confirmations until a server-authoritative order workflow exists.
+- Test order requests with separate buyer and seller accounts, including concurrent requests, over-quantity requests, self-purchases, seller acceptance/rejection, buyer cancellation, and attempts to change immutable price/party fields. The UI's order request is not a payment or completed sale.
 - Do not treat a browser/localStorage confirmation as a settled trade or wallet balance.
 - Do not accept live escrow funds until server-authoritative order state, authenticated and idempotent Daraja callbacks, real B2C payout verification, reconciliation, and audit logs are implemented.
 
