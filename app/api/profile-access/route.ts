@@ -1,3 +1,66 @@
 import { NextRequest, NextResponse } from 'next/server'
-function normalize(value:string){const digits=value.replace(/\D/g,'');if(digits.startsWith('254'))return `+${digits}`;if(digits.startsWith('0'))return `+254${digits.slice(1)}`;if(digits.startsWith('7'))return `+254${digits}`;return digits?`+${digits}`:''}
-export async function GET(request:NextRequest){const authorization=request.headers.get('authorization');if(!authorization?.startsWith('Bearer '))return NextResponse.json({isStaff:false},{status:401});try{const userResponse=await fetch(`${process.env.NEXT_PUBLIC_SUPABASE_URL}/auth/v1/user`,{headers:{apikey:process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,Authorization:authorization},cache:'no-store'});if(!userResponse.ok)return NextResponse.json({isStaff:false},{status:401});const user=await userResponse.json();const allowlist=(process.env.STAFF_PHONES||'').split(',').map(normalize).filter(Boolean);const phone=normalize(user.phone||user.user_metadata?.phone||'');const emailDigits=String(user.email||'').split('@')[0];const isStaff=allowlist.includes(phone)||allowlist.some(value=>value.replace(/\D/g,'')===emailDigits);return NextResponse.json({isStaff},{headers:{'Cache-Control':'private, no-store'}})}catch{return NextResponse.json({isStaff:false},{status:500})}}
+import { createClient } from '@supabase/supabase-js'
+
+export const dynamic = 'force-dynamic'
+export const runtime = 'nodejs'
+
+function jsonResponse(body: { isStaff: boolean }, status = 200) {
+  return NextResponse.json(body, {
+    status,
+    headers: {
+      'Cache-Control': 'private, no-store, max-age=0',
+      Vary: 'Authorization',
+    },
+  })
+}
+
+export async function GET(request: NextRequest) {
+  const authorization = request.headers.get('authorization')
+  const token = authorization?.match(/^Bearer\s+(.+)$/i)?.[1]
+
+  if (!token) return jsonResponse({ isStaff: false }, 401)
+
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
+  const anonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+
+  if (!supabaseUrl || !anonKey) {
+    console.error('Profile access check is missing Supabase server configuration.')
+    return jsonResponse({ isStaff: false }, 503)
+  }
+
+  try {
+    // getUser(token) verifies the JWT with Supabase Auth. Never trust user_metadata
+    // or a phone number supplied by the browser for staff authorization.
+    const supabase = createClient(supabaseUrl, anonKey, {
+      auth: {
+        autoRefreshToken: false,
+        persistSession: false,
+        detectSessionInUrl: false,
+      },
+    })
+
+    const { data, error } = await supabase.auth.getUser(token)
+
+    if (error || !data.user) return jsonResponse({ isStaff: false }, 401)
+
+    const staffIds = new Set(
+      (process.env.STAFF_USER_IDS || '')
+        .split(',')
+        .map((value) => value.trim().toLowerCase())
+        .filter(Boolean),
+    )
+
+    // app_metadata is managed by trusted server/admin operations; unlike
+    // user_metadata, a normal user cannot edit it from the client.
+    const trustedRole = String(data.user.app_metadata?.role || '').toLowerCase()
+    const isStaff =
+      staffIds.has(data.user.id.toLowerCase()) ||
+      trustedRole === 'staff' ||
+      trustedRole === 'admin'
+
+    return jsonResponse({ isStaff })
+  } catch (error) {
+    console.error('Profile access verification failed:', error)
+    return jsonResponse({ isStaff: false }, 503)
+  }
+}
