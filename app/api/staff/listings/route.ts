@@ -12,7 +12,7 @@ const response = (body: Record<string, unknown>, status = 200) =>
 
 
 export async function GET(request: NextRequest) {
-  const token = request.headers.get('authorization')?.match(/^Bearer\\s+(.+)$/i)?.[1]
+  const token = request.headers.get('authorization')?.match(/^Bearer\s+(.+)$/i)?.[1]
   if (!token) return response({ error: 'Authentication required.' }, 401)
 
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL
