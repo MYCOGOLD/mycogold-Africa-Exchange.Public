@@ -41,6 +41,7 @@ The live Supabase project `mycogoldafrica` was inspected on 2026-11-09. The foll
 - `20261109064100_disable_unverified_market_price_feed_access.sql`
 - `20261109064200_revoke_public_storage_insert_privileges_cascade.sql`
 - `20261109064300_add_explicit_deny_policies_for_legacy_tables.sql`
+- `20261109064300_add_explicit_deny_policies_for_legacy_tables.sql`
 
 The migrations:
 
