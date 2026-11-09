@@ -41,7 +41,7 @@ The migrations:
 - Put new listings into `pending` review state by default. Only the server-side staff moderation route can approve or deactivate them; listing owners cannot write the moderation status.
 - Add the public `produce-listings` image bucket (JPEG/PNG/WebP, max 5 MB) with authenticated uploads constrained to each user's own UUID folder.
 - Remove anonymous/authenticated table-wide write privileges and disable API access to the legacy `test_users` table.
-- Harden the `handle_new_user` SECURITY DEFINER helper, set an empty search path, align it with the live `profiles(id, phone, name)` columns, and revoke direct execution from API roles. (No auth trigger was present during the audit.)
+- Harden the `handle_new_user` SECURITY DEFINER helper, set an empty search path, align it with the live `profiles(id, phone, name)` columns, and revoke direct execution from API roles. (The `auth.users` AFTER INSERT trigger `on_auth_user_created` is attached to this function.)
 - Add the `listings.status` field/check constraint and seller index.
 
 All five public tables retain RLS. The `test_users` table intentionally has no API policies or anon/authenticated grants because it is a legacy test table. Do not re-enable access without a specific use case and tests.
