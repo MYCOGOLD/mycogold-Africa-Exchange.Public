@@ -90,6 +90,10 @@ https://supabase.com/docs/guides/auth/password-security#password-strength-and-le
 
 The performance advisor currently marks indexes unused because there is almost no marketplace traffic. Keep the buyer/seller and foreign-key indexes and re-check after real usage.
 
+## Application HTTP security headers
+
+The Next.js application now sends `X-Content-Type-Options: nosniff`, `X-Frame-Options: DENY`, `Referrer-Policy: strict-origin-when-cross-origin`, a restrictive `Permissions-Policy`, and HSTS (`max-age=31536000; includeSubDomains`). It disables the `X-Powered-By` header. A strict Content Security Policy has not been added yet because the app's current script/style requirements need to be inventoried and tested before enforcing one.
+
 ## Public static demo and exchange settlement
 
 The root GitHub Pages `index.html` is an interactive prototype that generates illustrative sample listings and prices in the browser. It is not connected to the Supabase exchange database, and its numbers must not be represented as live market quotes, verified listings, completed trades, or real earnings. The page has been labelled as demo-only and its fixed 1100px mobile layout has been removed. Use the authenticated application/API and database for persisted exchange data.
