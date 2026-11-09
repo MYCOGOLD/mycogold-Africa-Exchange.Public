@@ -38,12 +38,13 @@ The live Supabase project `mycogoldafrica` was inspected on 2026-11-09. The foll
 - `20261109063040_consolidate_order_update_policy.sql`
 - `20261109063800_require_server_validated_listing_image_uploads.sql`
 - `20261109063900_revoke_direct_storage_insert_grants.sql`
+- `20261109064100_disable_unverified_market_price_feed_access.sql`
 
 The migrations:
 
 - Remove the broad `profiles.open` policy and restrict profile reads/inserts/updates to the authenticated owner.
 - Restrict profile column writes to `id`, `phone`, and `name`; wallet `balance` is not writable by browser roles and now defaults to zero.
-- Keep public reads for active listings and live market prices.
+- Keep public reads for active listings. The legacy `live_prices` table is now private until a verified market-data source and provenance checks exist.
 - Restrict listing creation to the authenticated seller and listing changes/deletion to the owner or trusted `app_metadata.role` staff/admin.
 - Restrict trade reads to the owner or trusted staff/admin; browser users cannot create, update, or delete trade rows.
 - Add an `orders` request workflow: authenticated buyers can request quantities from active listings; the database derives buyer, seller, unit price and total from trusted context; order terms are immutable; only the buyer can cancel a request and only the seller can accept/reject it. Pending/accepted quantities are reserved under a listing-row lock to prevent overselling.
@@ -74,6 +75,8 @@ The root GitHub Pages `index.html` is an interactive prototype that generates il
 The synthetic price emitter and escrow prototype are disabled as described below.
 
 ## Exchange settlement and synthetic price feed
+
+The legacy `live_prices` table contained a synthetic sample index and hub values. That row was removed, public reads were revoked, and the frontend no longer consumes the table. Do not republish a market index until its source, timestamp, units, and audit trail are verified.
 
 The browser-only trade confirmation flow has been replaced by a non-payment order-request workflow. Browser roles cannot create/update/delete `trades` rows. Buyers can request a quantity; sellers can accept/reject; buyers can cancel. The database derives price and parties and prevents concurrent over-reservation. An accepted request is not a completed sale, payment, escrow, or settlement. MFPI display now reads the live `live_prices` row; the browser's localStorage is not treated as a trade ledger. The legacy `MYCOGOLD_ESCROW.PVT` script has been converted to a fail-closed safety stub: mock STK identifiers and unverified payout/release are disabled. The minute-based synthetic price emitter has also been disabled because it generated pseudo-random prices rather than verified market observations.
 
