@@ -1,5 +1,28 @@
 'use client'
-import { useState } from 'react'
-import { Check, ShieldCheck } from 'lucide-react'
+
+import { ShieldCheck } from 'lucide-react'
 import { validatePriceFloor } from '../lib/priceRules'
-export function TradeConfirm({listingId,price,kg,onConfirmed}:{listingId:string;price:number;kg:number;onConfirmed:(trade:{id:string;listingId:string;price:number;kg:number;confirmed_at:string})=>void}){const [sellerConfirmed,setSellerConfirmed]=useState(false);const [buyerConfirmed,setBuyerConfirmed]=useState(false);const [pending,setPending]=useState(false);const tradeId=`trade-${listingId}`;const floor=validatePriceFloor(price,'KES');if(!floor.ok)return <div className="mt-4 rounded-xl border border-[#ff7777]/30 bg-[#ff7777]/10 p-3 text-sm text-[#ff7777]">Below $3 floor - blocked</div>;const confirm=async(kind:'seller'|'buyer')=>{const nextSeller=kind==='seller'||sellerConfirmed;const nextBuyer=kind==='buyer'||buyerConfirmed;if(kind==='seller')setSellerConfirmed(true);else setBuyerConfirmed(true);if(nextSeller&&nextBuyer){setPending(true);const confirmed_at=new Date().toISOString();onConfirmed({id:tradeId,listingId,price,kg,confirmed_at});setPending(false)}};if(!floor.ok)return <div className="mt-4 rounded-xl border border-[#ff7777]/30 bg-[#ff7777]/10 p-3 text-sm text-[#ff7777]">Below $3 floor - blocked</div>;return <div className="mt-4 rounded-xl border border-[#ffd60a]/20 bg-[#ffd60a]/5 p-3"><div className="flex items-center gap-2 text-xs gold"><ShieldCheck size={14}/> Core confirmation</div><div className="mt-3 grid grid-cols-2 gap-2"><button className={`min-h-10 rounded-xl text-xs ${sellerConfirmed?'bg-[#68ff91]/20 text-[#68ff91]':'ghost-btn'}`} onClick={()=>confirm('seller')}><Check size={13} className="mr-1 inline"/>Seller confirms sale</button><button className={`min-h-10 rounded-xl text-xs ${buyerConfirmed?'bg-[#68ff91]/20 text-[#68ff91]':'ghost-btn'}`} onClick={()=>confirm('buyer')}><Check size={13} className="mr-1 inline"/>Buyer confirms receipt</button></div><p className="mt-2 text-xs muted">{pending?'Core confirming…':sellerConfirmed&&buyerConfirmed?'Core status: confirmed':'Core status: pending_trade'}</p></div>}
+
+export function TradeConfirm({ price }: { listingId: string; price: number; kg: number; onConfirmed: (trade: { id: string; listingId: string; price: number; kg: number; confirmed_at: string }) => void }) {
+  const floor = validatePriceFloor(price, 'KES')
+
+  if (!floor.ok) {
+    return (
+      <div className="mt-4 rounded-xl border border-[#ff7777]/30 bg-[#ff7777]/10 p-3 text-sm text-[#ff7777]">
+        This price does not meet the configured minimum.
+      </div>
+    )
+  }
+
+  return (
+    <div className="mt-4 rounded-xl border border-[#ffd60a]/20 bg-[#ffd60a]/5 p-3">
+      <div className="flex items-center gap-2 text-xs gold">
+        <ShieldCheck size={14} /> Trade confirmation temporarily unavailable
+      </div>
+      <p className="mt-2 text-xs muted">
+        Secure buyer/seller verification and server-side order records are being implemented.
+        No trade, wallet balance, or escrow payment is changed by this screen.
+      </p>
+    </div>
+  )
+}
