@@ -115,6 +115,7 @@ The following database checks were executed in temporary transactions and rolled
 - An authenticated direct insert into the produce image bucket was denied by Storage RLS.
 - The database-backed sliding-window upload limiter allowed the first 10 requests in a test window and blocked the 11th; API roles cannot execute the limiter or read its event table.
 - A listing insert with a seller-owned but nonexistent storage object was rejected by the database photo-integrity trigger.
+- Permission checks confirm browser roles cannot set listing status, `seller_verified_at`, or `moderated_at`; a database constraint requires `seller_verified_at` for every active listing.
 - A seller could not delete a storage object while a listing referenced it; the image remained present after the blocked delete.
 - Permission checks confirmed browser roles cannot change order price/total/status on insert, listing moderation status, profile balance, or trade rows.
 
