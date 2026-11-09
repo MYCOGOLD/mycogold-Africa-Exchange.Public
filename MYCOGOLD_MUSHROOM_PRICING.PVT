@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 """
 
-MYCOGOLD_MUSHROOM_PRICING.PVT - BOUNDED PRICING ENGINE V3.2
-Mushroom = All Mushroom Index | floor 155-350 | bands 150-600 | TUSK light-speed
-Refined: executable, autonomous, measurable, CPRNG
+MYCOGOLD_MUSHROOM_PRICING.PVT - OFFLINE SYNTHETIC DEMO SIMULATOR V3.2
+Synthetic mushroom price simulation only. Not market data, not an exchange index, not connected to Supabase.
+Offline experimentation only. Do not publish generated values as market prices.
 
 """
 import time, hashlib, secrets, json, os, sys
@@ -20,7 +20,7 @@ COMMODITY_BOUNDS = {
     "BEEF": {"floor": 600.0, "mean": 700.0, "premium": 809.0, "volatility": 2.5, "target": 700.0},
     "ONIONS": {"floor": 60.0, "mean": 105.0, "premium": 160.0, "volatility": 0.9, "target": 105.0},
 }
-LIVE_STATE = {k: v["mean"] for k,v in COMMODITY_BOUNDS.items()}
+DEMO_STATE = {k: v["mean"] for k,v in COMMODITY_BOUNDS.items()}
 
 class TuskCPRNG:
     def __init__(self, seed="MYCOGOLD_MUSHROOM_INDEX_155_350_150_600_TUSK"):
@@ -32,7 +32,7 @@ cprng = TuskCPRNG()
 
 def calculate_next_tusk_tick(commodity, theta=0.15):
     b = COMMODITY_BOUNDS[commodity]
-    cur = LIVE_STATE[commodity]
+    cur = DEMO_STATE[commodity]
     floor, premium, vol, target = b["floor"], b["premium"], b["volatility"], b["target"]
     # FORMULA: P(t+1) = P(t) + theta*(target-P) + vol*CPRNG
     drift = theta * (target - cur)
@@ -41,12 +41,12 @@ def calculate_next_tusk_tick(commodity, theta=0.15):
     # BOLLINGER HARD COLLAR [floor,premium] = [150,600] for mushroom
     if new_price > premium: new_price = premium - abs(diffusion*0.5)
     if new_price < floor: new_price = floor + abs(diffusion*0.5)
-    LIVE_STATE[commodity] = round(new_price,2)
+    DEMO_STATE[commodity] = round(new_price,2)
     boll_pct = (new_price - floor)/(premium - floor)*100 if premium!=floor else 50
     is_sweet = 155 <= new_price <= 350 if "MUSHROOM" in commodity else True
     return {
         "commodity": commodity,
-        "spot": LIVE_STATE[commodity],
+        "spot": DEMO_STATE[commodity],
         "floor": floor,
         "sweet_floor": 155 if "MUSHROOM" in commodity else floor,
         "sweet_premium": 350 if "MUSHROOM" in commodity else premium,
@@ -55,33 +55,35 @@ def calculate_next_tusk_tick(commodity, theta=0.15):
         "sweet": is_sweet,
         "drift": round(drift,3),
         "diffusion": round(diffusion,3),
-        "formula": "P(t+1)=P(t)+0.15*(252.5-P)+vol*CPRNG [150,600] sweet [155,350]"
+        "formula": "Synthetic random-walk illustration only; not a market price formula",
+        "is_demo": True,
+        "source": "Synthetic random walk; no observed market transactions or price feed"
     }
 
-def live_loop():
+def demo_loop():
     print("==================================================================")
-    print(" MYCOGOLD MUSHROOM PRICING ENGINE - LIVE")
+    print(" MYCOGOLD MUSHROOM PRICE DEMO - SYNTHETIC DATA")
     print(" Mushroom Index: sweet [155-350] | bands [150-600] | TUSK light-speed")
     print(" Formula: P(t+1)=P(t)+theta*(252.5-P)+vol*CPRNG clamped")
     print("==================================================================")
     try:
         while True:
             os.system('clear')
-            print(f"\n[{datetime.now().strftime('%H:%M:%S')}] MFPI LIVE - Mushroom Index Bounded\n")
+            print(f"\n[{datetime.now().strftime('%H:%M:%S')}] MFPI DEMO - synthetic random-walk values only\n")
             for crop in ["MUSHROOM","MUSHROOM_BUTTON","MUSHROOM_OYSTER","ONIONS","POTATOES","BEEF"]:
                 d = calculate_next_tusk_tick(crop)
                 icon = "★" if d['sweet'] else " "
                 print(f" {icon} {d['commodity']:<18} {d['spot']:>7} KES | Band [{d['floor']:.0f}-{d['premium']:.0f}] Sweet [155-350] | Boll {d['boll_pct']:>5}% | {d['drift']:+.2f}/{d['diffusion']:+.2f}")
-                # write for frontend
+                # Save local demo output only; never write to the live exchange database.
                 os.makedirs("MYCOGOLD.FRONT", exist_ok=True)
-                with open("MYCOGOLD.FRONT/live_prices.json","w") as f:
-                    json.dump({"live": LIVE_STATE, "ts": time.time_ns(), "formula": d['formula'], "bounds": COMMODITY_BOUNDS}, f, indent=2)
-            print("\n Press Ctrl+C to stop | Light-speed TUSK CPRNG autonomous measurable")
+                with open("MYCOGOLD.FRONT/demo_price_simulation.json","w") as f:
+                    json.dump({"demo_values": DEMO_STATE, "ts": time.time_ns(), "formula": d['formula'], "bounds": COMMODITY_BOUNDS, "is_demo": True}, f, indent=2)
+            print("\n Press Ctrl+C to stop | Synthetic demonstration only — not a market feed")
             time.sleep(1)
     except KeyboardInterrupt:
-        print("\n[STOPPED] Engine halted - state saved")
-        with open("MYCOGOLD.FRONT/live_prices.json","w") as f:
-            json.dump({"live": LIVE_STATE, "bounds": COMMODITY_BOUNDS}, f, indent=2)
+        print("\n[STOPPED] Demo simulator halted - local sample state saved")
+        with open("MYCOGOLD.FRONT/demo_price_simulation.json","w") as f:
+            json.dump({"demo_values": DEMO_STATE, "bounds": COMMODITY_BOUNDS, "is_demo": True}, f, indent=2)
 
 if __name__ == "__main__":
     # Single tick demo if arg --once else live loop
@@ -89,4 +91,4 @@ if __name__ == "__main__":
         for c in COMMODITY_BOUNDS:
             print(calculate_next_tusk_tick(c))
     else:
-        live_loop()
+        demo_loop()
