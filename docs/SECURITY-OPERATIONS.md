@@ -57,6 +57,12 @@ https://supabase.com/docs/guides/auth/password-security#password-strength-and-le
 
 The advisor also reports an informational RLS-without-policy notice for `test_users`; this is intentional because public API access has been revoked. A performance advisor reports the new seller index as unused immediately after creation; re-check after marketplace traffic.
 
+## Exchange settlement and synthetic price feed
+
+The browser-only trade confirmation flow has been disabled and browser roles can no longer insert/update/delete trade rows. MFPI display now reads the live `live_prices` row; the browser's localStorage is not treated as a trade ledger. The legacy `MYCOGOLD_ESCROW.PVT` script has been converted to a fail-closed safety stub: mock STK identifiers and unverified payout/release are disabled. The minute-based synthetic price emitter has also been disabled because it generated pseudo-random prices rather than verified market observations.
+
+The new `/api/staff/listings` route performs staff verification server-side before using a privileged Supabase key. Configure `SUPABASE_SERVICE_ROLE_KEY` or `SUPABASE_SECRET_KEY` only as a server-side deployment secret. Do not expose it through `NEXT_PUBLIC_` variables.
+
 ## Verification still required
 
 - Test anon, ordinary authenticated, owner, staff/admin, and service-role behavior against non-production test accounts.
@@ -64,10 +70,10 @@ The advisor also reports an informational RLS-without-policy notice for `test_us
 - Verify the live frontend deployment uses the intended Supabase project and environment variables.
 - Check all app pages and flows that create listings/trades; the database intentionally no longer permits browser-side profile balance changes or any browser-side trade writes. The UI now blocks fake client-only trade confirmations until a server-authoritative order workflow exists.
 - Do not treat a browser/localStorage confirmation as a settled trade or wallet balance.
-- Do not accept live escrow funds until server-authoritative order state, idempotent payment callbacks, reconciliation, and audit logs are implemented.
+- Do not accept live escrow funds until server-authoritative order state, authenticated and idempotent Daraja callbacks, real B2C payout verification, reconciliation, and audit logs are implemented.
 
 ## Incident and release checklist
 
 - Keep payment credentials and service-role keys only in server-side secret storage.
 - Rotate any credential accidentally committed to Git history; deleting a file in a later commit does not revoke a leaked credential.
-- Require CI typecheck/build and security checks before release.
+- Require CI typecheck/build and security checks before release. The new Application CI and CodeQL workflows have been triggered, but their latest runs are failing/queued and their logs are not currently available; do not treat the build as passed.
