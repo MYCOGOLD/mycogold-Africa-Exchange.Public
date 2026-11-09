@@ -122,7 +122,7 @@ The live project currently has two Auth users but zero persisted profiles, listi
 
 - Test anon, ordinary authenticated, owner, staff/admin, and service-role behavior against non-production test accounts.
 - Confirm staff users have trusted `app_metadata.role` or are configured in the server-only `STAFF_USER_IDS` variable. The database staff policies use `app_metadata.role`.
-- Verify the live frontend deployment uses the intended Supabase project and environment variables.
+- Verify the live frontend deployment uses the intended Supabase project and environment variables. The current Vercel deployment has not been connected/configured from this workspace; set the server-only Supabase key and `STAFF_USER_IDS` there before exposing the staff workspace.
 - Test order requests with separate buyer and seller accounts, including concurrent requests, over-quantity requests, self-purchases, seller acceptance/rejection, buyer cancellation, and attempts to change immutable price/party fields. The UI's order request is not a payment or completed sale.
 - Do not treat a browser/localStorage confirmation as a settled trade or wallet balance.
 - Do not accept live escrow funds until server-authoritative order state, authenticated and idempotent Daraja callbacks, real B2C payout verification, reconciliation, and audit logs are implemented.
