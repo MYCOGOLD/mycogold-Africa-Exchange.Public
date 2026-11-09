@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
 import { randomUUID } from 'node:crypto'
+import sharp from 'sharp'
 
 export const runtime = 'nodejs'
 export const dynamic = 'force-dynamic'
@@ -43,7 +44,7 @@ export async function POST(request: NextRequest) {
 
   const contentLength = Number(request.headers.get('content-length') || 0)
   if (Number.isFinite(contentLength) && contentLength > MAX_IMAGE_BYTES + 64 * 1024) {
-    return reply({ error: 'Image upload exceeds the 5 MB limit.' }, 413)
+    return reply({ error: 'Image upload exceeds the 4 MB limit.' }, 413)
   }
 
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL
@@ -79,7 +80,7 @@ export async function POST(request: NextRequest) {
     const file = form.get('file')
     if (!(file instanceof File)) return reply({ error: 'An image file is required.' }, 400)
     if (file.size <= 0 || file.size > MAX_IMAGE_BYTES) {
-      return reply({ error: 'Image must be between 1 byte and 5 MB.' }, 400)
+      return reply({ error: 'Image must be between 1 byte and 4 MB.' }, 400)
     }
 
     const bytes = Buffer.from(await file.arrayBuffer())
@@ -88,12 +89,33 @@ export async function POST(request: NextRequest) {
       return reply({ error: 'Image content does not match an allowed JPEG, PNG, or WebP file.' }, 415)
     }
 
-    const extension = detectedType === 'image/jpeg' ? 'jpg' : detectedType === 'image/png' ? 'png' : 'webp'
-    const objectPath = `${data.user.id}/${randomUUID()}.${extension}`
+    const image = sharp(bytes, {
+      failOn: 'warning',
+      limitInputPixels: 25_000_000,
+      sequentialRead: true,
+    })
+    const metadata = await image.metadata()
+    if (
+      !metadata.width ||
+      !metadata.height ||
+      metadata.width > 8192 ||
+      metadata.height > 8192 ||
+      !['jpeg', 'png', 'webp'].includes(metadata.format || '')
+    ) {
+      return reply({ error: 'Image dimensions or format are not supported.' }, 415)
+    }
+
+    // Re-encode to strip metadata and reject malformed/polyglot input.
+    const sanitizedImage = await image.rotate().webp({ quality: 82, effort: 4 }).toBuffer()
+    if (sanitizedImage.length > MAX_IMAGE_BYTES) {
+      return reply({ error: 'Processed image exceeds the 4 MB limit.' }, 413)
+    }
+
+    const objectPath = `${data.user.id}/${randomUUID()}.webp`
     const { error: uploadError } = await admin.storage
       .from('produce-listings')
-      .upload(objectPath, bytes, {
-        contentType: detectedType,
+      .upload(objectPath, sanitizedImage, {
+        contentType: 'image/webp',
         cacheControl: '3600',
         upsert: false,
       })
