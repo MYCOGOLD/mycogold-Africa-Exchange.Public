@@ -27,21 +27,21 @@ The live Supabase project `mycogoldafrica` was inspected on 2026-11-09. The foll
 - `20261109060835_harden_marketplace_rls_and_privileges.sql`
 - `20261109060907_refine_market_access_policies.sql`
 - `20261109060921_optimize_rls_jwt_policy_checks.sql`
-- `20261109061000_revoke_direct_auth_helper_execution.sql`
+- `20261109061019_revoke_direct_auth_helper_execution.sql`
 - `20261109061428_secure_listing_moderation_and_photo_storage.sql`
 - `20261109061503_disable_client_side_trade_writes.sql`
 - `20261109062352_protect_listing_identity_and_photo_paths.sql`
-- `20261109062700_add_safe_order_request_workflow.sql`
-- `20261109062830_serialize_order_quantity_reservations.sql`
-- `20261109062910_secure_global_order_reservation_count.sql`
-- `20261109063000_prevent_listing_quantity_oversell.sql`
-- `20261109063040_consolidate_order_update_policy.sql`
-- `20261109063800_require_server_validated_listing_image_uploads.sql`
-- `20261109063900_revoke_direct_storage_insert_grants.sql`
-- `20261109064100_disable_unverified_market_price_feed_access.sql`
-- `20261109064200_revoke_public_storage_insert_privileges_cascade.sql`
-- `20261109064300_add_explicit_deny_policies_for_legacy_tables.sql`
-- `20261109064300_add_explicit_deny_policies_for_legacy_tables.sql`
+- `20261109062814_add_safe_order_request_workflow.sql`
+- `20261109062838_serialize_order_quantity_reservations.sql`
+- `20261109062855_secure_global_order_reservation_count.sql`
+- `20261109062958_prevent_listing_quantity_oversell.sql`
+- `20261109063025_consolidate_order_update_policy.sql`
+- `20261109063801_require_server_validated_listing_image_uploads.sql`
+- `20261109063835_revoke_direct_storage_insert_grants.sql`
+- `20261109064140_disable_unverified_market_price_feed_access.sql`
+- `20261109064518_revoke_public_storage_insert_privileges_cascade.sql`
+- `20261109064612_add_explicit_deny_policies_for_legacy_tables.sql`
+- `20261109064612_add_explicit_deny_policies_for_legacy_tables.sql`
 
 The migrations:
 
