@@ -41,6 +41,11 @@ export async function POST(request: NextRequest) {
   const token = request.headers.get('authorization')?.match(/^Bearer\s+(.+)$/i)?.[1]
   if (!token) return reply({ error: 'Authentication required.' }, 401)
 
+  const contentLength = Number(request.headers.get('content-length') || 0)
+  if (Number.isFinite(contentLength) && contentLength > MAX_IMAGE_BYTES + 64 * 1024) {
+    return reply({ error: 'Image upload exceeds the 5 MB limit.' }, 413)
+  }
+
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL
   const anonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
   const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_SECRET_KEY
