@@ -103,11 +103,7 @@ export async function POST(request: NextRequest) {
       return reply({ error: 'Image upload failed. Please try again.' }, 500)
     }
 
-    const { data: publicData } = admin.storage
-      .from('produce-listings')
-      .getPublicUrl(objectPath)
-
-    return reply({ path: objectPath, publicUrl: publicData.publicUrl })
+    return reply({ path: objectPath })
   } catch (error) {
     console.error('Produce image upload request failed:', error)
     return reply({ error: 'Unable to process image upload.' }, 500)
