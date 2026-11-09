@@ -1,7 +1,7 @@
-<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=1100"><meta http-equiv="Cache-Control" content="no-cache, no-store"><title>MYCOGOLD-Africa Exchange V3.0.0 - TUSK Live</title><script src="https://cdn.tailwindcss.com"></script>
+<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><meta http-equiv="Cache-Control" content="no-cache, no-store"><title>MYCOGOLD Africa Exchange — Interactive Demo</title><script src="https://cdn.tailwindcss.com"></script>
 <style>
 :root{--gold:#FFD60A;--fs:14px}
-body{background:#000;color:#e9e9d9;font-family:Inter,system-ui;min-width:1100px;font-size:var(--fs)}
+body{background:#000;color:#e9e9d9;font-family:Inter,system-ui;min-width:0;width:100%;max-width:100vw;overflow-x:hidden;font-size:var(--fs)}
 .glass{background:rgba(255,214,10,0.06);border:1px solid rgba(255,214,10,0.18)}
 .glass-gold{background:linear-gradient(135deg, rgba(255,214,10,0.18), rgba(255,214,10,0.04));border:1px solid rgba(255,214,10,0.35)}
 .tab-active{background:var(--gold)!important;color:#000!important;font-weight:900!important;box-shadow:0 0 22px rgba(255,214,10,0.6)}
@@ -10,9 +10,9 @@ body{background:#000;color:#e9e9d9;font-family:Inter,system-ui;min-width:1100px;
 .mfpiF{animation:mf 1s ease}@keyframes mf{50%{transform:scale(1.12);color:var(--gold)}}
 #aiCanvas{display:block;width:100%;height:100%}
 .adminPulse{animation:pulse 1.5s infinite}@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.5}}
-</style></head><body>
-<div class="px-4 py-2.5 bg-[#0A0A00] border-b border-yellow-500/20 flex items-center gap-3 sticky top-0 z-50 text-[12px]"><span id="mfpi" class="font-black gold-text text-[15px]">MFPI 109.84 ▲ 0.87%</span><span class="opacity-60">131 Live • MYCOGOLD-Africa V3.0.0 • TUSK Live</span><div id="avgTop" class="flex gap-3 ml-4 flex-1 overflow-hidden text-[11px]"></div>
-<div class="relative w-[320px]"><input id="globalSearch" oninput="doSearch(this.value)" placeholder="🔍 Search produce, location, seller..." class="w-full px-4 py-2 rounded-full bg-black border border-yellow-500/30 outline-none text-[12px]"><div id="searchDD" class="hidden absolute top-[40px] left-0 right-0 glass-gold rounded-2xl p-2 z-[100] max-h-[380px] overflow-y-auto"></div></div><span class="px-2 py-1 rounded-full bg-[#FFD60A] text-black font-bold text-[9px]">TUSK LIVE • DOTS = AI ANALYSIS</span></div>
+@media(max-width:768px){.grid.grid-cols-2,.grid.grid-cols-3,.grid.grid-cols-4{grid-template-columns:repeat(1,minmax(0,1fr))!important}.relative.w-full.max-w-\\[320px\\]{width:100%;max-width:100%}#globalSearch{width:100%}.flex.items-center.gap-3{flex-wrap:wrap}}\n</style></head><body>
+<div class="px-4 py-2.5 bg-[#0A0A00] border-b border-yellow-500/20 flex items-center gap-3 sticky top-0 z-50 text-[12px]"><span id="mfpi" class="font-black gold-text text-[15px]">MFPI DEMO 109.84</span><span class="opacity-60">DEMO DATA • No live exchange connection • No orders or payments</span><div id="avgTop" class="flex gap-3 ml-4 flex-1 overflow-hidden text-[11px]"></div>
+<div class="relative w-full max-w-[320px]"><input id="globalSearch" oninput="doSearch(this.value)" placeholder="🔍 Search produce, location, seller..." class="w-full px-4 py-2 rounded-full bg-black border border-yellow-500/30 outline-none text-[12px]"><div id="searchDD" class="hidden absolute top-[40px] left-0 right-0 glass-gold rounded-2xl p-2 z-[100] max-h-[380px] overflow-y-auto"></div></div><span class="px-2 py-1 rounded-full bg-[#FFD60A] text-black font-bold text-[9px]">TUSK LIVE • DOTS = AI ANALYSIS</span></div>
 <div class="mx-3 mt-2 rounded-xl bg-[#0F0F00] border border-yellow-500/30 h-[38px] flex items-center"><marquee id="ticker" class="text-[12px]"></marquee></div>
 
 <div class="flex">
@@ -40,7 +40,7 @@ body{background:#000;color:#e9e9d9;font-family:Inter,system-ui;min-width:1100px;
 
 <!-- DOTS VISIBLE - TUSK AI ANALYSIS RUNNING - NOT JUST DOTS, BUT LIVE ANALYSIS -->
 <div class="relative glass-gold rounded-2xl overflow-hidden bg-black border border-yellow-500/30" style="height:250px"><canvas id="aiCanvas"></canvas>
-<div class="absolute top-3 left-4 flex gap-2 text-[9px]"><span class="px-2 py-1 rounded-full bg-[#FFD60A]/20 border border-[#FFD60A]/40">🟡 Market Data - Bayes P(cat|prod) - Live</span><span class="px-2 py-1 rounded-full bg-[#00B0FF]/20 border border-[#00B0FF]/40">🔵 Freshness e^(-λt) - Weather</span><span class="px-2 py-1 rounded-full bg-[#00E676]/20 border border-[#00E676]/40">🟢 Trust 0.5*Verif+0.3*Hist - Farms</span></div>
+<div class="absolute top-3 left-4 flex gap-2 text-[9px]"><span class="px-2 py-1 rounded-full bg-[#FFD60A]/20 border border-[#FFD60A]/40">🟡 Illustrative market model • demo only</span><span class="px-2 py-1 rounded-full bg-[#00B0FF]/20 border border-[#00B0FF]/40">🔵 Freshness e^(-λt) - Weather</span><span class="px-2 py-1 rounded-full bg-[#00E676]/20 border border-[#00E676]/40">🟢 Trust 0.5*Verif+0.3*Hist - Farms</span></div>
 <div class="absolute top-3 right-4 text-[9px] px-2 py-1 rounded-full bg-green-500/20 text-green-400 border border-green-500/30 adminPulse">● TUSK AI RUNNING • Analyzing every 1s • Maintaining 1s usage</div>
 <div class="absolute bottom-3 left-4 right-4 flex justify-between items-center"><div class="text-[10px] opacity-70">MYCOGOLD-Africa • Dots = TUSK collecting, updating, arranging info • Giving insights with proven data</div><div id="liveInsights" class="text-[9px] px-2 py-1 rounded-full bg-[#FFD60A]/20 border border-[#FFD60A]/30 gold-text font-bold">Live insights: 100 posts • Avg 67 KES</div></div>
 </div>
@@ -85,7 +85,7 @@ body{background:#000;color:#e9e9d9;font-family:Inter,system-ui;min-width:1100px;
 </div>
 <div id="locGrid" class="grid grid-cols-3 gap-3"></div><div id="locCats" class="grid grid-cols-4 gap-2 mt-4"></div></div>
 <div id="v-value" class="hidden mt-4"><h3 class="font-bold gold-text text-[16px] mb-3">✨ Value-Added</h3><div id="valueGrid" class="grid grid-cols-4 gap-3"></div></div>
-<div id="v-profile" class="hidden mt-4"><div class="max-w-[700px] glass-gold rounded-2xl p-5"><h2 class="font-black gold-text text-[18px]">👤 Profile - MYCOGOLD-Africa V3.0.0</h2><div class="grid grid-cols-2 gap-4 mt-5"><div class="glass rounded-xl p-4"><div class="font-bold text-[13px]">🔤 Font Size</div><input id="fontSlider" type="range" min="11" max="20" value="14" oninput="setFont(this.value)" class="w-full mt-3 accent-yellow-400"><div class="flex justify-between text-[10px] opacity-50 mt-1"><span>11px</span><span id="fontVal" class="gold-text font-bold">14px</span><span>20px</span></div></div><div class="glass rounded-xl p-4"><div class="font-bold text-[13px]">🏆 Account</div><div class="mt-3 text-[12px]">12 listings • 8 sold • 24,500 KES earned</div><div class="text-[10px] opacity-60 mt-2">🔒 V3.0.0 Locked Forever - Dots = TUSK Live AI</div></div></div></div></div>
+<div id="v-profile" class="hidden mt-4"><div class="max-w-[700px] glass-gold rounded-2xl p-5"><h2 class="font-black gold-text text-[18px]">👤 Profile - MYCOGOLD-Africa V3.0.0</h2><div class="grid grid-cols-2 gap-4 mt-5"><div class="glass rounded-xl p-4"><div class="font-bold text-[13px]">🔤 Font Size</div><input id="fontSlider" type="range" min="11" max="20" value="14" oninput="setFont(this.value)" class="w-full mt-3 accent-yellow-400"><div class="flex justify-between text-[10px] opacity-50 mt-1"><span>11px</span><span id="fontVal" class="gold-text font-bold">14px</span><span>20px</span></div></div><div class="glass rounded-xl p-4"><div class="font-bold text-[13px]">🏆 Account</div><div class="mt-3 text-[12px]">Sample listings • simulated sales • no verified earnings</div><div class="text-[10px] opacity-60 mt-2">🔒 V3.0.0 Locked Forever - Dots = illustrative TUSK prototype</div></div></div></div></div>
 
 </div></div>
 
