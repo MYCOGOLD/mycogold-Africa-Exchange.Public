@@ -32,6 +32,7 @@ const moderationMigration = read('supabase/migrations/20261109071933_add_atomic_
 const staticDemo = read('index.html')
 const ignore = read('.gitignore')
 const envExample = read('.env.example')
+const nextConfig = read('next.config.ts')
 const packageJson = JSON.parse(read('package.json'))
 const lock = JSON.parse(read('package-lock.json'))
 
