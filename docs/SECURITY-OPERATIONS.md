@@ -7,7 +7,7 @@ The profile-access endpoint verifies the Supabase access token with Supabase Aut
 - The authenticated user's UUID is in `STAFF_USER_IDS`; or
 - The user's trusted `app_metadata.role` is `staff` or `admin`.
 
-Do not use `user_metadata`, profile fields, phone numbers, or client-side flags to grant staff privileges. The current phone/password sign-in uses a synthetic email alias and does not verify phone ownership with SMS OTP. The UI now avoids claiming phone verification and disables password reset until a real recovery channel is configured.
+Do not use `user_metadata`, profile fields, phone numbers, or client-side flags to grant staff privileges. New signups now require a real email address for Supabase Auth confirmation and password recovery. Legacy phone-only accounts still use the old synthetic email alias and cannot receive email recovery. No account currently has a Supabase-confirmed phone number; phone ownership is not SMS-OTP verified. The UI labels phone as on-account and staff must manually contact sellers before activating listings.
 
 ### Configure staff UUIDs
 
