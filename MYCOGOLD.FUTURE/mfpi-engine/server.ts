@@ -1,11 +1,15 @@
-import { generateMFPI_Tick } from "../../MYCOGOLD.PVT/cprng-engine/index.js";
+/**
+ * DISABLED PROTOTYPE.
+ *
+ * The previous implementation generated pseudo-random ticks and labelled
+ * them as live MFPI. It was not backed by observed transactions or a verified
+ * market-data source. Do not publish these values or connect this module to
+ * the public exchange.
+ */
+export const MFPI_ENGINE_STATUS = 'DISABLED_SYNTHETIC_PROTOTYPE'
 
-console.log("MYCOGOLD MFPI LIVE - Base 100 KES | Anchor 129 | Tick 1s");
-let last = 100;
-setInterval(() => {
-  const realChange = (Math.random() - 0.5) * 0.3;
-  const newPrice = generateMFPI_Tick(realChange);
-  const dir = newPrice > last ? "UP" : "DOWN";
-  console.log(`${dir} - Price: ${newPrice} KES | Diff: ${(newPrice-last).toFixed(4)} | ${new Date().toLocaleTimeString()}`);
-  last = newPrice;
-}, 1000);
+export function startMfpiEngine(): never {
+  throw new Error(
+    'MFPI engine is disabled: a verified transaction-derived market-data pipeline is not implemented.',
+  )
+}
