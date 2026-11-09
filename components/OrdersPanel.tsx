@@ -73,6 +73,7 @@ export function OrdersPanel({ userId }: { userId: string }) {
 
   return (
     <div className="space-y-3 p-4">
+      <div className="rounded-xl border border-[#ffd60a]/20 bg-[#ffd60a]/5 p-3 text-xs muted">Requests are non-binding interest signals only. This feature does not exchange contact details, collect payment, or settle a sale.</div>
       <div className="flex items-center justify-between gap-3">
         <h2 className="font-semibold">Order requests</h2>
         <button type="button" className="ghost-btn flex min-h-9 items-center gap-2 text-xs" onClick={() => void refresh()} disabled={loading}>
