@@ -25,6 +25,7 @@ const uploadRoute = read('app/api/listings/photo/route.ts')
 const staffRoute = read('app/api/staff/listings/route.ts')
 const staffPanel = read('components/staff-panel.tsx')
 const photoIntegrityMigration = read('supabase/migrations/20261109070314_store_listing_photo_paths_not_absolute_urls.sql')
+const moderationMigration = read('supabase/migrations/20261109071933_add_atomic_listing_moderation_audit.sql')
 const staticDemo = read('index.html')
 const ignore = read('.gitignore')
 const envExample = read('.env.example')
@@ -48,7 +49,8 @@ check(uploadRoute.includes('const MAX_IMAGE_BYTES = 4 * 1024 * 1024')
   && /upsert:\s*false/.test(uploadRoute),
   'Image upload API must enforce size/rate limits and decode, sanitize, and re-encode images.')
 check(/auth\.getUser\(token\)/.test(staffRoute) && /app_metadata/.test(staffRoute)
-  && /sellerContactConfirmed/.test(staffRoute) && /seller_verified_at/.test(staffRoute),
+  && /sellerContactConfirmed/.test(staffRoute) && /moderate_listing/.test(staffRoute)
+  && /seller_verified_at/.test(moderationMigration),
   'Staff API must verify the JWT and trusted staff role.')
 check(staffPanel.includes("import { createClient } from '../lib/supabase'"),
   'Staff panel must use the same authenticated Supabase client as the profile page.')
