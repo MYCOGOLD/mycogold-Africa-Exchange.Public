@@ -52,7 +52,7 @@ body{background:#000;color:#e9e9d9;font-family:Inter,system-ui;min-width:0;width
 <div class="grid grid-cols-3 gap-3 mt-4 text-[12px]"><div class="glass rounded-xl p-3"><b>📊 Illustrative market simulation (sample data)</b><div id="provenMarket" class="mt-2 leading-6 opacity-80"></div></div><div class="glass rounded-xl p-3"><b>🌧️ Sample freshness & route concepts (not connected)</b><div id="tuskWeather" class="mt-2 leading-6 opacity-80"></div></div><div class="glass rounded-xl p-3"><b>👥 Buyer Trust (Psychology)</b><div id="buyerTrust" class="mt-2 leading-6 opacity-80"></div></div></div>
 <!-- ADMIN SIGNALS - PRIVATE - SITE OVERVIEW - BLOCKED THINGS -->
 <div class="mt-4 grid grid-cols-2 gap-3">
-<div class="glass rounded-xl p-3 border border-yellow-500/20"><b class="text-[11px] gold-text">📡 Admin Signals - Site Overview (Private)</b><div id="adminOverview" class="mt-2 text-[10px] font-mono leading-5 opacity-80 max-h-[140px] overflow-y-auto"></div></div>
+<div class="glass rounded-xl p-3 border border-yellow-500/20"><b class="text-[11px] gold-text">📡 Demo Simulation Signals</b><div id="adminOverview" class="mt-2 text-[10px] font-mono leading-5 opacity-80 max-h-[140px] overflow-y-auto"></div></div>
 <div class="glass rounded-xl p-3 border border-red-500/20"><b class="text-[11px] text-red-400">🚫 Blocked / Flagged / Private Admin</b><div id="blockedSignals" class="mt-2 text-[10px] font-mono leading-5 opacity-80 max-h-[140px] overflow-y-auto"></div></div>
 </div>
 <div class="mt-3 glass rounded-xl p-3 text-[11px]"><b>🧬 Recent Smart Categorizations + Demo score Feedback</b><div id="catLog" class="mt-2 opacity-80"></div><div id="secretLog" class="mt-3 font-mono text-[9px] opacity-60 max-h-[120px] overflow-y-auto bg-black/50 p-2 rounded-xl"></div></div>
@@ -179,7 +179,7 @@ function tuskLiveAnalysis(){
  secretLog.unshift(adminMsg); if(secretLog.length>20) secretLog.pop();
  document.getElementById('secretLog').innerHTML=secretLog.slice(0,8).map(l=>`<div>${l}</div>`).join('');
  document.getElementById('adminOverview').innerHTML=`${adminMsg}<br><br>📊 Illustrative demo calculations:<br>• Sample average asking price: ${avgAll} KES (demo only)<br>• MFPI demo value: ${mfpi.toFixed(2)} (not an exchange index)<br>• Sample location: ${locs[0]}<br>• Illustrative concepts only; no connected models<br>• Dots are decorative animation only<br>• Sample records displayed: ${total}`;
- document.getElementById('blockedSignals').innerHTML=blockedMsg+`<br><br>🔒 Private admin:<br>• Search queries: "${qSearch||'none'}"<br>• Filter: ${curFilter}<br>• Demo counters: ${calculations} updates/sec<br>• Local browser animation interval only<br>• No backend health check performed`;
+ document.getElementById('blockedSignals').innerHTML=blockedMsg+`<br><br>Demo-only controls:<br>• Search queries: "${qSearch||'none'}"<br>• Filter: ${curFilter}<br>• Demo counters: ${calculations} updates/sec<br>• Local browser animation interval only<br>• No backend health check performed`;
  document.getElementById('adminSignals').innerHTML=`● Demo tick ${tick} • ${calculations} sample updates/s • ${total} sample records • no backend health check`;
 
  console.log(`%c[Demo score DEMO] ${adminMsg}`, 'color:#FFD60A;background:#000;padding:3px;border:1px solid #FFD60A');
