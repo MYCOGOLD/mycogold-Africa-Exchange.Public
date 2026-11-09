@@ -43,8 +43,10 @@ check(/auth\.getUser\(token\)/.test(uploadRoute) && /detectImage/.test(uploadRou
   'Image upload API must verify the user and inspect image bytes.')
 check(uploadRoute.includes('const MAX_IMAGE_BYTES = 4 * 1024 * 1024')
   && /consume_listing_upload_limit/.test(uploadRoute)
+  && /sharp\(bytes/.test(uploadRoute)
+  && /webp\(\{ quality: 82/.test(uploadRoute)
   && /upsert:\s*false/.test(uploadRoute),
-  'Image upload API must enforce the 4 MB limit, rate limit and non-overwriting object creation.')
+  'Image upload API must enforce size/rate limits and decode, sanitize, and re-encode images.')
 check(/auth\.getUser\(token\)/.test(staffRoute) && /app_metadata/.test(staffRoute),
   'Staff API must verify the JWT and trusted staff role.')
 check(staffPanel.includes("import { createClient } from '../lib/supabase'"),
