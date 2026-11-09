@@ -138,37 +138,12 @@ export async function PATCH(request: NextRequest) {
       auth: { autoRefreshToken: false, persistSession: false, detectSessionInUrl: false },
     })
 
-    if (status === 'active') {
-      const { data: listingOwner, error: ownerError } = await admin
-        .from('listings')
-        .select('seller_id')
-        .eq('id', id)
-        .maybeSingle()
-      if (ownerError || !listingOwner) {
-        return response({ error: 'Listing not found.' }, 404)
-      }
-      const { data: sellerProfile, error: profileError } = await admin
-        .from('profiles')
-        .select('phone')
-        .eq('id', listingOwner.seller_id)
-        .maybeSingle()
-      if (profileError || !sellerProfile?.phone?.trim()) {
-        return response({ error: 'Seller has no contact phone on file; approval is blocked.' }, 409)
-      }
-    }
-
-    const reviewedAt = new Date().toISOString()
-    const { data: listing, error: updateError } = await admin
-      .from('listings')
-      .update({
-        status,
-        updated_at: reviewedAt,
-        moderated_at: reviewedAt,
-        seller_verified_at: status === 'active' ? reviewedAt : null,
-      })
-      .eq('id', id)
-      .select('id,status,moderated_at,seller_verified_at')
-      .maybeSingle()
+    const { data: listing, error: updateError } = await admin.rpc('moderate_listing', {
+      p_listing_id: id,
+      p_status: status,
+      p_actor_id: data.user.id,
+      p_seller_contact_confirmed: status === 'active' && body?.sellerContactConfirmed === true,
+    })
 
     if (updateError) {
       console.error('Staff listing moderation failed:', updateError)
