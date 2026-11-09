@@ -85,8 +85,8 @@ export function AddProduceModal({
       setError('A listing photo is required.')
       return
     }
-    if (!['image/jpeg', 'image/png', 'image/webp'].includes(photo.type) || photo.size > 5 * 1024 * 1024) {
-      setError('Use a JPEG, PNG, or WebP image up to 5 MB.')
+    if (!['image/jpeg', 'image/png', 'image/webp'].includes(photo.type) || photo.size > 4 * 1024 * 1024) {
+      setError('Use a JPEG, PNG, or WebP image up to 4 MB.')
       return
     }
 
