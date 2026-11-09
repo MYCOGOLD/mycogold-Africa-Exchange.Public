@@ -24,6 +24,8 @@ const tradeConfirm = read('components/TradeConfirm.tsx')
 const orderPanel = read('components/OrdersPanel.tsx')
 const uploadRoute = read('app/api/listings/photo/route.ts')
 const staffRoute = read('app/api/staff/listings/route.ts')
+const staffPanel = read('components/staff-panel.tsx')
+const photoIntegrityMigration = read('supabase/migrations/20261109070033_verify_listing_photo_object.sql')
 const staticDemo = read('index.html')
 const ignore = read('.gitignore')
 const envExample = read('.env.example')
@@ -44,7 +46,7 @@ check(/MAX_IMAGE_BYTES/.test(uploadRoute) && /upsert:\s*false/.test(uploadRoute)
   'Image upload API must enforce a size limit and non-overwriting object creation.')
 check(/auth\.getUser\(token\)/.test(staffRoute) && /app_metadata/.test(staffRoute),
   'Staff API must verify the JWT and trusted staff role.')
-check(/SUPABASE_SERVICE_ROLE_KEY/.test(staffRoute) && !/NEXT_PUBLIC_SUPABASE_SERVICE_ROLE_KEY/.test(appSource),
+check(/from \'..\\/lib\\/supabase\'/.test(staffPanel),\n  'Staff panel must use the same authenticated Supabase client as the profile page.')\ncheck(/verify_listing_photo_object/.test(photoIntegrityMigration) && /storage\\.objects/.test(photoIntegrityMigration),\n  'Database must verify that listing photos exist in the seller-owned storage folder.')\ncheck(/SUPABASE_SERVICE_ROLE_KEY/.test(staffRoute) && !/NEXT_PUBLIC_SUPABASE_SERVICE_ROLE_KEY/.test(appSource),
   'Privileged Supabase keys must remain server-side.')
 check(/No live exchange connection|DEMO DATA/.test(staticDemo),
   'Static GitHub Pages page must remain labelled as demo-only.')
