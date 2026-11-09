@@ -41,10 +41,13 @@ Daraja variables in `.env.example` are placeholders only. The payment/escrow int
 
 The live Supabase project has RLS hardening and the safe order-request workflow applied. The matching SQL files are under `supabase/migrations/`.
 
+New accounts require a real email address. The phone number is stored as contact information but is not SMS-OTP verified; staff must manually contact a seller before activating their listing. Legacy phone-only accounts use the old synthetic email alias and may require support-assisted migration.
+
 Order requests are not payments or completed sales:
 - Buyers request a quantity from an active listing.
 - The database derives the buyer, seller, unit price and total.
 - The seller may accept or reject; the buyer may cancel.
+- Requests are non-binding interest signals only. The app does not yet exchange contact details or provide messaging.
 - Open/accepted requests reserve listing quantity.
 - No wallet is debited and no escrow or payout is performed.
 
