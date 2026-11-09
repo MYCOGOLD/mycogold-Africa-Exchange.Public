@@ -93,6 +93,7 @@ The `OrdersPanel` in user profiles shows each user's buyer/seller order requests
 The following database checks were executed in temporary transactions and rolled back; they created no persistent test orders or listings:
 
 - An authenticated user could create their own profile; its ID matched the Auth user and wallet balance defaulted to zero.
+- An authenticated seller could create a listing; the database supplied the seller display label and set its status to `pending`.
 - An authenticated buyer's order request derived buyer ID, seller ID, unit price and total from the listing.
 - The seller could accept a request; the buyer could not cancel it after acceptance.
 - A buyer could not request their own listing.
