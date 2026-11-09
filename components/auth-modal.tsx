@@ -143,7 +143,7 @@ export function AuthModal({
 
           <input
             className="field min-h-11"
-            type="tel"
+            type={mode === 'forgot' ? 'email' : mode === 'signin' ? 'text' : 'tel'}
             value={phone}
             onChange={event => setPhone(event.target.value)}
             placeholder={mode === 'forgot' ? 'Real email address' : mode === 'signin' ? 'Email or legacy phone number' : 'Phone number'}
