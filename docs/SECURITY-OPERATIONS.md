@@ -84,6 +84,20 @@ The browser-only trade confirmation flow has been replaced by a non-payment orde
 
 The `OrdersPanel` in user profiles shows each user's buyer/seller order requests. Listing photo uploads now require the server-side `SUPABASE_SERVICE_ROLE_KEY` or `SUPABASE_SECRET_KEY` and are rejected if file signatures do not match the declared image type. The new `/api/staff/listings` route performs staff verification server-side before using a privileged Supabase key. Configure `SUPABASE_SERVICE_ROLE_KEY` or `SUPABASE_SECRET_KEY` only as a server-side deployment secret. Do not expose it through `NEXT_PUBLIC_` variables.
 
+## Database tests completed
+
+The following database checks were executed in temporary transactions and rolled back; they created no persistent test orders or listings:
+
+- An authenticated buyer's order request derived buyer ID, seller ID, unit price and total from the listing.
+- The seller could accept a request; the buyer could not cancel it after acceptance.
+- A buyer could not request their own listing.
+- A second request that would exceed the listing's remaining quantity was rejected.
+- Anonymous users saw an active listing but not a pending listing.
+- An authenticated direct insert into the produce image bucket was denied by Storage RLS.
+- Permission checks confirmed browser roles cannot change order price/total/status on insert, listing moderation status, profile balance, or trade rows.
+
+The live project currently has two Auth users but zero persisted profiles, listings, orders and trades. The legacy synthetic price row was removed. These checks verify policy logic, not full UI behaviour under real user traffic.
+
 ## Verification still required
 
 - Test anon, ordinary authenticated, owner, staff/admin, and service-role behavior against non-production test accounts.
