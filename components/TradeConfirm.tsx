@@ -46,6 +46,7 @@ export function TradeConfirm({
         .single()
 
       if (error) throw error
+      if (!data) throw new Error('The order request was not saved.')
       setMessage(
         `Order request ${String(data.id).slice(0, 8)} submitted. Seller response: ${data.status}. No payment has been taken.`,
       )
