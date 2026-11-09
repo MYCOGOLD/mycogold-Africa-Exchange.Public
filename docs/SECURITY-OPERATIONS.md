@@ -57,6 +57,12 @@ https://supabase.com/docs/guides/auth/password-security#password-strength-and-le
 
 The advisor also reports an informational RLS-without-policy notice for `test_users`; this is intentional because public API access has been revoked. A performance advisor reports the new seller index as unused immediately after creation; re-check after marketplace traffic.
 
+## Public static demo and exchange settlement
+
+The root GitHub Pages `index.html` is an interactive prototype that generates illustrative sample listings and prices in the browser. It is not connected to the Supabase exchange database, and its numbers must not be represented as live market quotes, verified listings, completed trades, or real earnings. The page has been labelled as demo-only and its fixed 1100px mobile layout has been removed. Use the authenticated application/API and database for persisted exchange data.
+
+The synthetic price emitter and escrow prototype are disabled as described below.
+
 ## Exchange settlement and synthetic price feed
 
 The browser-only trade confirmation flow has been disabled and browser roles can no longer insert/update/delete trade rows. MFPI display now reads the live `live_prices` row; the browser's localStorage is not treated as a trade ledger. The legacy `MYCOGOLD_ESCROW.PVT` script has been converted to a fail-closed safety stub: mock STK identifiers and unverified payout/release are disabled. The minute-based synthetic price emitter has also been disabled because it generated pseudo-random prices rather than verified market observations.
