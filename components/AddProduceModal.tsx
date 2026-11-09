@@ -110,7 +110,7 @@ export function AddProduceModal({
         body: uploadForm,
       })
       const uploadResult = await uploadResponse.json().catch(() => ({}))
-      if (!uploadResponse.ok || typeof uploadResult.path !== 'string' || typeof uploadResult.publicUrl !== 'string') {
+      if (!uploadResponse.ok || typeof uploadResult.path !== 'string') {
         throw new Error(String(uploadResult.error || 'Secure photo upload failed.'))
       }
       uploadedPath = uploadResult.path
