@@ -58,8 +58,8 @@ export function OrdersPanel({ userId }: { userId: string }) {
       setMessage(error?.message || 'Order could not be changed. It may already have been updated.')
       return
     }
-    setMessage(`Order updated: ${data.status}.`)
     await refresh()
+    setMessage(`Order updated: ${data.status}.`)
   }
 
   if (loading) return <p className="muted p-4 text-sm">Loading order requests…</p>
