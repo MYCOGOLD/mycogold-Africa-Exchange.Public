@@ -55,6 +55,7 @@ The live Supabase project `mycogoldafrica` was inspected on 2026-11-09. The foll
 - `20261109071627_add_listing_moderation_audit_fields.sql`
 - `20261109071829_require_manual_verification_for_active_listings.sql`
 - `20261109071933_add_atomic_listing_moderation_audit.sql`
+- `20261109072511_index_listing_moderation_actor.sql`
 
 The migrations:
 
