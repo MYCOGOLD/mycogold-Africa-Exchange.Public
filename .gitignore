@@ -29,6 +29,7 @@ pnpm-debug.log*
 .DS_Store
 
 # Local databases and runtime state
+MYCOGOLD.PVT/keys/
 *.db
 *.sqlite
 *.sqlite3
