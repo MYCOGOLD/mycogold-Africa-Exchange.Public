@@ -22,7 +22,7 @@ body{background:#000;color:#e9e9d9;font-family:Inter,system-ui;min-width:0;width
 <button onclick="tab('market')" id="b-market" class="w-full text-left px-4 py-3 rounded-full tab-active">🏠 Market</button>
 <button onclick="tab('tusk')" id="b-tusk" class="w-full text-left px-4 py-3 rounded-full glass">🧠 TUSK Demo</button>
 <button onclick="tab('services')" id="b-services" class="w-full text-left px-4 py-3 rounded-full glass">🛠️ Special Services</button>
-<button onclick="tab('weather')" id="b-weather" class="w-full text-left px-4 py-3 rounded-full glass">⛅ Weather & Routes</button>
+<button onclick="tab('weather')" id="b-weather" class="w-full text-left px-4 py-3 rounded-full glass">⛅ Weather & route examples</button>
 <button onclick="tab('exchange')" id="b-exchange" class="w-full text-left px-4 py-3 rounded-full glass">🔄 Exchange</button>
 <button onclick="tab('locations')" id="b-locations" class="w-full text-left px-4 py-3 rounded-full glass">📍 Locations</button>
 <button onclick="tab('value')" id="b-value" class="w-full text-left px-4 py-3 rounded-full glass-gold">✨ Value-Added</button>
@@ -40,7 +40,7 @@ body{background:#000;color:#e9e9d9;font-family:Inter,system-ui;min-width:0;width
 
 <!-- Illustrative TUSK prototype animation — not a live AI process -->
 <div class="relative glass-gold rounded-2xl overflow-hidden bg-black border border-yellow-500/30" style="height:250px"><canvas id="aiCanvas"></canvas>
-<div class="absolute top-3 left-4 flex gap-2 text-[9px]"><span class="px-2 py-1 rounded-full bg-[#FFD60A]/20 border border-[#FFD60A]/40">🟡 Illustrative market model • demo only</span><span class="px-2 py-1 rounded-full bg-[#00B0FF]/20 border border-[#00B0FF]/40">🔵 Freshness e^(-λt) - Weather</span><span class="px-2 py-1 rounded-full bg-[#00E676]/20 border border-[#00E676]/40">🟢 Trust 0.5*Verif+0.3*Hist - Farms</span></div>
+<div class="absolute top-3 left-4 flex gap-2 text-[9px]"><span class="px-2 py-1 rounded-full bg-[#FFD60A]/20 border border-[#FFD60A]/40">🟡 Illustrative market model • demo only</span><span class="px-2 py-1 rounded-full bg-[#00B0FF]/20 border border-[#00B0FF]/40">🔵 Illustrative freshness decay concept</span><span class="px-2 py-1 rounded-full bg-[#00E676]/20 border border-[#00E676]/40">🟢 Trust 0.5*Verif+0.3*Hist - Farms</span></div>
 <div class="absolute top-3 right-4 text-[9px] px-2 py-1 rounded-full bg-green-500/20 text-green-400 border border-green-500/30 adminPulse">● TUSK DEMO • illustrative animation only</div>
 <div class="absolute bottom-3 left-4 right-4 flex justify-between items-center"><div class="text-[10px] opacity-70">MYCOGOLD Africa • Demo animation only • No connected data or AI model</div><div id="liveInsights" class="text-[9px] px-2 py-1 rounded-full bg-[#FFD60A]/20 border border-[#FFD60A]/30 gold-text font-bold">Demo insights: sample posts • illustrative average price</div></div>
 </div>
@@ -59,14 +59,14 @@ body{background:#000;color:#e9e9d9;font-family:Inter,system-ui;min-width:0;width
 </div></div>
 
 <div id="v-services" class="hidden mt-4"><h2 class="font-black gold-text text-[18px] mb-3">🛠️ Special Services</h2><div id="servicesGrid" class="grid grid-cols-4 gap-3"></div></div>
-<div id="v-weather" class="hidden mt-4"><div class="glass-gold rounded-2xl p-4"><h3 class="font-bold gold-text text-[16px]">⛅ Weather & Routes</h3><div id="weatherGrid" class="grid grid-cols-3 gap-3 mt-3 text-[12px]"></div></div></div>
+<div id="v-weather" class="hidden mt-4"><div class="glass-gold rounded-2xl p-4"><h3 class="font-bold gold-text text-[16px]">⛅ Weather & route examples</h3><div id="weatherGrid" class="grid grid-cols-3 gap-3 mt-3 text-[12px]"></div></div></div>
 <div id="v-exchange" class="hidden mt-4"><div class="glass-gold rounded-2xl p-4"><h3 class="font-black gold-text text-[16px]">🔄 Exchange</h3><div class="grid grid-cols-4 gap-3 mt-3 text-[11px]"><div class="glass p-3 rounded-xl"><div class="opacity-60 text-[9px]">LAST</div><b id="lastP" class="gold-text text-[16px]">109.84 KES</b></div><div class="glass p-3 rounded-xl"><div class="opacity-60 text-[9px]">VOL</div><b>2,840 kg</b></div><div class="glass p-3 rounded-xl"><div class="opacity-60 text-[9px]">SPREAD</div><b>3.2 KES</b></div><div class="glass p-3 rounded-xl"><div class="opacity-60 text-[9px]">TRADERS</div><b class="text-green-400">131 Demo Traders</b></div></div><div class="grid grid-cols-2 gap-3 mt-4"><div class="glass rounded-2xl p-3"><h3 class="font-bold text-red-400 text-[12px]">🔴 ASKS</h3><div id="asks" class="mt-2"></div></div><div class="glass rounded-2xl p-3"><h3 class="font-bold text-green-400 text-[12px]">🟢 BIDS</h3><div id="bids" class="mt-2"></div></div></div></div></div>
 <div id="v-locations" class="hidden mt-4"><h3 class="font-bold gold-text text-[16px] mb-3">📍 Locations</h3>
 <!-- V3.0.0 TPilot - Native Locations with data - NO hard force -->
 <div id="locations-native" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px;margin-top:14px;padding:14px;background:#0a0a0a;border-radius:12px;border:1px solid #1f1f1f">
   <div style="grid-column:1/-1;margin-bottom:4px">
     <div style="color:#FFD700;font-weight:800;font-size:14px">📍 All Locations + Products Performance + Prizing + TUSK Overview</div>
-    <div style="font-size:11px;color:#888;margin-top:2px">Mushroom Index Sweet [155-350] | Bands [150-600] | Target 252.5 | MFPI 109.92 | Formula P(t+1)=P(t)+0.15*(252.5-P)+vol*CPRNG</div>
+    <div style="font-size:11px;color:#888;margin-top:2px">Illustrative mushroom price simulation • Synthetic values only • Not a verified market index</div>
   </div>
 
   <div style="background:#151515;border-left:3px solid #FFD700;border-radius:10px;padding:11px;border:1px solid #222"><b>📍 Kericho - Main Hub</b><div style="font-size:11px;color:#777">Sample hub • simulated volume • illustrative band</div><div style="margin-top:6px;font-size:13px;line-height:1.7"><div style="display:flex;justify-content:space-between"><span>🍄 Mushroom Index</span><span style="color:#FFD700;font-weight:800">255 KES ★ SWEET</span></div><div style="display:flex;justify-content:space-between"><span>🍄 Button</span><span>265 KES</span></div><div style="display:flex;justify-content:space-between"><span>🍄 Oyster</span><span>180 KES</span></div><div style="display:flex;justify-content:space-between"><span>🥔 Potatoes</span><span>95 KES</span></div><div style="display:flex;justify-content:space-between"><span>🧅 Onions</span><span>105 KES</span></div><div style="display:flex;justify-content:space-between"><span>🥩 Beef</span><span>700 KES</span></div></div><div style="margin-top:6px"><div style="font-size:11px;display:flex;justify-content:space-between"><span>Performance</span><span style="color:#00ff88">92%</span></div><div style="height:4px;background:#222;border-radius:2px"><div style="width:92%;height:100%;background:linear-gradient(90deg,#FFD700,#00ff88)"></div></div><div style="font-size:11px;display:flex;justify-content:space-between;margin-top:4px"><span>TUSK Score</span><span>88%</span></div><div style="height:4px;background:#222;border-radius:2px"><div style="width:88%;height:100%;background:#00ccff"></div></div></div></div>
@@ -124,7 +124,7 @@ setInterval(()=>{prev={...avg}; prods.forEach(c=>{let vol=(avg[c]||45)*0.02; avg
 document.getElementById('chips').innerHTML=`<span id="chip-All" onclick="setFilter('All')" class="chip chip-active px-4 py-2 rounded-full glass font-bold">All</span>`+["Mushroom","Potatoes","Onions","Kales","Cabbage","Cereals","Beef"].map(c=>`<span id="chip-${c}" onclick="setFilter('${c}')" class="chip px-4 py-2 rounded-full glass">${icons[c]} ${c}</span>`).join('')+`<span class="ml-auto px-3 py-1 rounded-full bg-[#FFD60A] text-black font-bold text-[10px]">${prods.length} products • Dots = TUSK Demo</span>`;
 document.getElementById('servicesGrid').innerHTML=[{n:"Vet - Poultry",p:"500 KES",i:"🩺"},{n:"Vet - Dairy",p:"800 KES",i:"🐄"},{n:"Mushroom Spawn 1kg",p:"1,200 KES",i:"🍄"},{n:"Oyster Spawn",p:"1,000 KES",i:"🍄"},{n:"Button Spawn",p:"1,500 KES",i:"🍄"},{n:"Soil Testing",p:"300 KES",i:"🧪"},{n:"Cold Chain",p:"15 KES/kg",i:"🚚"},{n:"Cold Storage",p:"10 KES",i:"❄️"},{n:"Incubation",p:"25 KES/egg",i:"🥚"},{n:"AI Insemination",p:"2,000 KES",i:"🐂"},{n:"Certified Seeds",p:"250 KES",i:"🌱"},{n:"Extension Officer",p:"Free",i:"👨‍🌾"}].map(s=>`<div class="glass rounded-2xl p-4"><div class="text-[22px]">${s.i}</div><b class="block mt-2 text-[12px]">${s.n}</b><div class="gold-text text-[12px] mt-1">${s.p}</div><button class="mt-3 w-full py-1.5 rounded-full bg-[#FFD60A] text-black font-bold text-[10px]">Book</button></div>`).join('');
 document.getElementById('valueGrid').innerHTML=[{n:"Dry Mushroom",m:"+275%"},{n:"Mushroom Crisp",m:"+250%"},{n:"Medicinal Caps",m:"+400%"},{n:"Myco Coffee",m:"+300%"},{n:"Egg Tray",m:"+60%"},{n:"Avocado Oil",m:"+275%"}].map(v=>`<div class="glass-gold rounded-xl p-3"><b class="text-[12px]">${v.n}</b><div class="gold-text text-[11px] mt-1">${v.m}</div></div>`).join('');
-document.getElementById('weatherGrid').innerHTML=locs.map(l=>`<div class="glass rounded-xl p-3"><b class="gold-text">${l}</b><div class="mt-1">Rain ${Math.floor(Math.random()*80)}% • Route +${10+Math.floor(Math.random()*15)} KES</div></div>`).join('');
+document.getElementById('weatherGrid').innerHTML=locs.map(l=>`<div class="glass rounded-xl p-3"><b class="gold-text">${l}</b><div class="mt-1">Illustrative rain and route values — not connected data</div></div>`).join('');
 renderAll();
 
 // ================= TUSK LIVE AI - DOTS VISIBLE + FORMULAS ANALYSIS EVERY 1s =================
@@ -163,7 +163,7 @@ function tuskLiveAnalysis(){
  let psychDots=dots.filter(d=>d.type==='psych').length;
 
  let provenMarket=`• Total posts: <b class="gold-text">${total}</b> • Avg price: ${avgAll} KES (proven)<br>• Top: ${top.cat} ${top.cnt} posts • Low stock: ${low} flagged<br>• Market dots: ${marketDots} analyzing Bayes P(cat|prod)=0.${90+tick%9}<br>• Calculations: ${calculations} formulas/sec`;
- let weatherInsights=`• Freshness: F(t)=F0*e^(-0.15t) - Physics blue dots ${physicsDots}<br>• Rain Kericho 80% - cover beds, λ↓<br>• Market gravity: F=G*Supply*Demand/Dist²<br>• Route profit: +${12+tick%10} KES/kg - data updated`;
+ let weatherInsights=`• Freshness: F(t)=F0*e^(-0.15t) - Physics blue dots ${physicsDots}<br>• Sample rain value only — not a forecast<br>• Market gravity is a theoretical illustration, not a measured demand signal<br>• Route profit: +${12+tick%10} KES/kg - data updated`;
  let trustInsights=`• Trust: 0.5*Verif+0.3*Hist+0.2*SocialProof<br>• Green dots ${psychDots} analyzing urgency<br>• Samuel K 94% trust • Mama Mboga top<br>• Social proof: P(buy)=1-e^(-0.05*n)`;
 
  document.getElementById('provenMarket').innerHTML=provenMarket;
@@ -178,11 +178,11 @@ function tuskLiveAnalysis(){
 
  secretLog.unshift(adminMsg); if(secretLog.length>20) secretLog.pop();
  document.getElementById('secretLog').innerHTML=secretLog.slice(0,8).map(l=>`<div>${l}</div>`).join('');
- document.getElementById('adminOverview').innerHTML=`${adminMsg}<br><br>📊 Proven data insights:<br>• Avg TUSK: ${avgAll} KES (real calc)<br>• MFPI: ${mfpi.toFixed(2)}<br>• Top market: ${locs[0]}<br>• Formulas: Bayes+TF-IDF+k-means+exp decay+gravity+trust<br>• Dots running = TUSK running background<br>• Site overview: ${total} posts healthy`;
- document.getElementById('blockedSignals').innerHTML=blockedMsg+`<br><br>🔒 Private admin:<br>• Search queries: "${qSearch||'none'}"<br>• Filter: ${curFilter}<br>• TUSK signals: ${calculations} formulas/sec<br>• Platform usage: 1s interval maintained<br>• Admin feedback: OK`;
- document.getElementById('adminSignals').innerHTML=`● TUSK Tick ${tick} • ${calculations} formulas/s • ${blocked} blocked • ${total} posts • 1s usage`;
+ document.getElementById('adminOverview').innerHTML=`${adminMsg}<br><br>📊 Illustrative demo calculations:<br>• Sample average asking price: ${avgAll} KES (demo only)<br>• MFPI demo value: ${mfpi.toFixed(2)} (not an exchange index)<br>• Sample location: ${locs[0]}<br>• Illustrative concepts only; no connected models<br>• Dots are decorative animation only<br>• Sample records displayed: ${total}`;
+ document.getElementById('blockedSignals').innerHTML=blockedMsg+`<br><br>🔒 Private admin:<br>• Search queries: "${qSearch||'none'}"<br>• Filter: ${curFilter}<br>• Demo counters: ${calculations} updates/sec<br>• Local browser animation interval only<br>• No backend health check performed`;
+ document.getElementById('adminSignals').innerHTML=`● Demo tick ${tick} • ${calculations} sample updates/s • ${total} sample records • no backend health check`;
 
- console.log(`%c[TUSK LIVE] ${adminMsg}`, 'color:#FFD60A;background:#000;padding:3px;border:1px solid #FFD60A');
+ console.log(`%c[TUSK DEMO] ${adminMsg}`, 'color:#FFD60A;background:#000;padding:3px;border:1px solid #FFD60A');
 }
 setInterval(tuskLiveAnalysis, 1000); // Every 1s - TUSK runs site to maintain 1s usage and good platform
 tuskLiveAnalysis();
