@@ -1,6 +1,7 @@
 'use client'
 
 import { useCallback, useEffect, useState } from 'react'
+import { RefreshCw } from 'lucide-react'
 import { createClient } from '../lib/supabase'
 
 type Order = {
@@ -18,25 +19,28 @@ type Order = {
 export function OrdersPanel({ userId }: { userId: string }) {
   const [orders, setOrders] = useState<Order[]>([])
   const [loading, setLoading] = useState(true)
+  const [updatingId, setUpdatingId] = useState<string | null>(null)
   const [message, setMessage] = useState('')
 
   const refresh = useCallback(async () => {
     setLoading(true)
-    const supabase = createClient()
-    const { data, error } = await supabase
-      .from('orders')
-      .select('id,listing_id,buyer_id,seller_id,quantity,unit_price,total_amount,status,created_at')
-      .order('created_at', { ascending: false })
-      .limit(100)
+    try {
+      const supabase = createClient()
+      const { data, error } = await supabase
+        .from('orders')
+        .select('id,listing_id,buyer_id,seller_id,quantity,unit_price,total_amount,status,created_at')
+        .order('created_at', { ascending: false })
+        .limit(100)
 
-    if (error) {
-      setOrders([])
-      setMessage('Could not load your order requests.')
-    } else {
+      if (error) throw error
       setOrders((data || []) as Order[])
       setMessage('')
+    } catch {
+      setOrders([])
+      setMessage('Could not load your order requests. Check your connection and try again.')
+    } finally {
+      setLoading(false)
     }
-    setLoading(false)
   }, [])
 
   useEffect(() => {
@@ -44,30 +48,41 @@ export function OrdersPanel({ userId }: { userId: string }) {
   }, [refresh, userId])
 
   async function changeStatus(orderId: string, status: 'accepted' | 'rejected' | 'cancelled') {
-    setMessage('Updating order…')
-    const supabase = createClient()
-    const { data, error } = await supabase
-      .from('orders')
-      .update({ status })
-      .eq('id', orderId)
-      .eq('status', 'requested')
-      .select('id,status')
-      .maybeSingle()
+    setUpdatingId(orderId)
+    setMessage('')
+    try {
+      const supabase = createClient()
+      const { data, error } = await supabase
+        .from('orders')
+        .update({ status })
+        .eq('id', orderId)
+        .eq('status', 'requested')
+        .select('id,status')
+        .maybeSingle()
 
-    if (error || !data) {
-      setMessage(error?.message || 'Order could not be changed. It may already have been updated.')
-      return
+      if (error) throw error
+      if (!data) throw new Error('The order may already have been updated.')
+      await refresh()
+      setMessage(`Order updated: ${data.status}.`)
+    } catch (error) {
+      setMessage(error instanceof Error ? error.message : 'Could not update this order.')
+    } finally {
+      setUpdatingId(null)
     }
-    await refresh()
-    setMessage(`Order updated: ${data.status}.`)
   }
-
-  if (loading) return <p className="muted p-4 text-sm">Loading order requests…</p>
 
   return (
     <div className="space-y-3 p-4">
+      <div className="flex items-center justify-between gap-3">
+        <h2 className="font-semibold">Order requests</h2>
+        <button type="button" className="ghost-btn flex min-h-9 items-center gap-2 text-xs" onClick={() => void refresh()} disabled={loading}>
+          <RefreshCw size={13}/> Refresh
+        </button>
+      </div>
       {message && <p className="text-sm gold" role="status">{message}</p>}
-      {orders.length === 0 ? (
+      {loading ? (
+        <p className="muted text-sm">Loading order requests…</p>
+      ) : orders.length === 0 ? (
         <p className="muted text-sm">No order requests yet.</p>
       ) : orders.map((order) => {
         const isBuyer = order.buyer_id === userId
@@ -86,10 +101,10 @@ export function OrdersPanel({ userId }: { userId: string }) {
             {order.status === 'requested' && (
               <div className="mt-3 flex flex-wrap gap-2">
                 {isSeller && <>
-                  <button className="gold-btn min-h-10" onClick={() => changeStatus(order.id, 'accepted')}>Accept request</button>
-                  <button className="ghost-btn min-h-10" onClick={() => changeStatus(order.id, 'rejected')}>Decline</button>
+                  <button className="gold-btn min-h-10" disabled={updatingId === order.id} onClick={() => changeStatus(order.id, 'accepted')}>Accept request</button>
+                  <button className="ghost-btn min-h-10" disabled={updatingId === order.id} onClick={() => changeStatus(order.id, 'rejected')}>Decline</button>
                 </>}
-                {isBuyer && <button className="ghost-btn min-h-10" onClick={() => changeStatus(order.id, 'cancelled')}>Cancel request</button>}
+                {isBuyer && <button className="ghost-btn min-h-10" disabled={updatingId === order.id} onClick={() => changeStatus(order.id, 'cancelled')}>Cancel request</button>}
               </div>
             )}
             {order.status === 'accepted' && (
