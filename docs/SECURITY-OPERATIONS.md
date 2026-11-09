@@ -53,6 +53,7 @@ The live Supabase project `mycogoldafrica` was inspected on 2026-11-09. The foll
 - `20261109071002_use_sliding_window_listing_upload_limits.sql`
 - `20261109071627_add_listing_moderation_audit_fields.sql`
 - `20261109071829_require_manual_verification_for_active_listings.sql`
+- `20261109071933_add_atomic_listing_moderation_audit.sql`
 - `20261109070435_deny_rate_limit_api_access_and_require_quantity.sql`
 
 The migrations:
@@ -63,7 +64,7 @@ The migrations:
 - Restrict listing creation to the authenticated seller and listing changes/deletion to the owner or trusted `app_metadata.role` staff/admin.
 - Restrict trade reads to the owner or trusted staff/admin; browser users cannot create, update, or delete trade rows.
 - Add an `orders` request workflow: authenticated buyers can request quantities from active listings; the database derives buyer, seller, unit price and total from trusted context; order terms are immutable; only the buyer can cancel a request and only the seller can accept/reject it. Pending/accepted quantities are reserved under a listing-row lock to prevent overselling.
-- Put new listings into `pending` review state by default. Only the server-side staff moderation route can approve or deactivate them; listing owners cannot write the moderation status. Staff-only review data includes the seller's phone on file. Approval requires an explicit staff confirmation that the seller was contacted and the details were manually checked; the server rejects approval if no phone is on file and records `moderated_at` and `seller_verified_at`. The phone on file is self-reported until this manual check; it is not SMS-OTP verified.
+- Put new listings into `pending` review state by default. Only the server-side staff moderation route can approve or deactivate them; listing owners cannot write the moderation status. Staff-only review data includes the seller's phone on file. Approval requires an explicit staff confirmation that the seller was contacted and the details were manually checked; the server calls a service-role-only database function that atomically checks the seller phone, changes status, writes `moderated_at`/`seller_verified_at`, and inserts a private moderation event with the staff actor and decision. The phone on file is self-reported until this manual check; it is not SMS-OTP verified.
 - Derive the public seller label from the authenticated seller's profile rather than trusting browser input; store only the seller-owned storage object path, and verify that the uploaded object actually exists before accepting a listing. This avoids hard-coding a Supabase project URL in the database.
 - Add the public `produce-listings` image bucket (JPEG/PNG/WebP, bucket hard cap 5 MB; upload API limit 4 MB). The database stores an object path, not an absolute project URL. A database constraint prevents any listing from being active without a staff verification timestamp. Uploads pass through `/api/listings/photo`, which verifies the authenticated user, checks file signatures and size, decodes and re-encodes images to WebP (stripping metadata and rejecting malformed input), enforces a database-backed sliding-window limit of 10 uploads per user per hour, and uses a server-only key; the browser INSERT policy is removed (a direct authenticated insert was tested and denied by Storage RLS). The server route uses the service-only storage key. Users can delete only their own uploaded objects.
 - Remove anonymous/authenticated table-wide write privileges and disable API access to the legacy `test_users` table. The private sliding-window upload event table has RLS and an explicit deny policy for browser roles.
@@ -116,6 +117,7 @@ The following database checks were executed in temporary transactions and rolled
 - The database-backed sliding-window upload limiter allowed the first 10 requests in a test window and blocked the 11th; API roles cannot execute the limiter or read its event table.
 - A listing insert with a seller-owned but nonexistent storage object was rejected by the database photo-integrity trigger.
 - Permission checks confirm browser roles cannot set listing status, `seller_verified_at`, or `moderated_at`; a database constraint requires `seller_verified_at` for every active listing.
+- A rollback-based test confirmed approval is rejected without explicit seller-contact confirmation and that an approved listing receives verification timestamps plus a private moderation audit event.
 - A seller could not delete a storage object while a listing referenced it; the image remained present after the blocked delete.
 - Permission checks confirmed browser roles cannot change order price/total/status on insert, listing moderation status, profile balance, or trade rows.
 
