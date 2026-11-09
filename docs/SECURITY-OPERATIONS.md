@@ -36,6 +36,7 @@ The live Supabase project `mycogoldafrica` was inspected on 2026-11-09. The foll
 - `20261109062910_secure_global_order_reservation_count.sql`
 - `20261109063000_prevent_listing_quantity_oversell.sql`
 - `20261109063040_consolidate_order_update_policy.sql`
+- `20261109063800_require_server_validated_listing_image_uploads.sql`
 
 The migrations:
 
@@ -47,7 +48,7 @@ The migrations:
 - Add an `orders` request workflow: authenticated buyers can request quantities from active listings; the database derives buyer, seller, unit price and total from trusted context; order terms are immutable; only the buyer can cancel a request and only the seller can accept/reject it. Pending/accepted quantities are reserved under a listing-row lock to prevent overselling.
 - Put new listings into `pending` review state by default. Only the server-side staff moderation route can approve or deactivate them; listing owners cannot write the moderation status.
 - Derive the public seller label from the authenticated seller's profile rather than trusting browser input; restrict photo URLs to that seller's own folder in the public `produce-listings` bucket.
-- Add the public `produce-listings` image bucket (JPEG/PNG/WebP, max 5 MB) with authenticated uploads constrained to each user's own UUID folder.
+- Add the public `produce-listings` image bucket (JPEG/PNG/WebP, max 5 MB). Uploads pass through `/api/listings/photo`, which verifies the authenticated user, checks file signatures and size, and uses a server-only key; direct browser INSERT to the storage bucket is revoked. Users can delete only their own uploaded objects.
 - Remove anonymous/authenticated table-wide write privileges and disable API access to the legacy `test_users` table.
 - Harden the `handle_new_user` SECURITY DEFINER helper, set an empty search path, align it with the live `profiles(id, phone, name)` columns, and revoke direct execution from API roles. (The `auth.users` AFTER INSERT trigger `on_auth_user_created` is attached to this function.)
 - Add the `listings.status` field/check constraint and seller index.
@@ -75,7 +76,7 @@ The synthetic price emitter and escrow prototype are disabled as described below
 
 The browser-only trade confirmation flow has been replaced by a non-payment order-request workflow. Browser roles cannot create/update/delete `trades` rows. Buyers can request a quantity; sellers can accept/reject; buyers can cancel. The database derives price and parties and prevents concurrent over-reservation. An accepted request is not a completed sale, payment, escrow, or settlement. MFPI display now reads the live `live_prices` row; the browser's localStorage is not treated as a trade ledger. The legacy `MYCOGOLD_ESCROW.PVT` script has been converted to a fail-closed safety stub: mock STK identifiers and unverified payout/release are disabled. The minute-based synthetic price emitter has also been disabled because it generated pseudo-random prices rather than verified market observations.
 
-The `OrdersPanel` in user profiles shows each user's buyer/seller order requests. The new `/api/staff/listings` route performs staff verification server-side before using a privileged Supabase key. Configure `SUPABASE_SERVICE_ROLE_KEY` or `SUPABASE_SECRET_KEY` only as a server-side deployment secret. Do not expose it through `NEXT_PUBLIC_` variables.
+The `OrdersPanel` in user profiles shows each user's buyer/seller order requests. Listing photo uploads now require the server-side `SUPABASE_SERVICE_ROLE_KEY` or `SUPABASE_SECRET_KEY` and are rejected if file signatures do not match the declared image type. The new `/api/staff/listings` route performs staff verification server-side before using a privileged Supabase key. Configure `SUPABASE_SERVICE_ROLE_KEY` or `SUPABASE_SECRET_KEY` only as a server-side deployment secret. Do not expose it through `NEXT_PUBLIC_` variables.
 
 ## Verification still required
 
