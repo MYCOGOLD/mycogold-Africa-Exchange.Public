@@ -41,6 +41,7 @@ The live Supabase project `mycogoldafrica` was inspected on 2026-11-09. The foll
 - `20261109064140_disable_unverified_market_price_feed_access.sql`
 - `20261109064518_revoke_public_storage_insert_privileges_cascade.sql`
 - `20261109064612_add_explicit_deny_policies_for_legacy_tables.sql`
+- `20261109065346_require_positive_listing_price_and_quantity.sql`
 
 The migrations:
 
@@ -56,6 +57,7 @@ The migrations:
 - Remove anonymous/authenticated table-wide write privileges and disable API access to the legacy `test_users` table.
 - Harden the `handle_new_user` SECURITY DEFINER helper, set an empty search path, align it with the live `profiles(id, phone, name)` columns, and revoke direct execution from API roles. (The `auth.users` AFTER INSERT trigger `on_auth_user_created` is attached to this function.)
 - Add the `listings.status` field/check constraint and seller index.
+- Enforce positive listing prices and quantities at the database boundary.
 
 All six application tables (`profiles`, `listings`, `orders`, `trades`, `live_prices`, and `test_users`) retain RLS. The legacy `test_users` and `live_prices` tables have explicit deny policies for `anon` and `authenticated` and are not exposed to the browser API.
 
