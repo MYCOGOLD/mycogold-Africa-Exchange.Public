@@ -49,6 +49,7 @@ The live Supabase project `mycogoldafrica` was inspected on 2026-11-09. The foll
 - `20261109070033_verify_listing_photo_object.sql`
 - `20261109070314_store_listing_photo_paths_not_absolute_urls.sql`
 - `20261109070435_deny_rate_limit_api_access_and_require_quantity.sql`
+- `20261109070710_protect_photos_referenced_by_listings.sql`
 - `20261109070435_deny_rate_limit_api_access_and_require_quantity.sql`
 
 The migrations:
@@ -111,6 +112,7 @@ The following database checks were executed in temporary transactions and rolled
 - An authenticated direct insert into the produce image bucket was denied by Storage RLS.
 - The database-backed upload limiter allowed the first 10 requests in a test window and blocked the 11th; API roles cannot execute the limiter or read its counter table.
 - A listing insert with a seller-owned but nonexistent storage object was rejected by the database photo-integrity trigger.
+- A seller could not delete a storage object while a listing referenced it; the image remained present after the blocked delete.
 - Permission checks confirmed browser roles cannot change order price/total/status on insert, listing moderation status, profile balance, or trade rows.
 
 The live project currently has two Auth users but zero persisted profiles, listings, orders and trades. The legacy synthetic price row was removed. These checks verify policy logic, not full UI behaviour under real user traffic.
