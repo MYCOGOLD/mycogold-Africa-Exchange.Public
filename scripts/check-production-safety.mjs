@@ -26,6 +26,7 @@ const orderPanel = read('components/OrdersPanel.tsx')
 const uploadRoute = read('app/api/listings/photo/route.ts')
 const staffRoute = read('app/api/staff/listings/route.ts')
 const staffPanel = read('components/staff-panel.tsx')
+const profilePage = read('components/ProfileLoggedIn.tsx')
 const photoIntegrityMigration = read('supabase/migrations/20261109070314_store_listing_photo_paths_not_absolute_urls.sql')
 const moderationMigration = read('supabase/migrations/20261109071933_add_atomic_listing_moderation_audit.sql')
 const staticDemo = read('index.html')
@@ -58,7 +59,7 @@ check(/type="email"/.test(authModal) && /emailRedirectTo/.test(authModal),
   'New accounts must use a real email for confirmation and recovery.')
 check(/@supabase\/ssr/.test(supabaseClient),
   'Browser Supabase auth must share SSR cookie sessions.')
-check(staffPanel.includes("import { createClient } from '../lib/supabase'"),
+check(/not OTP verified/.test(profilePage) && /manually verify the seller/.test(staffPanel),\n  'Phone verification limitations and manual seller review must be disclosed.')\ncheck(staffPanel.includes("import { createClient } from '../lib/supabase'"),
   'Staff panel must use the same authenticated Supabase client as the profile page.')
 check(/verify_listing_photo_object/.test(photoIntegrityMigration)
   && /storage\.objects/.test(photoIntegrityMigration),
