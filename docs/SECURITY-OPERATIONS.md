@@ -39,6 +39,7 @@ The live Supabase project `mycogoldafrica` was inspected on 2026-11-09. The foll
 - `20261109063800_require_server_validated_listing_image_uploads.sql`
 - `20261109063900_revoke_direct_storage_insert_grants.sql`
 - `20261109064100_disable_unverified_market_price_feed_access.sql`
+- `20261109064200_revoke_public_storage_insert_privileges_cascade.sql`
 
 The migrations:
 
@@ -50,7 +51,7 @@ The migrations:
 - Add an `orders` request workflow: authenticated buyers can request quantities from active listings; the database derives buyer, seller, unit price and total from trusted context; order terms are immutable; only the buyer can cancel a request and only the seller can accept/reject it. Pending/accepted quantities are reserved under a listing-row lock to prevent overselling.
 - Put new listings into `pending` review state by default. Only the server-side staff moderation route can approve or deactivate them; listing owners cannot write the moderation status.
 - Derive the public seller label from the authenticated seller's profile rather than trusting browser input; restrict photo URLs to that seller's own folder in the public `produce-listings` bucket.
-- Add the public `produce-listings` image bucket (JPEG/PNG/WebP, max 5 MB). Uploads pass through `/api/listings/photo`, which verifies the authenticated user, checks file signatures and size, and uses a server-only key; direct browser INSERT to the storage bucket is revoked. Users can delete only their own uploaded objects.
+- Add the public `produce-listings` image bucket (JPEG/PNG/WebP, max 5 MB). Uploads pass through `/api/listings/photo`, which verifies the authenticated user, checks file signatures and size, and uses a server-only key; the browser INSERT policy is removed (a direct authenticated insert was tested and denied by Storage RLS). The server route uses the service-only storage key. Users can delete only their own uploaded objects.
 - Remove anonymous/authenticated table-wide write privileges and disable API access to the legacy `test_users` table.
 - Harden the `handle_new_user` SECURITY DEFINER helper, set an empty search path, align it with the live `profiles(id, phone, name)` columns, and revoke direct execution from API roles. (The `auth.users` AFTER INSERT trigger `on_auth_user_created` is attached to this function.)
 - Add the `listings.status` field/check constraint and seller index.
