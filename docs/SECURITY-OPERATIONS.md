@@ -14,31 +14,51 @@ Do not use `user_metadata`, profile fields, phone numbers, or client-side flags 
 1. In Supabase Dashboard, open Authentication -> Users.
 2. Copy the UUID for each approved staff account.
 3. In the server deployment environment (for example Vercel -> Project -> Settings -> Environment Variables), add `STAFF_USER_IDS`.
-4. Set its value to comma-separated UUIDs, with no quotes, for example `uuid-one,uuid-two`.
+4. Set its value to comma-separated UUIDs, with no quotes.
 5. Redeploy the application.
 6. Test with one approved staff account and one ordinary account. The ordinary account must receive `isStaff: false`.
 
 Never prefix this variable with `NEXT_PUBLIC_`. Do not put a Supabase service-role key in browser code or expose it in client-side environment variables.
 
-## Database RLS audit — required before policy changes
+## Database security — deployed migrations
 
-The repository currently does not include a Supabase migration/schema definition for `profiles`, `listings`, `trades`, or `live_prices`. Do not guess column names or write broad policies.
+The live Supabase project `mycogoldafrica` was inspected on 2026-11-09. The following migrations were applied successfully and are committed in this repository:
 
-Run [the read-only Supabase audit](../supabase/audit_security.sql) in Supabase Dashboard -> SQL Editor. Save/export the complete results for all six sections and use them to design migrations against the actual schema.
+- `20261109060835_harden_marketplace_rls_and_privileges.sql`
+- `20261109060907_refine_market_access_policies.sql`
+- `20261109060921_optimize_rls_jwt_policy_checks.sql`
 
-Required policy outcomes to verify:
+The migrations:
 
-- `profiles`: authenticated users can select/update only their own profile; profile IDs cannot be reassigned; role and balance are not user-editable.
-- `listings`: public/guest read access must match the intended marketplace visibility; authenticated users can create listings only for themselves and update/delete only their own listings; staff moderation must be separately authorized.
-- `trades`: only the buyer/seller participants can read their trade; users cannot create arbitrary completed trades or alter settlement status from the browser.
-- `live_prices`: public read access may be appropriate; writes must be restricted to a trusted server/worker identity.
+- Remove the broad `profiles.open` policy and restrict profile reads/inserts/updates to the authenticated owner.
+- Restrict profile column writes to `id`, `phone`, and `name`; wallet `balance` is not writable by browser roles and now defaults to zero.
+- Keep public reads for active listings and live market prices.
+- Restrict listing creation to the authenticated seller and listing changes/deletion to the owner or trusted `app_metadata.role` staff/admin.
+- Restrict trade reads to the owner or trusted staff/admin; browser users cannot update/delete trade rows.
+- Remove anonymous/authenticated table-wide write privileges and disable API access to the legacy `test_users` table.
+- Restrict the `handle_new_user` SECURITY DEFINER helper, set an empty search path, and align it with the live `profiles(id, phone, name)` columns.
+- Add the `listings.status` field/check constraint and seller index.
 
-These are target behaviours, not policies already installed. RLS must be tested with anon, ordinary authenticated, staff, and service roles before production.
+All five public tables retain RLS. The `test_users` table intentionally has no API policies or anon/authenticated grants because it is a legacy test table. Do not re-enable access without a specific use case and tests.
+
+## Remaining Supabase advisories
+
+The post-migration security advisor reports one remaining warning: leaked-password protection is disabled. Enable Supabase Auth's leaked-password protection in the Auth password/security settings and test the signup/password-reset flows:
+https://supabase.com/docs/guides/auth/password-security#password-strength-and-leaked-password-protection
+
+The advisor also reports an informational RLS-without-policy notice for `test_users`; this is intentional because public API access has been revoked. A performance advisor reports the new seller index as unused immediately after creation; re-check after marketplace traffic.
+
+## Verification still required
+
+- Test anon, ordinary authenticated, owner, staff/admin, and service-role behavior against non-production test accounts.
+- Confirm staff users have trusted `app_metadata.role` or are configured in the server-only `STAFF_USER_IDS` variable. The database staff policies use `app_metadata.role`.
+- Verify the live frontend deployment uses the intended Supabase project and environment variables.
+- Check all app pages and flows that create listings/trades; the database intentionally no longer permits browser-side profile balance changes or arbitrary trade updates.
+- Do not treat a browser/localStorage confirmation as a settled trade or wallet balance.
+- Do not accept live escrow funds until server-authoritative order state, idempotent payment callbacks, reconciliation, and audit logs are implemented.
 
 ## Incident and release checklist
 
 - Keep payment credentials and service-role keys only in server-side secret storage.
 - Rotate any credential accidentally committed to Git history; deleting a file in a later commit does not revoke a leaked credential.
-- Never treat a browser/localStorage confirmation as a settled trade or wallet balance.
-- Do not accept live escrow funds until server-authoritative order state, idempotent payment callbacks, reconciliation, and audit logs are implemented.
 - Require CI typecheck/build and security checks before release.
