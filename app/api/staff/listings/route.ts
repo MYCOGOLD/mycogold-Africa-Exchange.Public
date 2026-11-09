@@ -54,8 +54,30 @@ export async function GET(request: NextRequest) {
       return response({ error: 'Could not load staff workspace data.' }, 500)
     }
 
+    const sellerIds = [...new Set((listingsResult.data || [])
+      .map((listing) => listing.seller_id)
+      .filter((sellerId): sellerId is string => typeof sellerId === 'string'))]
+    const profilesResult = sellerIds.length
+      ? await admin.from('profiles').select('id,phone,name').in('id', sellerIds)
+      : { data: [], error: null }
+
+    if (profilesResult.error) {
+      console.error('Staff seller contact lookup failed:', profilesResult.error)
+      return response({ error: 'Could not load seller review details.' }, 500)
+    }
+
+    const profilesById = new Map((profilesResult.data || []).map((profile) => [profile.id, profile]))
+    const listings = (listingsResult.data || []).map((listing) => {
+      const sellerProfile = listing.seller_id ? profilesById.get(listing.seller_id) : undefined
+      return {
+        ...listing,
+        seller_phone: sellerProfile?.phone || null,
+        seller_profile_name: sellerProfile?.name || null,
+      }
+    })
+
     return response({
-      listings: listingsResult.data || [],
+      listings,
       trades: tradesResult.data || [],
     })
   } catch (error) {
@@ -112,11 +134,17 @@ export async function PATCH(request: NextRequest) {
     const admin = createClient(url, serviceKey, {
       auth: { autoRefreshToken: false, persistSession: false, detectSessionInUrl: false },
     })
+    const reviewedAt = new Date().toISOString()
     const { data: listing, error: updateError } = await admin
       .from('listings')
-      .update({ status, updated_at: new Date().toISOString() })
+      .update({
+        status,
+        updated_at: reviewedAt,
+        moderated_at: reviewedAt,
+        seller_verified_at: status === 'active' ? reviewedAt : null,
+      })
       .eq('id', id)
-      .select('id,status')
+      .select('id,status,moderated_at,seller_verified_at')
       .maybeSingle()
 
     if (updateError) {
