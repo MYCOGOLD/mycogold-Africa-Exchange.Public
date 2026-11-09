@@ -1,8 +1,67 @@
-export const BASE_MFPI = 99.06654
-export const BASE_WEIGHTED_PRICE = 52.00
-export type ConfirmedTrade = { id: string; listingId: string; price: number; kg: number; confirmed_at: string }
-export function weightedPriceFromTrades(confirmedTrades: ConfirmedTrade[]): number | null { if(!confirmedTrades.length)return null;const totalKg=confirmedTrades.reduce((sum,trade)=>sum+Number(trade.kg),0);if(!totalKg)return null;return confirmedTrades.reduce((sum,trade)=>sum+Number(trade.price)*Number(trade.kg),0)/totalKg }
-export function calculateMFPI(confirmedTrades: ConfirmedTrade[]){const tick=confirmedTrades.length;if(!tick)return {mfpi:BASE_MFPI,weighted:null,tick:0,isGenesis:true};const weighted=weightedPriceFromTrades(confirmedTrades)!;return {mfpi:BASE_MFPI+((weighted-BASE_WEIGHTED_PRICE)/BASE_WEIGHTED_PRICE*100),weighted,tick,isGenesis:false}}
-export function mineBlock(prevHash:string,trade:ConfirmedTrade,mfpi:number,index=1){const raw=`${prevHash}|${trade.id}|${mfpi}|${trade.confirmed_at}`;let hash='';for(let index=0;index<raw.length;index+=1)hash+=raw.charCodeAt(index).toString(16);return {index,hash:hash.slice(0,16),prevHash,mfpi,activitiesCount:1,tradeId:trade.id,listingId:trade.listingId,confirmed_at:trade.confirmed_at}}
-export const GENESIS_BLOCK={index:0,hash:'GENESIS-99.06654',prevHash:'',mfpi:BASE_MFPI,activitiesCount:0,confirmed_at:new Date(0).toISOString()}
-export type LedgerBlock=ReturnType<typeof mineBlock>|typeof GENESIS_BLOCK
+/**
+ * Experimental MFPI mathematics only.
+ *
+ * No official baseline, verified transaction feed, or market-data provenance
+ * is configured in this project. This module therefore refuses to publish a
+ * default/genesis index. It is not a ledger, blockchain, or source of live prices.
+ */
+
+export type ConfirmedTrade = {
+  id: string
+  listingId: string
+  price: number
+  kg: number
+  confirmed_at: string
+}
+
+export function weightedPriceFromTrades(trades: ConfirmedTrade[]): number | null {
+  if (!trades.length) return null
+
+  let totalKg = 0
+  let weightedTotal = 0
+
+  for (const trade of trades) {
+    const price = Number(trade.price)
+    const kg = Number(trade.kg)
+    if (!Number.isFinite(price) || price <= 0 || !Number.isFinite(kg) || kg <= 0) {
+      return null
+    }
+    totalKg += kg
+    weightedTotal += price * kg
+  }
+
+  if (!Number.isFinite(totalKg) || totalKg <= 0) return null
+  return weightedTotal / totalKg
+}
+
+/**
+ * Calculate only when an independently verified base index and base price
+ * have been supplied by a trusted data pipeline. No values are invented.
+ */
+export function calculateMFPI(
+  verifiedTrades: ConfirmedTrade[],
+  baseIndex?: number,
+  baseWeightedPrice?: number,
+) {
+  const weighted = weightedPriceFromTrades(verifiedTrades)
+  if (
+    weighted === null ||
+    !Number.isFinite(baseIndex) ||
+    !Number.isFinite(baseWeightedPrice) ||
+    Number(baseWeightedPrice) <= 0
+  ) {
+    return {
+      mfpi: null,
+      weighted,
+      tick: verifiedTrades.length,
+      isPublished: false,
+    }
+  }
+
+  return {
+    mfpi: Number(baseIndex) + ((weighted - Number(baseWeightedPrice)) / Number(baseWeightedPrice)) * 100,
+    weighted,
+    tick: verifiedTrades.length,
+    isPublished: true,
+  }
+}
