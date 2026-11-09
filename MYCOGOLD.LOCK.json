@@ -1,12 +1,12 @@
 {
   "version": "3.0.0",
   "name": "MYCOGOLD-Africa Exchange",
-  "status": "LOCKED FOREVER V3.0.0 - DOTS VISIBLE = TUSK LIVE AI",
+  "status": "DEMO_ONLY — NO LIVE DATA, AI SERVICE, PAYMENT OR EXCHANGE SETTLEMENT",
   "locked_date": "2026-09-23",
   "design": {
     "theme": "Gold-Black",
-    "dots": "VISIBLE 36 dots Y/B/G - Yellow=Market Bayes TF-IDF k-means, Blue=Physics Freshness e^-λt Market Gravity, Green=Psych Trust Urgency - Every collision=formula calculation - Dots remain running = TUSK running background",
-    "tusk_live": "Analyzes platform every 1s - posts, analysis, data - collecting, updating, arranging info, giving insights with proven data - maintains 1s usage, good platform, gives signals to admins, blocked things, private admin site overview",
+    "dots": "Decorative demo animation only; no Bayes, TF-IDF, k-means, weather, trust or background analysis service runs.",
+    "tusk_live": "Not connected. The public static page uses illustrative sample data and a decorative animation only.",
     "branding": "MYCOGOLD-Africa"
   }
 }
