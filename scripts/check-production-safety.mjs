@@ -54,7 +54,11 @@ check(/auth\.getUser\(token\)/.test(staffRoute) && /app_metadata/.test(staffRout
   && /sellerContactConfirmed/.test(staffRoute) && /moderate_listing/.test(staffRoute)
   && /seller_verified_at/.test(moderationMigration),
   'Staff API must verify the JWT and trusted staff role.')
-check(/type="email"/.test(authModal) && /emailRedirectTo/.test(authModal),\n  'New accounts must use a real email for confirmation and recovery.')\ncheck(/@supabase\/ssr/.test(supabaseClient),\n  'Browser Supabase auth must share SSR cookie sessions.')\ncheck(staffPanel.includes("import { createClient } from '../lib/supabase'"),
+check(/type="email"/.test(authModal) && /emailRedirectTo/.test(authModal),
+  'New accounts must use a real email for confirmation and recovery.')
+check(/@supabase\/ssr/.test(supabaseClient),
+  'Browser Supabase auth must share SSR cookie sessions.')
+check(staffPanel.includes("import { createClient } from '../lib/supabase'"),
   'Staff panel must use the same authenticated Supabase client as the profile page.')
 check(/verify_listing_photo_object/.test(photoIntegrityMigration)
   && /storage\.objects/.test(photoIntegrityMigration),
