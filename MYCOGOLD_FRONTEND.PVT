@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+"""Design-only frontend artifact. Not wired to the Next.js exchange or payment backend."""
 import json, os, time, hashlib
 # Read the exact frontend core you provided
 with open("MYCOGOLD.FRONT/frontend-core.js","r") as f: js_core=f.read()
@@ -14,7 +15,7 @@ frontend_essential={
         "product_router":"Global Product Auto-Routing - clicking any produce item filters Market - TUSK genius",
         "mushroom_pricing":"Oyster 80 floor 140-240 premium, Button 145 floor 150-250 normal 300-440 cafe, Cremini 250 floor 450 premium, Portobello 280 floor 480 premium - per 250g punnet",
         "iot_proof":"Post Produce + Buy/Sell Modal with IoT Media Hashing SHA-256 + freshness exp(-λt)",
-        "tusk_chat":"TUSK Smart Chat & Semi-Autonomous Negotiator - OFFER_INIT, OFFER_ACCEPT, OFFER_COUNTER, ESCROW LOCK"
+        "tusk_chat":"Rule-based chat prototype only; no automated negotiation, payment, or escrow"
     },
     "essential_for_ui":True,
     "secret_formulas_hidden":True,
@@ -31,7 +32,7 @@ backend={
         "filterByProduct":"Sets MycoGoldState.selectedProduct, switchTab('market'), highlights .filter-chip, filters .produce-item-card by data-product-type",
         "registerNewProduct":"Pushes to MycoGoldState.registeredProducts, dynamically creates filter-chip button if new mushroom variety added upon verification",
         "submitProduceWithIoTProof":"crypto.subtle.digest('SHA-256', arrayBuffer) + freshness = Math.exp(-lambdaDecay*timeInTransit) + payload id MYCO_${Date.now()} + auto filterByProduct",
-        "tusk_chat_engine":"chatActiveContract {product, price, counterparty, step}, OFFER_INIT -> OFFER_ACCEPT -> ESCROW LOCK via M-Pesa C2B STK, COUNTER_OFFER = price*1.05 Wakulima spot index"
+        "tusk_chat_engine":"Design-only state machine; no M-Pesa/STK request, payment callback, escrow lock, or settlement endpoint is implemented"
     },
     "formula_hidden":"SHA-256 + exp(-λt) + Bayesian + TUSK state machine",
     "essential_for_ui":False
@@ -43,7 +44,7 @@ future={
     "desc":"Future - Predictive UI routing, future mushroom varieties, auto-filter predictions secret",
     "predictions":{
         "new_mushroom_auto_route":"When new mushroom verified -> registerNewProduct() -> auto adds chip to market-filter-bar -> filterByProduct() works instantly",
-        "chat_forecast":"TUSK will auto-counter with 5% margin if Wakulima index higher, else accept",
+        "chat_forecast":"Planned concept only; no verified index or automated counter-offer is implemented",
         "freshness_forecast":"GARCH-like decay lambda 0.05 -> 0.5 days transit = 97.5% freshness, 2 days = 90.4%"
     },
     "essential_for_ui":False
@@ -52,12 +53,12 @@ future={
 # PVT - secret quant engine for frontend
 pvt={
     "type":"MYCOGOLD.PVT",
-    "desc":"PVT - Secret Quant Engine for Frontend - Physics+Math+Psych+CARA+CPRNG background",
+    "desc":"Experimental formula notes only — not a production quant engine",
     "secret_formulas":{
         "freshness":"SECRET: freshness = e^(-λt) where λ=0.05 perishability constant, t=0.5 days transit - used for trust scoring",
-        "hash":"SECRET: SHA-256 crypto.subtle.digest - media proof hash for Merkle ledger, first 16 chars shown to user",
+        "hash":"Prototype hash example only; no verified media provenance or Merkle ledger is implemented",
         "tusk_state":"SECRET: MycoGoldState.activeTab, selectedProduct, registeredProducts[14 initial], userRole BUYER/SELLER, chatActiveContract",
-        "negotiation_math":"SECRET: revisedPrice = chat.price * 1.05 auto-margin based on Wakulima spot index - CARA risk aversion"
+        "negotiation_math":"Illustrative negotiation formula only; not connected to verified market prices"
     },
     "essential_for_ui":False
 }
@@ -72,7 +73,7 @@ overall={
         "mushroom_pricing_genius":{"Oyster_250g":"floor 80 KES premium 140-240","Button_250g":"floor 145 KES normal 150-250 premium cafe 300-440","Cremini_250g":"floor 250 KES premium 450","Portobello_250g":"floor 280 KES premium 480"},
         "new_variety_flow":"New mushroom variety upon verification -> registerNewProduct() -> chip added -> filterByProduct() works -> TUSK genius understands",
         "frontend_core_locked":"V2.0.1 FINAL GENIUS LOCKED - tab switcher + product router + IoT hashing + TUSK chat",
-        "site_health":"Frontend 100% • Strict tab management • No overlays • Global auto-routing"
+        "site_health":"Prototype design artifact • no production backend, verified market data, or payment integration"
     },
     "essential_for_ui":True
 }
@@ -92,7 +93,7 @@ with open("MYCO.OVERAL/frontend_overall_admin.json","w") as f: json.dump(overall
 # Also copy frontend-core.js to components for your existing tree
 with open("MYCOGOLD.FRONT/components/frontend-core.js","w") as f: f.write(js_core)
 
-print("[✔] FRONTEND REFINED SUCCESS - BACK+FRONT+FUTURE+PVT+OVERAL pasted geniusly")
+print("[DEMO] Frontend design artifact generated. Not a production deployment or payment integration.")
 print(" -> FRONT: frontend-core.js (YOUR EXACT CODE - NO CHANGE)")
 print(" -> FRONT: frontend_essential_ui.json (essential UI only)")
 print(" -> BACK: frontend_backend.json (full secret routing background)")
