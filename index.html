@@ -169,12 +169,12 @@ function tuskLiveAnalysis(){
  document.getElementById('provenMarket').innerHTML=provenMarket;
  document.getElementById('tuskWeather').innerHTML=weatherInsights;
  document.getElementById('buyerTrust').innerHTML=trustInsights;
- document.getElementById('liveInsights').innerText=`Live: ${total} posts • Avg ${avgAll} KES • ${calculations} formulas/s • Dots ${dots.length} = TUSK AI`;
- document.getElementById('tuskLiveStatus').innerHTML=`TUSK analyzing ${total} posts every 1s...<br>🟡 Market ${marketDots} formulas: ${dots.filter(d=>d.type==='market').reduce((s,d)=>s+d.formulas,0)}<br>🔵 Physics ${physicsDots} • 🟢 Psych ${psychDots}<br><span class="gold-text">Tick ${tick} • ${calculations} calc/s</span>`;
+ document.getElementById('liveInsights').innerText=`DEMO: ${total} sample records • Avg ${avgAll} KES • ${calculations} illustrative calculations/s • no connected AI`;
+ document.getElementById('tuskLiveStatus').innerHTML=`TUSK demo simulation: ${total} sample records<br>🟡 Illustrative market calculations ${marketDots}: ${dots.filter(d=>d.type==='market').reduce((s,d)=>s+d.formulas,0)}<br>🔵 Physics ${physicsDots} • 🟢 Psych ${psychDots}<br><span class="gold-text">Tick ${tick} • ${calculations} calc/s</span>`;
 
  // ADMIN SIGNALS - PRIVATE - SITE OVERVIEW - GIVING SIGNALS TO ADMINS
- let adminMsg=`[${new Date().toLocaleTimeString()}] TICK ${tick} | Posts:${total} Avg:${avgAll} Low:${low} Blocked:${blocked} Top:${top.cat} | Dots:${dots.length} Calc:${calculations}/s | Market:${marketMap.slice(0,50)} | TUSK maintaining 1s usage - platform healthy`;
- let blockedMsg=blocked>0?`🚫 Flagged ${blocked} posts - qty<5 or price anomaly<br>• ${items.filter(x=>x.blocked).slice(0,3).map(i=>`${i.prod} ${i.price}KES ${i.loc}`).join('<br>• ')}<br>• Action: Review needed<br>• Trust check: ${Math.floor(Math.random()*20+80)}%`:`✅ No blocked posts • All ${total} listings verified<br>• 0 spam • 0 duplicate<br>• System health: 100% • 1s usage maintained`;
+ let adminMsg=`[${new Date().toLocaleTimeString()}] TICK ${tick} | Posts:${total} Avg:${avgAll} Low:${low} Blocked:${blocked} Top:${top.cat} | Dots:${dots.length} Calc:${calculations}/s | Market:${marketMap.slice(0,50)} | DEMO simulation only - no live platform health check`;
+ let blockedMsg=blocked>0?`🚫 Flagged ${blocked} posts - qty<5 or price anomaly<br>• ${items.filter(x=>x.blocked).slice(0,3).map(i=>`${i.prod} ${i.price}KES ${i.loc}`).join('<br>• ')}<br>• Action: Review needed<br>• Trust check: ${Math.floor(Math.random()*20+80)}%`:`ℹ️ No sample records flagged<br>• No real listings were verified<br>• Demo simulation only`;
 
  secretLog.unshift(adminMsg); if(secretLog.length>20) secretLog.pop();
  document.getElementById('secretLog').innerHTML=secretLog.slice(0,8).map(l=>`<div>${l}</div>`).join('');
