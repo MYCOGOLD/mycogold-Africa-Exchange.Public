@@ -37,6 +37,7 @@ The live Supabase project `mycogoldafrica` was inspected on 2026-11-09. The foll
 - `20261109063000_prevent_listing_quantity_oversell.sql`
 - `20261109063040_consolidate_order_update_policy.sql`
 - `20261109063800_require_server_validated_listing_image_uploads.sql`
+- `20261109063900_revoke_direct_storage_insert_grants.sql`
 
 The migrations:
 
