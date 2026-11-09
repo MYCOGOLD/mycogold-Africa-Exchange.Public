@@ -60,6 +60,21 @@ export async function POST(request: NextRequest) {
     const { data, error } = await authClient.auth.getUser(token)
     if (error || !data.user) return reply({ error: 'Invalid session.' }, 401)
 
+    const admin = createClient(url, serviceKey, {
+      auth: { autoRefreshToken: false, persistSession: false, detectSessionInUrl: false },
+    })
+    const { data: uploadAllowed, error: rateLimitError } = await admin.rpc(
+      'consume_listing_upload_limit',
+      { p_user_id: data.user.id, p_limit: 10, p_window_seconds: 3600 },
+    )
+    if (rateLimitError) {
+      console.error('Listing upload rate limit check failed:', rateLimitError)
+      return reply({ error: 'Secure upload service is temporarily unavailable.' }, 503)
+    }
+    if (uploadAllowed !== true) {
+      return reply({ error: 'Upload limit reached. Try again later.' }, 429)
+    }
+
     const form = await request.formData()
     const file = form.get('file')
     if (!(file instanceof File)) return reply({ error: 'An image file is required.' }, 400)
@@ -75,9 +90,6 @@ export async function POST(request: NextRequest) {
 
     const extension = detectedType === 'image/jpeg' ? 'jpg' : detectedType === 'image/png' ? 'png' : 'webp'
     const objectPath = `${data.user.id}/${randomUUID()}.${extension}`
-    const admin = createClient(url, serviceKey, {
-      auth: { autoRefreshToken: false, persistSession: false, detectSessionInUrl: false },
-    })
     const { error: uploadError } = await admin.storage
       .from('produce-listings')
       .upload(objectPath, bytes, {
