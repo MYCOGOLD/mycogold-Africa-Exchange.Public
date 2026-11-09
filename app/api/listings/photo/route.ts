@@ -5,7 +5,7 @@ import { randomUUID } from 'node:crypto'
 export const runtime = 'nodejs'
 export const dynamic = 'force-dynamic'
 
-const MAX_IMAGE_BYTES = 5 * 1024 * 1024
+const MAX_IMAGE_BYTES = 4 * 1024 * 1024
 
 function reply(body: Record<string, unknown>, status = 200) {
   return NextResponse.json(body, {
