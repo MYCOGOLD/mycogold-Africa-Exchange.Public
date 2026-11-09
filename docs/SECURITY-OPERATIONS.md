@@ -41,7 +41,6 @@ The live Supabase project `mycogoldafrica` was inspected on 2026-11-09. The foll
 - `20261109064140_disable_unverified_market_price_feed_access.sql`
 - `20261109064518_revoke_public_storage_insert_privileges_cascade.sql`
 - `20261109064612_add_explicit_deny_policies_for_legacy_tables.sql`
-- `20261109064612_add_explicit_deny_policies_for_legacy_tables.sql`
 
 The migrations:
 
@@ -58,7 +57,7 @@ The migrations:
 - Harden the `handle_new_user` SECURITY DEFINER helper, set an empty search path, align it with the live `profiles(id, phone, name)` columns, and revoke direct execution from API roles. (The `auth.users` AFTER INSERT trigger `on_auth_user_created` is attached to this function.)
 - Add the `listings.status` field/check constraint and seller index.
 
-All five public tables retain RLS. The `test_users` table intentionally has no API policies or anon/authenticated grants because it is a legacy test table. Do not re-enable access without a specific use case and tests.
+All six application tables (`profiles`, `listings`, `orders`, `trades`, `live_prices`, and `test_users`) retain RLS. The legacy `test_users` and `live_prices` tables have explicit deny policies for `anon` and `authenticated` and are not exposed to the browser API.
 
 ## Server-side staff moderation configuration
 
@@ -69,7 +68,7 @@ The staff listing moderation route (`/api/staff/listings`) verifies the user's S
 The post-migration security advisor reports one remaining warning: leaked-password protection is disabled. Enable Supabase Auth's leaked-password protection in the Auth password/security settings and test the signup/password-reset flows:
 https://supabase.com/docs/guides/auth/password-security#password-strength-and-leaked-password-protection
 
-The advisor also reports an informational RLS-without-policy notice for `test_users`; this is intentional because public API access has been revoked. A performance advisor reports the new seller index as unused immediately after creation; re-check after marketplace traffic.
+The performance advisor currently marks indexes unused because there is almost no marketplace traffic. Keep the buyer/seller and foreign-key indexes and re-check after real usage.
 
 ## Public static demo and exchange settlement
 
@@ -81,7 +80,7 @@ The synthetic price emitter and escrow prototype are disabled as described below
 
 The legacy `live_prices` table contained a synthetic sample index and hub values. That row was removed, public reads were revoked, and the frontend no longer consumes the table. Do not republish a market index until its source, timestamp, units, and audit trail are verified.
 
-The browser-only trade confirmation flow has been replaced by a non-payment order-request workflow. Browser roles cannot create/update/delete `trades` rows. Buyers can request a quantity; sellers can accept/reject; buyers can cancel. The database derives price and parties and prevents concurrent over-reservation. An accepted request is not a completed sale, payment, escrow, or settlement. MFPI display now reads the live `live_prices` row; the browser's localStorage is not treated as a trade ledger. The legacy `MYCOGOLD_ESCROW.PVT` script has been converted to a fail-closed safety stub: mock STK identifiers and unverified payout/release are disabled. The minute-based synthetic price emitter has also been disabled because it generated pseudo-random prices rather than verified market observations.
+The browser-only trade confirmation flow has been replaced by a non-payment order-request workflow. Browser roles cannot create/update/delete `trades` rows. Buyers can request a quantity; sellers can accept/reject; buyers can cancel. The database derives price and parties and prevents concurrent over-reservation. An accepted request is not a completed sale, payment, escrow, or settlement. MFPI is unpublished; the frontend no longer consumes the legacy `live_prices` table. The browser's localStorage is not treated as a trade ledger. The legacy `MYCOGOLD_ESCROW.PVT` script has been converted to a fail-closed safety stub: mock STK identifiers and unverified payout/release are disabled. The minute-based synthetic price emitter has also been disabled because it generated pseudo-random prices rather than verified market observations.
 
 The `OrdersPanel` in user profiles shows each user's buyer/seller order requests. Listing photo uploads now require the server-side `SUPABASE_SERVICE_ROLE_KEY` or `SUPABASE_SECRET_KEY` and are rejected if file signatures do not match the declared image type. The new `/api/staff/listings` route performs staff verification server-side before using a privileged Supabase key. Configure `SUPABASE_SERVICE_ROLE_KEY` or `SUPABASE_SECRET_KEY` only as a server-side deployment secret. Do not expose it through `NEXT_PUBLIC_` variables.
 
@@ -113,4 +112,4 @@ The live project currently has two Auth users but zero persisted profiles, listi
 
 - Keep payment credentials and service-role keys only in server-side secret storage.
 - Rotate any credential accidentally committed to Git history; deleting a file in a later commit does not revoke a leaked credential.
-- Require CI typecheck/build and security checks before release. The new Application CI and CodeQL workflows have been triggered, but their latest runs are failing/queued and their logs are not currently available; do not treat the build as passed.
+- Require CI typecheck/build and security checks before release. The latest Application CI and CodeQL runs fail before any job step starts (`runner_id=0`, no steps, and no job logs). The application build and static analysis have therefore not run; resolve GitHub Actions runner availability/policy before treating CI as passed.
