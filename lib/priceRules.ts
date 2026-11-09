@@ -4,7 +4,7 @@
  * fraud, and anomaly checks must use commodity-, grade-, unit-, and location-
  * aware rules backed by real reference data.
  */
-export function validatePriceFloor(price: number, currency: 'USD' | 'KES' = 'KES') {
+export function validatePositivePrice(price: number, currency: 'USD' | 'KES' = 'KES') {
   const value = Number(price)
   const ok = Number.isFinite(value) && value > 0
   return {
