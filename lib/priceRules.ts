@@ -1,5 +1,25 @@
-export const BOLLINGER_FLOOR_USD = 3
-export const BOLLINGER_FLOOR_KES = 300
-export function validatePriceFloor(price: number, currency: 'USD'|'KES' = 'KES') { const floor=currency==='USD'?BOLLINGER_FLOOR_USD:BOLLINGER_FLOOR_KES; return {ok:Number(price)>=floor,floor,currency,message:Number(price)<floor?'Below $3 floor - blocked':null} }
-export function formatPrice(price: number, currency='KES') { return `${currency} ${Number(price||0).toFixed(2)}` }
-export function formatMFPI(value: number) { return Number(value).toFixed(5) }
+/**
+ * Seller asking prices are market inputs, not values to be rejected by a
+ * universal minimum. Validate only finite positive amounts here; benchmark,
+ * fraud, and anomaly checks must use commodity-, grade-, unit-, and location-
+ * aware rules backed by real reference data.
+ */
+export function validatePriceFloor(price: number, currency: 'USD' | 'KES' = 'KES') {
+  const value = Number(price)
+  const ok = Number.isFinite(value) && value > 0
+  return {
+    ok,
+    floor: 0,
+    currency,
+    message: ok ? null : 'Enter a valid price greater than zero.',
+  }
+}
+
+export function formatPrice(price: number, currency = 'KES') {
+  const value = Number(price)
+  return Number.isFinite(value) ? `${currency} ${value.toFixed(2)}` : 'Price unavailable'
+}
+
+export function formatMFPI(value: number) {
+  return Number.isFinite(value) ? value.toFixed(5) : '—'
+}
