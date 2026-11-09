@@ -1,10 +1,26 @@
-﻿'use client'
+'use client'
 
 import { useEffect, useState } from 'react'
 import { AuthModal } from '../../components/auth-modal'
 import { ProfileGuest } from '../../components/ProfileGuest'
 import { ProfileLoggedIn } from '../../components/ProfileLoggedIn'
 import { createClient } from '../../lib/supabase'
+
+async function checkStaffAccess(accessToken: string): Promise<boolean> {
+  try {
+    const response = await fetch('/api/profile-access', {
+      headers: { Authorization: `Bearer ${accessToken}` },
+      cache: 'no-store',
+    })
+
+    if (!response.ok) return false
+
+    const result: { isStaff?: boolean } = await response.json()
+    return result.isStaff === true
+  } catch {
+    return false
+  }
+}
 
 export default function ProfilePage() {
   const [userId, setUserId] = useState<string | null>(null)
@@ -16,37 +32,32 @@ export default function ProfilePage() {
     let active = true
 
     async function loadSession() {
-      const supabase = createClient()
-      const { data } = await supabase.auth.getSession()
-      const sessionUser = data.session?.user ?? null
+      try {
+        const supabase = createClient()
+        const { data, error } = await supabase.auth.getSession()
+        if (error) throw error
 
-      if (!active) return
+        const session = data.session
+        if (!active) return
 
-      setUserId(sessionUser?.id ?? null)
+        setUserId(session?.user.id ?? null)
+        setIsStaff(false)
 
-      if (sessionUser && data.session?.access_token) {
-        try {
-          const response = await fetch('/api/profile-access', {
-            headers: {
-              Authorization: `Bearer ${data.session.access_token}`,
-            },
-          })
-
-          if (response.ok) {
-            const result = await response.json()
-            setIsStaff(Boolean(result.isStaff))
-          }
-        } catch {
+        if (session?.access_token) {
+          const staff = await checkStaffAccess(session.access_token)
+          if (active) setIsStaff(staff)
+        }
+      } catch {
+        if (active) {
+          setUserId(null)
           setIsStaff(false)
         }
-      } else {
-        setIsStaff(false)
+      } finally {
+        if (active) setLoading(false)
       }
-
-      setLoading(false)
     }
 
-    loadSession()
+    void loadSession()
 
     return () => {
       active = false
@@ -55,26 +66,21 @@ export default function ProfilePage() {
 
   const handleAuthed = async () => {
     const supabase = createClient()
-    const { data } = await supabase.auth.getSession()
-    setUserId(data.session?.user.id ?? null)
+    const { data, error } = await supabase.auth.getSession()
+
+    if (error || !data.session) {
+      setUserId(null)
+      setIsStaff(false)
+      setAuthOpen(false)
+      return
+    }
+
+    setUserId(data.session.user.id)
+    setIsStaff(false)
     setAuthOpen(false)
 
-    if (data.session?.access_token && data.session.user) {
-      try {
-        const response = await fetch('/api/profile-access', {
-          headers: {
-            Authorization: `Bearer ${data.session.access_token}`,
-          },
-        })
-
-        if (response.ok) {
-          const result = await response.json()
-          setIsStaff(Boolean(result.isStaff))
-        }
-      } catch {
-        setIsStaff(false)
-      }
-    }
+    const staff = await checkStaffAccess(data.session.access_token)
+    setIsStaff(staff)
   }
 
   if (loading) {
