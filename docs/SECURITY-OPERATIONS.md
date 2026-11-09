@@ -7,7 +7,7 @@ The profile-access endpoint verifies the Supabase access token with Supabase Aut
 - The authenticated user's UUID is in `STAFF_USER_IDS`; or
 - The user's trusted `app_metadata.role` is `staff` or `admin`.
 
-Do not use `user_metadata`, profile fields, phone numbers, or client-side flags to grant staff privileges.
+Do not use `user_metadata`, profile fields, phone numbers, or client-side flags to grant staff privileges. The current phone/password sign-in uses a synthetic email alias and does not verify phone ownership with SMS OTP. The UI now avoids claiming phone verification and disables password reset until a real recovery channel is configured.
 
 ### Configure staff UUIDs
 
@@ -61,7 +61,7 @@ The migrations:
 - Restrict listing creation to the authenticated seller and listing changes/deletion to the owner or trusted `app_metadata.role` staff/admin.
 - Restrict trade reads to the owner or trusted staff/admin; browser users cannot create, update, or delete trade rows.
 - Add an `orders` request workflow: authenticated buyers can request quantities from active listings; the database derives buyer, seller, unit price and total from trusted context; order terms are immutable; only the buyer can cancel a request and only the seller can accept/reject it. Pending/accepted quantities are reserved under a listing-row lock to prevent overselling.
-- Put new listings into `pending` review state by default. Only the server-side staff moderation route can approve or deactivate them; listing owners cannot write the moderation status.
+- Put new listings into `pending` review state by default. Only the server-side staff moderation route can approve or deactivate them; listing owners cannot write the moderation status. Staff-only review data includes the seller's phone on file. Approval requires an explicit staff confirmation that the seller was contacted and the details were manually checked; the API records `moderated_at` and `seller_verified_at`.
 - Derive the public seller label from the authenticated seller's profile rather than trusting browser input; store only the seller-owned storage object path, and verify that the uploaded object actually exists before accepting a listing. This avoids hard-coding a Supabase project URL in the database.
 - Add the public `produce-listings` image bucket (JPEG/PNG/WebP, bucket hard cap 5 MB; upload API limit 4 MB). The database stores an object path, not an absolute project URL. Uploads pass through `/api/listings/photo`, which verifies the authenticated user, checks file signatures and size, decodes and re-encodes images to WebP (stripping metadata and rejecting malformed input), enforces a database-backed sliding-window limit of 10 uploads per user per hour, and uses a server-only key; the browser INSERT policy is removed (a direct authenticated insert was tested and denied by Storage RLS). The server route uses the service-only storage key. Users can delete only their own uploaded objects.
 - Remove anonymous/authenticated table-wide write privileges and disable API access to the legacy `test_users` table. The private sliding-window upload event table has RLS and an explicit deny policy for browser roles.
