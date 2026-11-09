@@ -47,7 +47,8 @@ check(uploadRoute.includes('const MAX_IMAGE_BYTES = 4 * 1024 * 1024')
   && /webp\(\{ quality: 82/.test(uploadRoute)
   && /upsert:\s*false/.test(uploadRoute),
   'Image upload API must enforce size/rate limits and decode, sanitize, and re-encode images.')
-check(/auth\.getUser\(token\)/.test(staffRoute) && /app_metadata/.test(staffRoute),
+check(/auth\.getUser\(token\)/.test(staffRoute) && /app_metadata/.test(staffRoute)
+  && /sellerContactConfirmed/.test(staffRoute) && /seller_verified_at/.test(staffRoute),
   'Staff API must verify the JWT and trusted staff role.')
 check(staffPanel.includes("import { createClient } from '../lib/supabase'"),
   'Staff panel must use the same authenticated Supabase client as the profile page.')
