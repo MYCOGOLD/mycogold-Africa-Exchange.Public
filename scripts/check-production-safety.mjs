@@ -59,7 +59,9 @@ check(/type="email"/.test(authModal) && /emailRedirectTo/.test(authModal),
   'New accounts must use a real email for confirmation and recovery.')
 check(/@supabase\/ssr/.test(supabaseClient),
   'Browser Supabase auth must share SSR cookie sessions.')
-check(/not OTP verified/.test(profilePage) && /manually verify the seller/.test(staffPanel),\n  'Phone verification limitations and manual seller review must be disclosed.')\ncheck(staffPanel.includes("import { createClient } from '../lib/supabase'"),
+check(/not OTP verified/.test(profilePage) && /manually verify the seller/.test(staffPanel),
+  'Phone verification limitations and manual seller review must be disclosed.')
+check(staffPanel.includes("import { createClient } from '../lib/supabase'"),
   'Staff panel must use the same authenticated Supabase client as the profile page.')
 check(/verify_listing_photo_object/.test(photoIntegrityMigration)
   && /storage\.objects/.test(photoIntegrityMigration),
