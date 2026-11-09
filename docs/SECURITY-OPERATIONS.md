@@ -49,6 +49,7 @@ The live Supabase project `mycogoldafrica` was inspected on 2026-11-09. The foll
 - `20261109070033_verify_listing_photo_object.sql`
 - `20261109070314_store_listing_photo_paths_not_absolute_urls.sql`
 - `20261109070435_deny_rate_limit_api_access_and_require_quantity.sql`
+- `20261109070435_deny_rate_limit_api_access_and_require_quantity.sql`
 
 The migrations:
 
@@ -61,7 +62,7 @@ The migrations:
 - Put new listings into `pending` review state by default. Only the server-side staff moderation route can approve or deactivate them; listing owners cannot write the moderation status.
 - Derive the public seller label from the authenticated seller's profile rather than trusting browser input; store only the seller-owned storage object path, and verify that the uploaded object actually exists before accepting a listing. This avoids hard-coding a Supabase project URL in the database.
 - Add the public `produce-listings` image bucket (JPEG/PNG/WebP, bucket hard cap 5 MB; upload API limit 4 MB). The database stores an object path, not an absolute project URL. Uploads pass through `/api/listings/photo`, which verifies the authenticated user, checks file signatures and size, enforces a database-backed limit of 10 uploads per user per hour, and uses a server-only key; the browser INSERT policy is removed (a direct authenticated insert was tested and denied by Storage RLS). The server route uses the service-only storage key. Users can delete only their own uploaded objects.
-- Remove anonymous/authenticated table-wide write privileges and disable API access to the legacy `test_users` table.
+- Remove anonymous/authenticated table-wide write privileges and disable API access to the legacy `test_users` table. The private upload-rate-limit table has RLS and an explicit deny policy for browser roles.
 - Harden the `handle_new_user` SECURITY DEFINER helper, set an empty search path, align it with the live `profiles(id, phone, name)` columns, and revoke direct execution from API roles. (The `auth.users` AFTER INSERT trigger `on_auth_user_created` is attached to this function.)
 - Add the `listings.status` field/check constraint and seller index.
 - Enforce positive listing prices and quantities at the database boundary.
