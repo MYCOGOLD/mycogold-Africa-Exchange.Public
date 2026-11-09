@@ -119,7 +119,7 @@ export async function PATCH(request: NextRequest) {
     if (!isStaff) return response({ error: 'Staff access required.' }, 403)
 
     const body = await request.json().catch(() => null) as
-      | { id?: unknown; status?: unknown }
+      | { id?: unknown; status?: unknown; sellerContactConfirmed?: unknown }
       | null
     const id = typeof body?.id === 'string' ? body.id : ''
     const status = body?.status
@@ -130,10 +130,33 @@ export async function PATCH(request: NextRequest) {
     if (status !== 'active' && status !== 'inactive') {
       return response({ error: 'Status must be active or inactive.' }, 400)
     }
+    if (status === 'active' && body?.sellerContactConfirmed !== true) {
+      return response({ error: 'Confirm that you manually contacted and checked the seller before approval.' }, 400)
+    }
 
     const admin = createClient(url, serviceKey, {
       auth: { autoRefreshToken: false, persistSession: false, detectSessionInUrl: false },
     })
+
+    if (status === 'active') {
+      const { data: listingOwner, error: ownerError } = await admin
+        .from('listings')
+        .select('seller_id')
+        .eq('id', id)
+        .maybeSingle()
+      if (ownerError || !listingOwner) {
+        return response({ error: 'Listing not found.' }, 404)
+      }
+      const { data: sellerProfile, error: profileError } = await admin
+        .from('profiles')
+        .select('phone')
+        .eq('id', listingOwner.seller_id)
+        .maybeSingle()
+      if (profileError || !sellerProfile?.phone?.trim()) {
+        return response({ error: 'Seller has no contact phone on file; approval is blocked.' }, 409)
+      }
+    }
+
     const reviewedAt = new Date().toISOString()
     const { data: listing, error: updateError } = await admin
       .from('listings')
