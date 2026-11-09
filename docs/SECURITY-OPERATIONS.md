@@ -27,6 +27,7 @@ The live Supabase project `mycogoldafrica` was inspected on 2026-11-09. The foll
 - `20261109060835_harden_marketplace_rls_and_privileges.sql`
 - `20261109060907_refine_market_access_policies.sql`
 - `20261109060921_optimize_rls_jwt_policy_checks.sql`
+- `20261109061000_revoke_direct_auth_helper_execution.sql`
 
 The migrations:
 
@@ -36,7 +37,7 @@ The migrations:
 - Restrict listing creation to the authenticated seller and listing changes/deletion to the owner or trusted `app_metadata.role` staff/admin.
 - Restrict trade reads to the owner or trusted staff/admin; browser users cannot update/delete trade rows.
 - Remove anonymous/authenticated table-wide write privileges and disable API access to the legacy `test_users` table.
-- Restrict the `handle_new_user` SECURITY DEFINER helper, set an empty search path, and align it with the live `profiles(id, phone, name)` columns.
+- Harden the `handle_new_user` SECURITY DEFINER helper, set an empty search path, align it with the live `profiles(id, phone, name)` columns, and revoke direct execution from API roles. (No auth trigger was present during the audit.)
 - Add the `listings.status` field/check constraint and seller index.
 
 All five public tables retain RLS. The `test_users` table intentionally has no API policies or anon/authenticated grants because it is a legacy test table. Do not re-enable access without a specific use case and tests.
