@@ -76,7 +76,7 @@ check(/MFPI DEMO/.test(staticDemo) && !/TUSK AI RUNNING/i.test(staticDemo),
   'Static demo must not claim live AI or live index data.')
 check(/X-Content-Type-Options/.test(nextConfig) && /X-Frame-Options/.test(nextConfig)
   && /Referrer-Policy/.test(nextConfig) && /Permissions-Policy/.test(nextConfig)
-  && /Strict-Transport-Security/.test(nextConfig) && /poweredByHeader:\\s*false/.test(nextConfig),
+  && /Strict-Transport-Security/.test(nextConfig) && /poweredByHeader:\s*false/.test(nextConfig),
   'Next.js must send baseline security headers and disable the X-Powered-By header.')
 check(/node_modules\//.test(ignore) && /\.env\.\*/.test(ignore),
   'Git ignore must exclude dependencies and local environment files.')
