@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+"""Offline research prototype only. No Supabase, payment, verified market feed, or external AI connection."""
 import sqlite3, hashlib, json, time, math, secrets, re, os
 DB_FILE = "MYCOGOLD_EXCHANGE.db"
 
@@ -123,13 +124,13 @@ class TuskMetaAIPipelineLearner:
         insights=[]; total=0.0
         for code,delta,conf in recent:
             new_conf=conf*math.exp(-abs(delta)/100.0)+0.1; total+=delta
-            insights.append({"product":code,"error_delta":delta,"old_conf":conf,"new_conf_meta_ai":round(min(0.98,new_conf),3),"action":"CORRECTED_VIA_META_AI_PIPELINE"})
+            insights.append({"product":code,"error_delta":delta,"old_conf":conf,"new_conf_meta_ai":round(min(0.98,new_conf),3),"action":"SIMULATED_LOCAL_ANALYSIS"})
         avg_corr=total/max(len(recent),1); mfpi_shift=CryptographicCPRNG.gaussian(0,0.5)
-        return {"pipeline_status":"TUSK_FETCHED_INFO_LEARNED_VIA_META_AI","learning_mode":secrets.choice(self.modes),"insights":insights,"avg_correction":round(avg_corr,2),"mfpi_shift":round(mfpi_shift,3),"timestamp":time.time()}
+        return {"pipeline_status":"LOCAL_SIMULATION_ONLY","learning_mode":secrets.choice(self.modes),"insights":insights,"avg_correction":round(avg_corr,2),"mfpi_shift":round(mfpi_shift,3),"timestamp":time.time()}
     def distribute_to_categories(self, pipeline_data):
         for folder in ["MYCOGOLD.BACK","MYCOGOLD.FRONT","MYCOGOLD.FUTURE","MYCOGOLD.PVT","MYCO.OVERAL"]: os.makedirs(folder,exist_ok=True)
         with open("MYCOGOLD.BACK/kernel_backend.json","w") as f: json.dump({"type":"MYCOGOLD.BACK","desc":"Backend - DB kernel, Merkle ledger, TUSK - FULL SECRET CODE background","pipeline_insights":pipeline_data["insights"],"total_correction":pipeline_data["avg_correction"],"formula_hidden":"Bayes + Kalman","essential_for_ui":False},f,indent=2)
-        with open("MYCOGOLD.FRONT/tusk_front_essential.json","w") as f: json.dump({"type":"MYCOGOLD.FRONT","desc":"Frontend - Only essential to be viewed UI","essential_ui":{"avg_price_trend":f"{pipeline_data['avg_correction']} KES correction via TUSK Meta AI","tusk_status":"TUSK Live - Fetching info - Learning via Meta AI pipeline","dots":"36 dots = TUSK analyzing every 1s - Yellow Market, Blue Physics, Green Trust","products":32,"mfpi_shift":pipeline_data["mfpi_shift"]},"essential_for_ui":True},f,indent=2)
+        with open("MYCOGOLD.FRONT/tusk_front_essential.json","w") as f: json.dump({"type":"MYCOGOLD.FRONT","desc":"Frontend - Only essential to be viewed UI","essential_ui":{"avg_price_trend":f"{pipeline_data['avg_correction']} KES correction via TUSK Meta AI","tusk_status":"Offline local simulation — no live feed or external AI model","dots":"36 dots = TUSK analyzing every 1s - Yellow Market, Blue Physics, Green Trust","products":32,"mfpi_shift":pipeline_data["mfpi_shift"]},"essential_for_ui":True},f,indent=2)
         with open("MYCOGOLD.FUTURE/future_predictions.json","w") as f: json.dump({"type":"MYCOGOLD.FUTURE","desc":"Future - Predictive secret","predictions":{"shift":pipeline_data["mfpi_shift"],"forecast":"GARCH-like"},"essential_for_ui":False},f,indent=2)
         with open("MYCOGOLD.PVT/pvt_secret_engine.json","w") as f: json.dump({"type":"MYCOGOLD.PVT","desc":"PVT - Secret Quant Engine - Physics+Math+Psych+CARA+CPRNG background","secret_formulas":"SECRET","pipeline_data":pipeline_data,"essential_for_ui":False},f,indent=2)
         with open("MYCO.OVERAL/overall_admin.json","w") as f: json.dump({"type":"MYCO.OVERAL","desc":"Overall - Admin overview essential only","admin_overview":{"total_datasets":32,"avg_correction":pipeline_data["avg_correction"],"pipeline_status":pipeline_data["pipeline_status"],"meta_ai_learning":"TUSK fetched info, learned via Meta AI only for pipeline upgrading","site_health":"100%","distribution":"BACK+FRONT+FUTURE+PVT+OVERAL"},"essential_for_ui":True},f,indent=2)
@@ -145,32 +146,18 @@ class MycoGoldEssentialUIRefiner:
         cur.execute("SELECT COUNT(*) FROM TUSK_AI_BRAIN"); brain=cur.fetchone()[0]
         cur.execute("SELECT COUNT(*) FROM IMMUTABLE_LEDGER"); led=cur.fetchone()[0]
         conn.close()
-        essential={"version":"3.0.0","branding":"MYCOGOLD-Africa","total_datasets":count,"avg_price":round(avg or 0,2),"top_5_expensive":[{"code":c,"price":p} for c,p in top5],"tusk_brain_learnings":brain,"ledger_blocks":led,"ui_message":"DOTS VISIBLE=TUSK LIVE AI","essential_only":True,"secret_formulas_hidden":True}
+        essential={"version":"3.0.0","branding":"MYCOGOLD-Africa","total_datasets":count,"avg_price":round(avg or 0,2),"top_5_expensive":[{"code":c,"price":p} for c,p in top5],"tusk_brain_learnings":brain,"ledger_blocks":led,"ui_message":"OFFLINE DEMO ONLY — NO LIVE AI PROCESS","essential_only":True,"secret_formulas_hidden":True}
         os.makedirs("MYCOGOLD.FRONT",exist_ok=True)
         with open("MYCOGOLD.FRONT/database_essential_ui.json","w") as f: json.dump(essential,f,indent=2)
         return essential
 if __name__ == "__main__":
-    print("[+] Initializing Cryptographic Database Schemas...")
+    print("[DEMO ONLY] Initializing local example catalogue.")
     init_database()
-    print("[+] Seeding 32 Agro-Produce Datasets...")
     seed_catalog()
     brain = TuskAIBrainEngine()
-    raw_query = "Waru potatoes 1 bag 90kg from Molo"
-    parsed = brain.parse_natural_language_input(raw_query)
-    print(f"[+] TUSK NLP: {parsed['name']} ({parsed['code']}) Multi {parsed['multiplier']} Avg KES {parsed['avg']}")
-    actual_market_sale = 8200.0
-    brain.execute_bayesian_self_learning(parsed['code'], raw_query, actual_market_sale / parsed['multiplier'])
-    photo_hash = hashlib.sha256(b"POTATO_INSPECTION_PHOTO").hexdigest()
-    video_hash = hashlib.sha256(b"TRUCK_WEIGHT_SCALE_VIDEO").hexdigest()
-    hash_committed = ImmutableMerkleLedger.append_block(parsed['code'],90.0,actual_market_sale/90.0,"CLEAR_AUTONOMOUS_MATCH",-0.2488,35.7324,[photo_hash,video_hash],{"market":"Molo Farmgate","buyer_trust_score":0.94})
-    print(f"[✔] SUCCESS: Block Hash {hash_committed}")
-    print("[+] REFINING - Only essentials UI, rest background...")
-    essential_ui = MycoGoldEssentialUIRefiner.generate_essential_ui_only()
-    print(f" -> Essential UI: {essential_ui['total_datasets']} datasets")
-    print("[+] TUSK META AI PIPELINE LEARNING...")
-    meta_learner = TuskMetaAIPipelineLearner()
-    pipeline_data = meta_learner.fetch_and_learn_pipeline()
-    print(f" -> {pipeline_data['pipeline_status']} Mode {pipeline_data['learning_mode']}")
-    distributed = meta_learner.distribute_to_categories(pipeline_data)
-    for cat, path in distributed.items(): print(f" -> {cat}: {path}")
-    print("[✔] REFINED SUCCESS - BACK+FRONT+FUTURE+PVT+OVERAL pasted geniusly")
+    sample_query = "Waru potatoes 1 bag 90kg from Molo"
+    parsed = brain.parse_natural_language_input(sample_query)
+    print(f"[DEMO ONLY] Example classification: {parsed['name']} ({parsed['code']})")
+    print("[DISABLED] No synthetic sale, wallet transaction, trade confirmation, or ledger block is created.")
+    print("[DISABLED] No external AI service is called. The parser and price values are local heuristics/sample data.")
+    print("[NOT PRODUCTION] This local SQLite prototype is not the MycoGold exchange database.")
