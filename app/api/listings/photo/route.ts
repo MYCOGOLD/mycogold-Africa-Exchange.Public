@@ -89,24 +89,30 @@ export async function POST(request: NextRequest) {
       return reply({ error: 'Image content does not match an allowed JPEG, PNG, or WebP file.' }, 415)
     }
 
-    const image = sharp(bytes, {
-      failOn: 'warning',
-      limitInputPixels: 25_000_000,
-      sequentialRead: true,
-    })
-    const metadata = await image.metadata()
-    if (
-      !metadata.width ||
-      !metadata.height ||
-      metadata.width > 8192 ||
-      metadata.height > 8192 ||
-      !['jpeg', 'png', 'webp'].includes(metadata.format || '')
-    ) {
-      return reply({ error: 'Image dimensions or format are not supported.' }, 415)
+    let sanitizedImage: Buffer
+    try {
+      const image = sharp(bytes, {
+        failOn: 'warning',
+        limitInputPixels: 25_000_000,
+        sequentialRead: true,
+      })
+      const metadata = await image.metadata()
+      if (
+        !metadata.width ||
+        !metadata.height ||
+        metadata.width > 8192 ||
+        metadata.height > 8192 ||
+        !['jpeg', 'png', 'webp'].includes(metadata.format || '')
+      ) {
+        return reply({ error: 'Image dimensions or format are not supported.' }, 415)
+      }
+
+      // Re-encode to strip metadata and reject malformed/polyglot input.
+      sanitizedImage = await image.rotate().webp({ quality: 82, effort: 4 }).toBuffer()
+    } catch {
+      return reply({ error: 'Image could not be decoded safely.' }, 415)
     }
 
-    // Re-encode to strip metadata and reject malformed/polyglot input.
-    const sanitizedImage = await image.rotate().webp({ quality: 82, effort: 4 }).toBuffer()
     if (sanitizedImage.length > MAX_IMAGE_BYTES) {
       return reply({ error: 'Processed image exceeds the 4 MB limit.' }, 413)
     }
