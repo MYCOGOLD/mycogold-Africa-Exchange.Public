@@ -96,23 +96,24 @@ export function AddProduceModal({
 
     try {
       const supabase = createClient()
+      const { data: { session }, error: sessionError } = await supabase.auth.getSession()
       const { data: { user }, error: authError } = await supabase.auth.getUser()
-      if (authError || !user || user.id !== userId) {
+      if (sessionError || authError || !session || !user || user.id !== userId) {
         throw new Error('Your session is no longer valid. Sign in again.')
       }
 
-      const extension = photo.type === 'image/png' ? 'png' : photo.type === 'image/webp' ? 'webp' : 'jpg'
-      uploadedPath = `${user.id}/${crypto.randomUUID()}.${extension}`
-
-      const { error: uploadError } = await supabase.storage
-        .from('produce-listings')
-        .upload(uploadedPath, photo, { contentType: photo.type, upsert: false })
-
-      if (uploadError) throw new Error(`Photo upload failed: ${uploadError.message}`)
-
-      const { data: publicPhoto } = supabase.storage
-        .from('produce-listings')
-        .getPublicUrl(uploadedPath)
+      const uploadForm = new FormData()
+      uploadForm.append('file', photo)
+      const uploadResponse = await fetch('/api/listings/photo', {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${session.access_token}` },
+        body: uploadForm,
+      })
+      const uploadResult = await uploadResponse.json().catch(() => ({}))
+      if (!uploadResponse.ok || typeof uploadResult.path !== 'string' || typeof uploadResult.publicUrl !== 'string') {
+        throw new Error(String(uploadResult.error || 'Secure photo upload failed.'))
+      }
+      uploadedPath = uploadResult.path
 
       const { data, error: insertError } = await supabase
         .from('listings')
@@ -123,7 +124,7 @@ export function AddProduceModal({
           location,
           price: numericPrice,
           quantity: numericQuantity,
-          photo_url: publicPhoto.publicUrl,
+          photo_url: uploadResult.publicUrl,
         })
         .select()
         .single()
