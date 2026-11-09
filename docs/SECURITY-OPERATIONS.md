@@ -46,15 +46,15 @@ The live Supabase project `mycogoldafrica` was inspected on 2026-11-09. The foll
 - `20261109065931_require_complete_produce_listings.sql`
 - `20261109065938_require_listing_photo.sql`
 - `20261109070003_add_listing_upload_rate_limit.sql`
-- `20261109070033_verify_listing_photo_object.sql`
+- `20261109070033_verify_listing_photo_object_exists.sql`
 - `20261109070314_store_listing_photo_paths_not_absolute_urls.sql`
 - `20261109070435_deny_rate_limit_api_access_and_require_quantity.sql`
+- `20261109070510_protect_photos_referenced_by_listings.sql`
 - `20261109070710_protect_photos_referenced_by_listings.sql`
 - `20261109071002_use_sliding_window_listing_upload_limits.sql`
 - `20261109071627_add_listing_moderation_audit_fields.sql`
 - `20261109071829_require_manual_verification_for_active_listings.sql`
 - `20261109071933_add_atomic_listing_moderation_audit.sql`
-- `20261109070435_deny_rate_limit_api_access_and_require_quantity.sql`
 
 The migrations:
 
