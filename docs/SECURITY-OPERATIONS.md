@@ -80,7 +80,7 @@ The staff listing moderation route (`/api/staff/listings`) verifies the user's S
 
 ## Remaining Supabase advisories
 
-The post-migration security advisor reports one remaining warning: leaked-password protection is disabled. Enable Supabase Auth's leaked-password protection in the Auth password/security settings and test the signup/password-reset flows:
+The post-migration security advisor reports one remaining warning: leaked-password protection is disabled. This organization is on Supabase Free, and the feature requires Pro or above. Upgrade before enabling it in Authentication -> Providers -> Password security, then test signup and password-reset flows:
 https://supabase.com/docs/guides/auth/password-security#password-strength-and-leaked-password-protection
 
 The performance advisor currently marks indexes unused because there is almost no marketplace traffic. Keep the buyer/seller and foreign-key indexes and re-check after real usage.
