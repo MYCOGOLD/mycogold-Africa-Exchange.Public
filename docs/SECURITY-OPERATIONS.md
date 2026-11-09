@@ -30,6 +30,7 @@ The live Supabase project `mycogoldafrica` was inspected on 2026-11-09. The foll
 - `20261109061000_revoke_direct_auth_helper_execution.sql`
 - `20261109061428_secure_listing_moderation_and_photo_storage.sql`
 - `20261109061503_disable_client_side_trade_writes.sql`
+- `20261109062352_protect_listing_identity_and_photo_paths.sql`
 
 The migrations:
 
@@ -39,6 +40,7 @@ The migrations:
 - Restrict listing creation to the authenticated seller and listing changes/deletion to the owner or trusted `app_metadata.role` staff/admin.
 - Restrict trade reads to the owner or trusted staff/admin; browser users cannot create, update, or delete trade rows.
 - Put new listings into `pending` review state by default. Only the server-side staff moderation route can approve or deactivate them; listing owners cannot write the moderation status.
+- Derive the public seller label from the authenticated seller's profile rather than trusting browser input; restrict photo URLs to that seller's own folder in the public `produce-listings` bucket.
 - Add the public `produce-listings` image bucket (JPEG/PNG/WebP, max 5 MB) with authenticated uploads constrained to each user's own UUID folder.
 - Remove anonymous/authenticated table-wide write privileges and disable API access to the legacy `test_users` table.
 - Harden the `handle_new_user` SECURITY DEFINER helper, set an empty search path, align it with the live `profiles(id, phone, name)` columns, and revoke direct execution from API roles. (The `auth.users` AFTER INSERT trigger `on_auth_user_created` is attached to this function.)
