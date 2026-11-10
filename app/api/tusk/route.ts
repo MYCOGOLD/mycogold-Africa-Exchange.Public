@@ -28,27 +28,38 @@ const TUSK_INSTRUCTIONS = [
   'Do not provide investment, lending, legal, or guaranteed price advice. Encourage users to check produce quality, grade, unit, location, freshness, and transport costs.',
   'If the data is missing or insufficient, say so plainly. Do not fabricate figures, market prices, stock, transaction history, index values, or verification status.',
   'Be practical, respectful, concise, and accessible to Kenyan farmers, buyers, and traders.',
-].join('\\n')
+].join('\n')
 
 export async function POST(request: NextRequest) {
+  // TUSK uses a cookie-authenticated session. Require an exact same-origin
+  // Origin header so cross-site requests cannot ride a signed-in browser.
   const origin = request.headers.get('origin')
-  if (origin && origin !== request.nextUrl.origin) {
+  if (!origin || origin !== request.nextUrl.origin) {
     return json({ error: 'Request origin not allowed.' }, 403)
   }
 
+  if (!request.headers.get('content-type')?.toLowerCase().startsWith('application/json')) {
+    return json({ error: 'Content-Type must be application/json.' }, 415)
+  }
+
   const rawBody = await request.text()
-  if (rawBody.length > 4096) {
+  if (new TextEncoder().encode(rawBody).byteLength > 4096) {
     return json({ error: 'Question is too large. Please shorten it.' }, 413)
   }
 
-  let body: { question?: unknown }
+  let body: unknown
   try {
-    body = JSON.parse(rawBody) as { question?: unknown }
+    body = JSON.parse(rawBody)
   } catch {
     return json({ error: 'A valid question is required.' }, 400)
   }
 
-  const question = typeof body.question === 'string' ? body.question.trim() : ''
+  if (!body || typeof body !== 'object' || Array.isArray(body)) {
+    return json({ error: 'A valid question is required.' }, 400)
+  }
+
+  const questionValue = (body as { question?: unknown }).question
+  const question = typeof questionValue === 'string' ? questionValue.trim() : ''
   if (question.length < 2 || question.length > 1000) {
     return json({ error: 'Please enter a question between 2 and 1,000 characters.' }, 400)
   }
@@ -144,7 +155,7 @@ export async function POST(request: NextRequest) {
       signal: AbortSignal.timeout(20000),
       body: JSON.stringify({
         model,
-        instructions: TUSK_INSTRUCTIONS + '\\nCURRENT MYCOGOLD DATA SNAPSHOT:\\n' + JSON.stringify(context),
+        instructions: TUSK_INSTRUCTIONS + '\nCURRENT MYCOGOLD DATA SNAPSHOT:\n' + JSON.stringify(context),
         input: question,
         max_output_tokens: 550,
         store: false,
@@ -168,7 +179,7 @@ export async function POST(request: NextRequest) {
     .flatMap((item) => item.content || [])
     .filter((part) => part.type === 'output_text' && typeof part.text === 'string')
     .map((part) => part.text as string)
-    .join('\\n')
+    .join('\n')
     .trim()
 
   if (!answer) {
