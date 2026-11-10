@@ -28,7 +28,7 @@ const TUSK_INSTRUCTIONS = [
   'Do not provide investment, lending, legal, or guaranteed price advice. Encourage users to check produce quality, grade, unit, location, freshness, and transport costs.',
   'If the data is missing or insufficient, say so plainly. Do not fabricate figures, market prices, stock, transaction history, index values, or verification status.',
   'Be practical, respectful, concise, and accessible to Kenyan farmers, buyers, and traders.',
-].join('\n')
+].join('\\n')
 
 export async function POST(request: NextRequest) {
   const origin = request.headers.get('origin')
@@ -66,10 +66,12 @@ export async function POST(request: NextRequest) {
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
   const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_SECRET_KEY
   const openAiKey = process.env.OPENAI_API_KEY
-  const model = process.env.OPENAI_MODEL || 'gpt-6-luna'
+  // Do not guess a model identifier. Configure an API model supported by the
+  // account after checking the current OpenAI model catalogue.
+  const model = process.env.OPENAI_MODEL?.trim()
 
-  if (!supabaseUrl || !serviceKey || !openAiKey) {
-    return json({ error: 'TUSK server configuration is incomplete.' }, 503)
+  if (!supabaseUrl || !serviceKey || !openAiKey || !model) {
+    return json({ error: 'TUSK server configuration is incomplete. Set the server-only OPENAI_MODEL to a supported model.' }, 503)
   }
 
   const admin = createAdminClient(supabaseUrl, serviceKey, {
@@ -142,7 +144,7 @@ export async function POST(request: NextRequest) {
       signal: AbortSignal.timeout(20000),
       body: JSON.stringify({
         model,
-        instructions: TUSK_INSTRUCTIONS + '\nCURRENT MYCOGOLD DATA SNAPSHOT:\n' + JSON.stringify(context),
+        instructions: TUSK_INSTRUCTIONS + '\\nCURRENT MYCOGOLD DATA SNAPSHOT:\\n' + JSON.stringify(context),
         input: question,
         max_output_tokens: 550,
         store: false,
@@ -166,7 +168,7 @@ export async function POST(request: NextRequest) {
     .flatMap((item) => item.content || [])
     .filter((part) => part.type === 'output_text' && typeof part.text === 'string')
     .map((part) => part.text as string)
-    .join('\n')
+    .join('\\n')
     .trim()
 
   if (!answer) {
