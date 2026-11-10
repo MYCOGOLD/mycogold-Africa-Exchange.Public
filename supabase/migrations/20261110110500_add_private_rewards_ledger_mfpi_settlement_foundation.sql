@@ -103,7 +103,6 @@ create table if not exists private.payment_provider_events (
   payload_sha256 text not null check (payload_sha256 ~ '^[0-9a-f]{64}$'),
   signature_verified_at timestamptz,
   received_at timestamptz not null default now(),
-  processed_at timestamptz,
   unique (provider, provider_event_reference)
 );
 
