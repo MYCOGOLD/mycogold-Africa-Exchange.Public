@@ -4,6 +4,24 @@ Status: implementation baseline; reward issuance, MFPI publication and payment s
 
 ## Product boundary
 
+## Kenya legal classification gate
+
+The Virtual Asset Service Providers Act, 2025 commenced on 4 November 2025. Its implementing Virtual Asset Service Providers Regulations, 2026 were published as Legal Notice No. 134 of 2026 and are in force from 22 July 2026. Do not use older documentation that describes the 2026 Regulations as only a draft.
+
+The Act has a specific closed-ecosystem exclusion and separately defines virtual service tokens. The exclusion is conditional, not a branding choice: the relevant digital value/rights must stay within the issuer's closed ecosystem, be non-transferable outside it, not be traded onward or sold on an outside secondary market, not be exchanged for fiat or virtual assets, and not function as payment or investment. The Act's wording also restricts exchange for real-world goods, services or discounts. Its virtual-service-token definition focuses on a non-transferable token whose sole function is access to or use of a service.
+
+Product design constraint for the first release:
+- Keep MycoGold Reward Points off-chain, account-based and non-transferable; never create public blockchain addresses, private keys, external transfers, bridges, exchange markets, cash-out or a public ticker.
+- Do not allow points to pay for produce, replace KES consideration, reduce real-world produce prices, buy real-world goods, or be redeemed for external goods/services/discounts.
+- Limit any eventual utility to platform-only functionality, and only after Kenyan counsel confirms that the exact design and operation fit the relevant statutory treatment.
+- Do not represent the 67m cap or Bitcoin-inspired halving schedule as making the programme a cryptocurrency or as a regulatory exemption. Economic design and actual use determine classification.
+- If the business needs transferable assets, token trading, external redemption, custody of virtual assets, crypto settlement or a token offering, stop the product launch path and obtain advice on the applicable CBK/CMA licensing and approvals first.
+
+The Act's First Schedule assigns custodial virtual-asset wallet services and virtual-asset payment processing to CBK, and virtual-asset exchanges, trading/clearing/settlement platforms, offering providers and token issuance/tokenisation activities to CMA. A MycoGold database wallet reference is therefore deliberately not a crypto wallet. A fiat payment/escrow relationship must use an appropriately authorised payment/escrow partner under its approved arrangement; this architecture does not itself establish authority to safeguard customer funds.
+
+Legal sources to review before launch: Kenya Law's Virtual Asset Service Providers Act, 2025 (especially sections 2, 4, 8, 34 and the First Schedule) and the final 2026 Regulations / Legal Notice 134 of 2026. This section is an engineering risk control, not a legal opinion or a regulator determination.
+
+
 MycoGold is a produce marketplace with an agricultural information assistant and an internal, closed-loop loyalty programme. The following systems must remain separate:
 
 1. TUSK AI — read-only agricultural guidance and retrieval from approved MycoGold data.
@@ -53,14 +71,15 @@ Working product name: MycoGold Reward Points. Do not create a public ticker or d
 
 - Hard maximum: 67,000,000 whole reward points.
 - Earn-only during the initial release; non-transferable between users and not purchasable.
-- No cash-out, external wallet withdrawal, exchange listing, interest, staking, investment return, deposit, collateral use or promise of monetary value.
+- No cash-out, external wallet withdrawal, exchange listing, payment for produce, purchase of real-world goods, real-world discounts, external redemption, interest, staking, investment return, deposit, collateral use or promise of monetary value.
+- Any future rewards utility must be limited to platform-only functionality and independently reviewed against the current Kenyan Act; do not use points as a substitute for KES or a means to buy the produce listed on the exchange.
 - No proof-of-work mining. New points are issued only as rewards for eligible, verified platform activities recorded in the Verified Activity Ledger.
-- Bitcoin-inspired mechanics: a transparent hard cap and a 50% reduction in the maximum reward rate every four-year reward era, measured from a published genesis date. The exact per-activity reward schedule and genesis date must be approved and published before issuance is enabled.
+- Bitcoin-inspired scarcity mechanics only: a transparent hard cap and a 50% reduction in the maximum reward rate per eligible verified activity every four-year reward era, measured from a published genesis date. This is not Bitcoin, proof-of-work mining, a decentralised consensus network or a public cryptocurrency. The exact per-activity reward schedule and genesis date must be approved and published before issuance is enabled.
 - No presale, premine, private allocation or speculative distribution. Unissued points remain unissued; the protocol must never exceed the cap.
 - Use append-only credit and compensating debit entries. Do not store a user-editable wallet balance. Calculate balances from the ledger or maintain a transactionally updated cache that can be rebuilt from it.
 - Each reward must have a unique idempotency key tied to one verified source event and rule version. Apply per-event and per-user limits, anti-self-dealing checks, related-account review, dispute holds and a transparent reversal process.
 - The wallet is an internal account with a random opaque wallet reference. It is not a blockchain address and has no user-held private key. Cryptographic integrity is provided by the server-side ledger, not by exposing key material to customers.
-- If points later become transferable, redeemable for cash, purchasable, exchangeable or usable outside MycoGold, stop and obtain a new Kenyan regulatory assessment before enabling that change.
+- If points later become transferable, redeemable for cash, exchangeable for produce/real-world goods or discounts, purchasable, exchangeable for virtual assets, or usable outside the closed platform, stop and obtain a new Kenyan regulatory assessment before enabling that change.
 
 ## Escrow and payment settlement
 
@@ -100,7 +119,7 @@ Never infer a money state from the existing order status alone.
 
 - Reward genesis date and launch date.
 - Reward points awarded per eligible activity and the four-year era start.
-- Whether and how points may be redeemed for non-cash MycoGold benefits.
+- Whether any platform-only utility for points is legally permissible under the closed-ecosystem / virtual-service-token rules; no real-world goods, produce or discounts are in scope for the initial design.
 - Final MFPI thresholds, commodities, grades, standard units and market coverage.
 - Payment/escrow provider and the legal structure for safeguarding customer funds.
 
