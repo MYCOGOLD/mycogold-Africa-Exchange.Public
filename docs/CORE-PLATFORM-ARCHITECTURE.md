@@ -2,8 +2,7 @@
 Date: 2026-11-10
 Status: implementation baseline; reward issuance, MFPI publication and payment settlement remain disabled pending tests and compliance review.
 
-## Product boundary
-
+## Kenya legal classification gate
 
 The Virtual Asset Service Providers Act, 2025 commenced on 4 November 2025. Its implementing Virtual Asset Service Providers Regulations, 2026 were published as Legal Notice No. 134 of 2026 and are in force from 22 July 2026. Do not use older documentation that describes the 2026 Regulations as only a draft.
 
@@ -18,8 +17,9 @@ Product design constraint for the first release:
 
 The Act's First Schedule assigns custodial virtual-asset wallet services and virtual-asset payment processing to CBK, and virtual-asset exchanges, trading/clearing/settlement platforms, offering providers and token issuance/tokenisation activities to CMA. A MycoGold database wallet reference is therefore deliberately not a crypto wallet. A fiat payment/escrow relationship must use an appropriately authorised payment/escrow partner under its approved arrangement; this architecture does not itself establish authority to safeguard customer funds.
 
-Legal sources to review before launch: Kenya Law's Virtual Asset Service Providers Act, 2025 (especially sections 2, 4, 8, 34 and the First Schedule) and the final 2026 Regulations / Legal Notice 134 of 2026. This section is an engineering risk control, not a legal opinion or a regulator determination.
+Legal sources to review before launch: Kenya Law's Virtual Asset Service Providers Act, 2025 (especially sections 2, 4, 8, 34 and the First Schedule), Legal Notice No. 134 of 2026, and the final regulations listed by the Capital Markets Authority. This section is an engineering risk control, not a legal opinion or a regulator determination.
 
+## Product boundary
 
 MycoGold is a produce marketplace with an agricultural information assistant and an internal, closed-loop loyalty programme. The following systems must remain separate:
 
