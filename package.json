@@ -6,7 +6,11 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "typecheck": "tsc --noEmit",
+    "typecheck": "npx tsc --noEmit",
+    "test": "npx tsx lib/mycg/mycogoldRequest.test.ts",
+    "test:ci": "npm run typecheck && npm test",
+    "docker:build": "docker compose build",
+    "docker:up": "docker compose up -d",
     "check:safety": "node scripts/check-production-safety.mjs"
   },
   "dependencies": {

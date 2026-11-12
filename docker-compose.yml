@@ -1,0 +1,18 @@
+services:
+  app:
+    build: .
+    ports:
+      - "3000:3000"
+    env_file:
+      - .env
+    environment:
+      NODE_ENV: production
+      MYCOGOLD_TIMEOUT_MS: "15000"
+      MFPI: "99.06654"
+      MYCG_DORMANT: "true"
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "-q", "http://localhost:3000/api/mycg/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
