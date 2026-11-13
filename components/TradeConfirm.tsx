@@ -17,6 +17,8 @@ export function TradeConfirm({
   const [quantity, setQuantity] = useState('1')
   const [loading, setLoading] = useState(false)
   const [message, setMessage] = useState('')
+  const [pendingOrderId, setPendingOrderId] = useState<string | null>(null)
+  const [paymentPending, setPaymentPending] = useState(false)
   const available = Number(kg)
   const unitPrice = Number(price)
   const requested = Number(quantity)
@@ -39,18 +41,26 @@ export function TradeConfirm({
         return
       }
 
-      const { data, error } = await supabase
-        .from('orders')
-        .insert({ listing_id: listingId, quantity: requested })
-        .select('id,status,total_amount,unit_price,quantity')
-        .single()
+      let orderId = pendingOrderId
+      if (!orderId) {
+        const { data, error } = await supabase
+          .from('orders')
+          .insert({ listing_id: listingId, quantity: requested })
+          .select('id')
+          .single()
 
-      if (error) throw error
-      if (!data) throw new Error('The order request was not saved.')
-      setMessage(
-        `Order request ${String(data.id).slice(0, 8)} submitted. Seller response: ${data.status}. No payment has been taken.`,
-      )
-      setQuantity('1')
+        if (error) throw error
+        if (!data) throw new Error('The order could not be created.')
+        orderId = data.id
+        setPendingOrderId(orderId)
+      }
+      if (!orderId) throw new Error('The order could not be created.')
+
+      const response = await fetch(`/api/orders/${encodeURIComponent(orderId)}/stk`, { method: 'POST' })
+      const result = await response.json()
+      if (!response.ok) throw new Error(result.error || 'Could not start M-Pesa payment.')
+      setPaymentPending(true)
+      setMessage(`M-Pesa prompt sent for KES ${total.toLocaleString()}. Enter your PIN on your phone; funds remain in escrow until delivery is verified.`)
     } catch (error) {
       setMessage(error instanceof Error ? error.message : 'Could not submit the order request.')
     } finally {
@@ -85,10 +95,10 @@ export function TradeConfirm({
         disabled={loading || !valid}
         onClick={requestOrder}
       >
-        {loading ? 'Submitting…' : 'Send order request'}
+        {loading ? 'Sending STK Push…' : paymentPending ? 'STK prompt sent' : pendingOrderId ? 'Retry M-Pesa prompt' : 'Buy with M-Pesa'}
       </button>
       <p className="mt-2 text-[11px] muted">
-        This sends a request to the seller only. It does not reserve payment, debit a wallet, or confirm a sale.
+        M-Pesa charges the displayed price × quantity. Payment stays in escrow until delivery verification.
       </p>
       {message && <p className="mt-2 text-xs gold" role="status">{message}</p>}
     </div>

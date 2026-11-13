@@ -93,6 +93,7 @@ export default function ProfilePage() {
 
   return (
     <main>
+      <div className="shell pt-4"><a className="ghost-btn inline-flex min-h-10 items-center gap-2" href="/"><span aria-hidden="true">←</span> Back to Marketplace</a></div>
       {userId ? (
         <ProfileLoggedIn
           userId={userId}

@@ -27,7 +27,7 @@ export async function GET(request: Request) {
 
   let query = dataClient
     .from('orders')
-    .select('id,listing_id,buyer_id,seller_id,quantity,unit_price,total_amount,status,created_at')
+    .select('id,listing_id,buyer_id,seller_id,quantity,unit_price,total_amount,status,created_at,delivered_at,buyer_confirmed_at,disputed_at,escrow_released_at')
     .order('created_at', { ascending: false })
     .limit(100)
   if (orderId) query = query.eq('id', orderId)
@@ -51,7 +51,7 @@ export async function GET(request: Request) {
   const listings = new Map((listingRows || []).map(listing => [listing.id, listing]))
   const joinedOrders = (orderRows || []).map(order => ({ ...order, listing: listings.get(order.listing_id) || null }))
   const orders = orderId ? joinedOrders : joinedOrders.filter(order => {
-    const past = ['rejected', 'cancelled'].includes(order.status)
+    const past = ['rejected', 'cancelled', 'COMPLETED'].includes(order.status)
     return status === 'PAST' ? past : !past
   })
 
