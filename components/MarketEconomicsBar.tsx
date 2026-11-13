@@ -16,12 +16,17 @@ export function MarketEconomicsBar() {
   // dynamic categories from listings - no hardcoded list
   const [categories, setCategories] = useState<string[]>([]);
   useEffect(() => {
+    let cancelled = false;
+    const supabase = createClient();
     async function loadCats() {
-      const { data } = await supabase.from('listings').select('category');
+      const { data, error } = await supabase.from('listings').select('category').limit(1000).returns<{ category: string | null }[]>();
+      if (cancelled) return;
+      if (error || !data) { setCategories([...new Set(data.map((r) => r.category).filter((v): v is string => typeof v === 'string' && v.trim().length > 0).map((s) => s.trim()))].sort((a, b) => a.localeCompare(b))); return; }
       const vals = [...new Set((data ?? []).map((r: any) => r.category).filter(Boolean))];
       setCategories(vals);
     }
     loadCats();
+    return () => { cancelled = true; };
   }, []);
   const [rows, setRows] = useState<MfpiRow[]>([])
   const [userId, setUserId] = useState<string | null>(null)

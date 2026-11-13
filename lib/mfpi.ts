@@ -1,67 +1,32 @@
-/**
- * Experimental MFPI mathematics only.
- *
- * No official baseline, verified transaction feed, or market-data provenance
- * is configured in this project. This module therefore refuses to publish a
- * default/genesis index. It is not a ledger, blockchain, or source of live prices.
- */
-
-export type ConfirmedTrade = {
-  id: string
-  listingId: string
-  price: number
-  kg: number
-  confirmed_at: string
+// MFPI - confirmed trades only. MYCG never affects MFPI.
+// BASE_MFPI = 99.06654, BASE_WEIGHTED_PRICE = 52.00
+// MFPI = 99.06654 + ((WeightedPrice - 52) / 52 * 100)
+// Inputs: { price_KES, kg } from server-validated verified_trades only.
+// Map verified_price_kes -> price_KES, verified_kg -> kg. Do NOT use trust_score as weight.
+export const BASE_MFPI = 99.06654;
+export const BASE_WEIGHTED_PRICE = 52.00;
+export type ConfirmedTradeInput = { price_KES: number; kg: number };
+export function weightedPriceKes(trades: ConfirmedTradeInput[]): number | null {
+  if (!Array.isArray(trades) || trades.length === 0) return null;
+  let totalKg = 0;
+  let weightedSum = 0;
+  for (const t of trades) {
+    if (!Number.isFinite(t.price_KES) || !Number.isFinite(t.kg)) return null;
+    if (t.price_KES <= 0 || t.kg <= 0) return null;
+    totalKg += t.kg;
+    weightedSum += t.price_KES * t.kg;
+  }
+  if (totalKg <= 0) return null;
+  return weightedSum / totalKg;
 }
-
-export function weightedPriceFromTrades(trades: ConfirmedTrade[]): number | null {
-  if (!trades.length) return null
-
-  let totalKg = 0
-  let weightedTotal = 0
-
-  for (const trade of trades) {
-    const price = Number(trade.price)
-    const kg = Number(trade.kg)
-    if (!Number.isFinite(price) || price <= 0 || !Number.isFinite(kg) || kg <= 0) {
-      return null
-    }
-    totalKg += kg
-    weightedTotal += price * kg
-  }
-
-  if (!Number.isFinite(totalKg) || totalKg <= 0) return null
-  return weightedTotal / totalKg
+export function mfpiFromWeightedPrice(weightedPrice: number): number | null {
+  if (!Number.isFinite(weightedPrice) || weightedPrice <= 0) return null;
+  return BASE_MFPI + ((weightedPrice - BASE_WEIGHTED_PRICE) / BASE_WEIGHTED_PRICE * 100);
 }
-
-/**
- * Calculate only when an independently verified base index and base price
- * have been supplied by a trusted data pipeline. No values are invented.
- */
-export function calculateMFPI(
-  verifiedTrades: ConfirmedTrade[],
-  baseIndex?: number,
-  baseWeightedPrice?: number,
-) {
-  const weighted = weightedPriceFromTrades(verifiedTrades)
-  if (
-    weighted === null ||
-    !Number.isFinite(baseIndex) ||
-    !Number.isFinite(baseWeightedPrice) ||
-    Number(baseWeightedPrice) <= 0
-  ) {
-    return {
-      mfpi: null,
-      weighted,
-      tick: verifiedTrades.length,
-      isPublished: false,
-    }
-  }
-
-  return {
-    mfpi: Number(baseIndex) + ((weighted - Number(baseWeightedPrice)) / Number(baseWeightedPrice)) * 100,
-    weighted,
-    tick: verifiedTrades.length,
-    isPublished: true,
-  }
+export function mfpiFromConfirmedTrades(trades: ConfirmedTradeInput[]): { weighted_price_kes: number; mfpi: number } | null {
+  const wp = weightedPriceKes(trades);
+  if (wp === null) return null;
+  const mfpi = mfpiFromWeightedPrice(wp);
+  if (mfpi === null) return null;
+  return { weighted_price_kes: wp, mfpi };
 }
