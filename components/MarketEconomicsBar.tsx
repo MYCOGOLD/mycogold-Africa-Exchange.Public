@@ -4,8 +4,6 @@ import { useEffect, useState } from 'react'
 import { Coins } from 'lucide-react'
 import { createClient } from '../lib/supabase'
 
-const categories = ['Mushroom', 'Potatoes', 'Onions', 'Kales', 'Cabbage', 'Cereals', 'Beef', 'Tomato', 'Carrot', 'Spinach']
-
 type MfpiRow = {
   category: string
   trade_date: string
@@ -15,6 +13,16 @@ type MfpiRow = {
 }
 
 export function MarketEconomicsBar() {
+  // dynamic categories from listings - no hardcoded list
+  const [categories, setCategories] = useState<string[]>([]);
+  useEffect(() => {
+    async function loadCats() {
+      const { data } = await supabase.from('listings').select('category');
+      const vals = [...new Set((data ?? []).map((r: any) => r.category).filter(Boolean))];
+      setCategories(vals);
+    }
+    loadCats();
+  }, []);
   const [rows, setRows] = useState<MfpiRow[]>([])
   const [userId, setUserId] = useState<string | null>(null)
   const [balance, setBalance] = useState<number | null>(null)
