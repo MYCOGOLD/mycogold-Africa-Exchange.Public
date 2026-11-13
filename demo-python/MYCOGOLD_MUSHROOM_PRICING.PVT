@@ -31,8 +31,11 @@ class TuskCPRNG:
 cprng = TuskCPRNG()
 
 def calculate_next_tusk_tick(commodity, theta=0.15):
-    b = COMMODITY_BOUNDS[commodity]
-    cur = DEMO_STATE[commodity]
+    profile = commodity
+    if commodity not in COMMODITY_BOUNDS and commodity.startswith("MUSHROOM_VARIETY:"):
+        profile = "MUSHROOM"
+    b = COMMODITY_BOUNDS[profile]
+    cur = DEMO_STATE.setdefault(commodity, b["mean"])
     floor, premium, vol, target = b["floor"], b["premium"], b["volatility"], b["target"]
     # FORMULA: P(t+1) = P(t) + theta*(target-P) + vol*CPRNG
     drift = theta * (target - cur)

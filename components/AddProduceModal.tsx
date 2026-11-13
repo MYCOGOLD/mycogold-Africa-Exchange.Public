@@ -1,12 +1,11 @@
 'use client'
 
-import { useEffect, useMemo, useState, type FormEvent } from 'react'
+import { useEffect, useMemo, useRef, useState, type FormEvent } from 'react'
 import { X } from 'lucide-react'
 import { createClient, type Listing } from '../lib/supabase'
 import { formatPrice } from '../lib/priceRules'
 
-const categories = ['Mushroom', 'Potatoes', 'Onions', 'Kales', 'Cabbage', 'Cereals', 'Beef']
-const locations = ['Kericho', 'Nakuru', 'Eldoret', 'Nairobi', 'Kisumu', 'Mombasa', 'Kisii']
+const categories = ['Mushroom', 'Potatoes', 'Onions', 'Kales', 'Cabbage', 'Cereals', 'Beef', 'Tomato', 'Carrot', 'Spinach']
 
 function detect(value: string) {
   const text = value.toLowerCase()
@@ -17,6 +16,9 @@ function detect(value: string) {
   if (/mushroom|oyster|button/.test(text)) return 'Mushroom'
   if (text.includes('beef')) return 'Beef'
   if (/maize|beans|rice/.test(text)) return 'Cereals'
+  if (text.includes('tomato')) return 'Tomato'
+  if (text.includes('carrot')) return 'Carrot'
+  if (text.includes('spinach')) return 'Spinach'
   return ''
 }
 
@@ -37,30 +39,109 @@ export function AddProduceModal({
   onNeedAuth: () => void
 }) {
   const [photo, setPhoto] = useState<File | null>(null)
-  const [product, setProduct] = useState(initialProduct)
+  const photoInputRef = useRef<HTMLInputElement | null>(null)
   const [category, setCategory] = useState('')
+  const [varieties, setVarieties] = useState<string[]>([])
+  const [variety, setVariety] = useState('')
+  const [customVariety, setCustomVariety] = useState('')
   const [price, setPrice] = useState('')
   const [quantity, setQuantity] = useState('')
   const [location, setLocation] = useState('')
+  const [latitude, setLatitude] = useState<number | null>(null)
+  const [longitude, setLongitude] = useState<number | null>(null)
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
 
   useEffect(() => {
     if (open) {
-      setProduct(initialProduct)
       setCategory(detect(initialProduct))
+      setVariety(initialProduct ? '__CUSTOM__' : '')
+      setCustomVariety(initialProduct)
       setError('')
     }
   }, [open, initialProduct])
 
-  const detected = useMemo(() => detect(product), [product])
+  useEffect(() => {
+    if (!open) return
+    let active = true
+    setLocation('')
+    setLatitude(null)
+    setLongitude(null)
+
+    if (!navigator.geolocation) {
+      setError('Enable GPS to post')
+      return
+    }
+
+    navigator.geolocation.getCurrentPosition(
+      position => {
+        if (!active) return
+        const lat = position.coords.latitude
+        const lng = position.coords.longitude
+        setLatitude(lat)
+        setLongitude(lng)
+        setLocation(`${lat.toFixed(6)}, ${lng.toFixed(6)}`)
+        setError('')
+      },
+      () => {
+        if (!active) return
+        setLatitude(null)
+        setLongitude(null)
+        setLocation('')
+          setError('Enable GPS to post')
+      },
+      { enableHighAccuracy: true, timeout: 15000, maximumAge: 0 },
+    )
+
+    return () => { active = false }
+  }, [open])
+
+  useEffect(() => {
+    const input = photoInputRef.current
+    if (!open || !input) return
+
+    const handleCancel = () => {
+      input.value = ''
+      setPhoto(null)
+      setError('Camera capture was cancelled. A new photo is required.')
+    }
+
+    input.addEventListener('cancel', handleCancel)
+    return () => input.removeEventListener('cancel', handleCancel)
+  }, [open])
+
+  useEffect(() => {
+    if (!open || !category) {
+      setVarieties([])
+      return
+    }
+    let active = true
+    createClient()
+      .from('product_catalog')
+      .select('variety')
+      .eq('category', category)
+      .order('variety')
+      .then(({ data, error: catalogError }) => {
+        if (!active) return
+        if (catalogError) {
+          setError(`Could not load ${category.toLowerCase()} varieties. Please try again.`)
+          return
+        }
+        setVarieties((data || []).map(item => item.variety))
+      })
+    return () => { active = false }
+  }, [open, category])
+
+  const detected = useMemo(() => detect(initialProduct), [initialProduct])
   const total = Number(price || 0) * Number(quantity || 0)
+  const displayProduct = variety === '__CUSTOM__' ? customVariety : variety
 
   if (!open) return null
 
   async function publish(event: FormEvent) {
     event.preventDefault()
-    const clean = product.trim()
+    const finalVariety = variety === '__CUSTOM__' ? customVariety.trim() : variety
+    const clean = finalVariety
     const finalCategory = category || detected
     const numericPrice = Number(price)
     const numericQuantity = Number(quantity)
@@ -69,8 +150,16 @@ export function AddProduceModal({
       onNeedAuth()
       return
     }
+    if (latitude === null || longitude === null) {
+      setError('Enable GPS to post')
+      return
+    }
     if (!clean || !finalCategory || !location) {
-      setError('Complete the product, category, and location.')
+      setError('Select or enter a product variety, category, and location.')
+      return
+    }
+    if (clean.length > 80) {
+      setError('Product variety must be 80 characters or fewer.')
       return
     }
     if (!Number.isFinite(numericPrice) || numericPrice <= 0) {
@@ -102,6 +191,16 @@ export function AddProduceModal({
         throw new Error('Your session is no longer valid. Sign in again.')
       }
 
+      if (variety === '__CUSTOM__') {
+        const { error: catalogError } = await supabase
+          .from('product_catalog')
+          .upsert(
+            { category, variety: finalVariety, created_by: user.id },
+            { onConflict: 'category,variety', ignoreDuplicates: true },
+          )
+        if (catalogError) throw new Error(`Could not save mushroom variety: ${catalogError.message}`)
+      }
+
       const uploadForm = new FormData()
       uploadForm.append('file', photo)
       const uploadResponse = await fetch('/api/listings/photo', {
@@ -122,9 +221,12 @@ export function AddProduceModal({
           category: finalCategory,
           product: clean,
           location,
+          latitude,
+          longitude,
           price: numericPrice,
           quantity: numericQuantity,
           photo_path: uploadResult.path,
+          status: 'pending',
         })
         .select()
         .single()
@@ -134,8 +236,9 @@ export function AddProduceModal({
 
       onCreated(data as Listing)
       setPhoto(null)
-      setProduct('')
       setCategory('')
+      setVariety('')
+      setCustomVariety('')
       setPrice('')
       setQuantity('')
       setLocation('')
@@ -143,7 +246,7 @@ export function AddProduceModal({
     } catch (cause) {
       if (uploadedPath) {
         try {
-          await createClient().storage.from('produce-listings').remove([uploadedPath])
+          await createClient().storage.from('listing-photos').remove([uploadedPath])
         } catch {
           // Cleanup is best-effort; the original submission error is shown below.
         }
@@ -168,23 +271,27 @@ export function AddProduceModal({
         </div>
 
         <form onSubmit={publish} className="mt-5 space-y-3">
-          <input className="field min-h-11" type="file" accept="image/jpeg,image/png,image/webp" onChange={event => setPhoto(event.target.files?.[0] || null)} aria-label="Photo" required/>
-          <input className="field min-h-11" value={product} onChange={event => setProduct(event.target.value)} placeholder="e.g. Sukuma Wiki, Viazi, Kitunguu..." aria-label="Product" required/>
-          <select className="field min-h-11" value={category} onChange={event => setCategory(event.target.value)} required>
+          <input ref={photoInputRef} className="field min-h-11" type="file" accept="image/*" capture="environment" onChange={event => { const selectedPhoto = event.target.files?.[0] || null; setPhoto(selectedPhoto); setError(selectedPhoto ? '' : 'Camera capture was cancelled. A new photo is required.') }} aria-label="Camera photo" required/>
+          <select className="field min-h-11" value={category} onChange={event => { setCategory(event.target.value); setVariety(''); setCustomVariety('') }} required>
             <option value="">Category</option>
-            {categories.map(item => <option key={item}>{item}</option>)}
+            {categories.map(item => <option key={item} value={item}>{item}</option>)}
           </select>
+          <select className="field min-h-11" value={variety} onChange={event => { setVariety(event.target.value); setCustomVariety('') }} required aria-label="Product variety" disabled={!category}>
+            <option value="">{category ? `${category} variety` : 'Select a category first'}</option>
+            {varieties.map(item => <option key={item} value={item}>{item}</option>)}
+            <option value="__CUSTOM__">Add new variety...</option>
+          </select>
+          {variety === '__CUSTOM__' && (
+            <input className="field min-h-11" value={customVariety} onChange={event => setCustomVariety(event.target.value)} placeholder="Enter product variety" aria-label="New product variety" maxLength={80} required/>
+          )}
           {detected && detected !== category && <p className="text-xs gold">Suggested category: {detected}</p>}
           <input className="field min-h-11" type="number" min="0.01" step="0.01" value={price} onChange={event => setPrice(event.target.value)} placeholder="Price per kg KES e.g. 50" aria-label="Price per kg KES" required/>
           <input className="field min-h-11" type="number" min="0.01" step="0.01" value={quantity} onChange={event => setQuantity(event.target.value)} placeholder="Quantity kg e.g. 20" aria-label="Quantity kg" required/>
-          <select className="field min-h-11" value={location} onChange={event => setLocation(event.target.value)} required>
-            <option value="">Location</option>
-            {locations.map(item => <option key={item}>{item}</option>)}
-          </select>
+          <input className="field min-h-11" value={location} placeholder="Waiting for GPS location..." aria-label="Location" readOnly required/>
 
-          {product && quantity && price && location && (
+          {displayProduct && quantity && price && location && (
             <div className="rounded-xl bg-[#ffd60a]/10 p-3 text-sm">
-              {quantity} kg of {product} at {formatPrice(numericSafe(price), 'KES')}/kg in {location} = {total.toLocaleString()} KES.
+              {quantity} kg of {displayProduct} at {formatPrice(numericSafe(price), 'KES')}/kg in {location} = {total.toLocaleString()} KES.
             </div>
           )}
           {error && <p className="text-sm text-[#ff7777]" role="alert">{error}</p>}

@@ -1,7 +1,5 @@
-import { createEscrow } from "../../../../../lib/mycg/mycogoldEscrow";
+import { NextResponse } from 'next/server'
 
-export async function POST(request: Request) {
-  const { orderId, buyerId, sellerId, amount } = await request.json();
-  const escrow = createEscrow(orderId, buyerId, sellerId, amount);
-  return Response.json({ escrow }, { status: 201 });
+export async function POST() {
+  return NextResponse.json({ error: 'ESCROW_NOT_CONFIGURED' }, { status: 503 })
 }

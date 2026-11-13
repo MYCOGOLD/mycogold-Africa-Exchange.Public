@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
-import { randomUUID } from 'node:crypto'
 import sharp from 'sharp'
 
 export const runtime = 'nodejs'
@@ -108,7 +107,7 @@ export async function POST(request: NextRequest) {
       }
 
       // Re-encode to strip metadata and reject malformed/polyglot input.
-      sanitizedImage = await image.rotate().webp({ quality: 82, effort: 4 }).toBuffer()
+      sanitizedImage = await image.rotate().flatten({ background: '#ffffff' }).jpeg({ quality: 82, mozjpeg: true }).toBuffer()
     } catch {
       return reply({ error: 'Image could not be decoded safely.' }, 415)
     }
@@ -117,11 +116,11 @@ export async function POST(request: NextRequest) {
       return reply({ error: 'Processed image exceeds the 4 MB limit.' }, 413)
     }
 
-    const objectPath = `${data.user.id}/${randomUUID()}.webp`
+    const objectPath = `${data.user.id}/${Date.now()}.jpg`
     const { error: uploadError } = await admin.storage
-      .from('produce-listings')
+      .from('listing-photos')
       .upload(objectPath, sanitizedImage, {
-        contentType: 'image/webp',
+        contentType: 'image/jpeg',
         cacheControl: '3600',
         upsert: false,
       })

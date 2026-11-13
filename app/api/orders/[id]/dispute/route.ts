@@ -1,4 +1,5 @@
-export async function POST(request: Request) {
-  const { comments } = await request.json();
-  return Response.json({ status: "DISPUTED", adminOversight: true, escrowLocked: true, reason: comments });
+import { NextResponse } from 'next/server'
+
+export async function POST() {
+  return NextResponse.json({ error: 'DISPUTE_REVIEW_NOT_CONFIGURED' }, { status: 503 })
 }

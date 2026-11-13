@@ -16,6 +16,7 @@ export function MycgLiveScan({
   const [enabled, setEnabled] = useState(false)
   const [error, setError] = useState('')
   const [scanQuantity, setScanQuantity] = useState(String(expectedQuantity))
+  const [photoName, setPhotoName] = useState('')
 
   function toggleLocation(checked: boolean) {
     setError('')
@@ -38,16 +39,25 @@ export function MycgLiveScan({
         {enabled && <p className="mt-2 text-sm muted">Location: Enabled - lat/lng will be sent with scan</p>}
         {error && <p className="mt-2 text-sm text-red-400" role="status">{error}</p>}
       </div>
-      <label className="block text-sm">
-        Scanned quantity (expected {expectedQuantity})
-        <input className="field mt-2" type="number" min="0" value={scanQuantity} onChange={event => setScanQuantity(event.target.value)} />
-      </label>
-      <div>
-        <button type="button" className="ghost-btn" onClick={() => onScanComplete(Number(scanQuantity) === expectedQuantity)}>
-          Check scanned quantity
-        </button>
-        <p className="mt-2 text-xs muted">Demo quantity check only; camera capture is not connected.</p>
-      </div>
+      <form onSubmit={event => { event.preventDefault(); onScanComplete(Number(scanQuantity) === expectedQuantity) }}>
+        <label className="block text-sm">Live scan photo
+          <input
+            className="field mt-2"
+            type="file"
+            accept="image/*"
+            capture="environment"
+            required
+            onChange={event => setPhotoName(event.currentTarget.files?.[0]?.name ?? '')}
+          />
+        </label>
+        {photoName && <p className="mt-2 text-xs muted">Selected: {photoName}</p>}
+        <label className="mt-4 block text-sm">
+          Scanned quantity (expected {expectedQuantity})
+          <input className="field mt-2" type="number" min="0" value={scanQuantity} onChange={event => setScanQuantity(event.target.value)} />
+        </label>
+        <button type="submit" className="ghost-btn mt-4">Check scanned quantity</button>
+        <p className="mt-2 text-xs muted">Demo quantity check only; photo is not uploaded or verified.</p>
+      </form>
     </div>
   )
 }
