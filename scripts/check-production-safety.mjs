@@ -27,6 +27,17 @@ const uploadRoute = read('app/api/listings/photo/route.ts')
 const staffRoute = read('app/api/staff/listings/route.ts')
 const staffPanel = read('components/staff-panel.tsx')
 const profilePage = read('components/ProfileLoggedIn.tsx')
+const marketShell = read('components/market-shell.tsx')
+const tokenomicsModal = read('components/TokenomicsModal.tsx')
+const hardeningMigration = read('supabase/migrations/20261117063816_harden_public_access_and_function_search_paths.sql')
+const ledgerMigration = read('supabase/migrations/20261117070000_create_double_entry_ledger.sql')
+const stkRoute = read('app/api/orders/[id]/stk/route.ts')
+const mpesaCallbackRoute = read('app/api/payments/mpesa/callback/route.ts')
+const paymentConfigRoute = read('app/api/payments/config/route.ts')
+const orderSettlementRoute = read('app/api/orders/[id]/verify/route.ts')
+const publicListingsView = hardeningMigration.match(
+  /create or replace view public\.public_listings[\s\S]*?grant select on public\.public_listings to anon, authenticated;/i,
+)?.[0] || ''
 const photoIntegrityMigration = read('supabase/migrations/20261109070314_store_listing_photo_paths_not_absolute_urls.sql')
 const moderationMigration = read('supabase/migrations/20261109071933_add_atomic_listing_moderation_audit.sql')
 const staticDemo = read('index.html')
@@ -49,7 +60,7 @@ check(/auth\.getUser\(token\)/.test(uploadRoute) && /detectImage/.test(uploadRou
 check(uploadRoute.includes('const MAX_IMAGE_BYTES = 4 * 1024 * 1024')
   && /consume_listing_upload_limit/.test(uploadRoute)
   && /sharp\(bytes/.test(uploadRoute)
-  && /webp\(\{ quality: 82/.test(uploadRoute)
+  && /\.jpeg\(\{ quality:\s*82/.test(uploadRoute)
   && /upsert:\s*false/.test(uploadRoute),
   'Image upload API must enforce size/rate limits and decode, sanitize, and re-encode images.')
 check(/auth\.getUser\(token\)/.test(staffRoute) && /app_metadata/.test(staffRoute)
@@ -67,6 +78,43 @@ check(staffPanel.includes("import { createClient } from '../lib/supabase'"),
 check(/verify_listing_photo_object/.test(photoIntegrityMigration)
   && /storage\.objects/.test(photoIntegrityMigration),
   'Database must verify that listing photos exist in the seller-owned storage folder.')
+check(/drop policy if exists produce_listings_insert_own_folder/i.test(hardeningMigration)
+  && /drop policy if exists produce_listings_update_own_folder/i.test(hardeningMigration)
+  && /revoke insert, update on storage\.objects from public, anon, authenticated/i.test(hardeningMigration)
+  && /grant insert, update, select, delete on storage\.objects to service_role/i.test(hardeningMigration),
+  'Browser roles must not bypass server-validated listing photo uploads.')
+check(/create or replace view public\.public_listings\s+with \(security_invoker = true\)/i.test(hardeningMigration)
+  && !/(seller_id|moderated_at|seller_verified_at|verified_at|tusk_status|network_stamp)/i.test(publicListingsView)
+  && /sessionUser\?await supabase\.from\('listings'\)\.select\('\*'\)/.test(marketShell)
+  && /:await supabase\.from\('listings'\)\.select\('id,category,product,location,price,seller,quantity,created_at,updated_at,photo_path,variety,title,status'\)/.test(marketShell),
+  'Anonymous marketplace reads must request only approved listing columns.')
+check(/set search_path = ''/i.test(hardeningMigration)
+  && /extensions\.digest/.test(hardeningMigration)
+  && /revoke all on function public\.award_mcg[\s\S]*?from public, anon, authenticated/i.test(hardeningMigration)
+  && /grant execute on function public\.award_mcg[\s\S]*?to service_role/i.test(hardeningMigration)
+  && /grant execute on function public\.compute_mfpi_daily\(\) to service_role/i.test(hardeningMigration)
+  && /grant execute on function public\.verify_trade_and_reward[\s\S]*?to service_role/i.test(hardeningMigration),
+  'Privileged reward and MFPI functions must use pinned paths and least-privilege grants.')
+check(/get_public_mcg_tokenomics/.test(tokenomicsModal)
+  && /security_invoker = true/.test(hardeningMigration)
+  && /function public\.get_public_mcg_tokenomics\(\)[\s\S]*?security definer[\s\S]*?set search_path = ''/i.test(hardeningMigration)
+  && /grant execute on function public\.get_public_mcg_tokenomics\(\) to anon, authenticated/i.test(hardeningMigration),
+  'Public tokenomics must expose only a pinned aggregate RPC, not a definer view.')
+check(/enabled:\s*false/.test(paymentConfigRoute)
+  && /PAYMENTS_NOT_AVAILABLE/.test(stkRoute)
+  && /PAYMENT_CALLBACK_PROCESSING_DISABLED/.test(mpesaCallbackRoute)
+  && /ORDER_SETTLEMENT_NOT_AVAILABLE/.test(orderSettlementRoute),
+  'STK collection, payment callbacks and escrow settlement must remain fail-closed.')
+check(/ledger_transactions[\s\S]*?idempotency_key text not null unique/.test(ledgerMigration)
+  && /asset_code text not null check \(asset_code in \('KES', 'MCG'\)\)/.test(ledgerMigration)
+  && /deferrable initially deferred/.test(ledgerMigration)
+  && /Ledger rows are immutable; post a reversal instead/.test(ledgerMigration)
+  && /A reversal must exactly invert the referenced transaction/.test(ledgerMigration)
+  && /grant execute on function public\.post_ledger_transaction[\s\S]*?to service_role/i.test(ledgerMigration),
+  'Accounting ledger must be append-only, idempotent, double-entry balanced per asset, and reversal-based.')
+check(/add_mpesa_stk_and_escrow\.sql/.test(read('supabase/held-migrations/README.md'))
+  && !readdirSync(join(root, 'supabase/migrations')).some((name) => /mpesa_stk_and_escrow/i.test(name)),
+  'Payment and escrow migration must remain outside the deployable migrations directory.')
 check(/SUPABASE_SERVICE_ROLE_KEY/.test(staffRoute)
   && !/NEXT_PUBLIC_SUPABASE_SERVICE_ROLE_KEY/.test(appSource),
   'Privileged Supabase keys must remain server-side.')

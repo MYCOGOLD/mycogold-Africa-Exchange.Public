@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "typecheck": "npx tsc --noEmit",
-    "test": "npx tsx lib/mycg/mycogoldRequest.test.ts",
+    "test": "node --import tsx --test lib/mfpi.test.ts && npx tsx lib/mycg/mycogoldRequest.test.ts",
     "test:ci": "npm run typecheck && npm test",
     "docker:build": "docker compose build",
     "docker:up": "docker compose up -d",

@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { createClient } from '@/lib/supabase/server';
+import { createClient } from '../../../../lib/supabase/server';
 
 // REAL TRADE LEDGER - READ ONLY
 // Source: public.verified_trades only. No verified trade = empty list, not demo data.

@@ -19,11 +19,19 @@ export function MarketEconomicsBar() {
     let cancelled = false;
     const supabase = createClient();
     async function loadCats() {
-      const { data, error } = await supabase.from('listings').select('category').limit(1000).returns<{ category: string | null }[]>();
+      const { data, error } = await supabase.from('listings')
+        .select('category')
+        .limit(1000)
+        .returns<{ category: string | null }[]>();
       if (cancelled) return;
-      if (error || !data) { setCategories([...new Set(data.map((r) => r.category).filter((v): v is string => typeof v === 'string' && v.trim().length > 0).map((s) => s.trim()))].sort((a, b) => a.localeCompare(b))); return; }
-      const vals = [...new Set((data ?? []).map((r: any) => r.category).filter(Boolean))];
-      setCategories(vals);
+      if (error || !data) {
+        setCategories([]);
+        return;
+      }
+      const values = data
+        .map((row) => row.category?.trim())
+        .filter((category): category is string => Boolean(category));
+      setCategories([...new Set(values)].sort((a, b) => a.localeCompare(b)));
     }
     loadCats();
     return () => { cancelled = true; };
