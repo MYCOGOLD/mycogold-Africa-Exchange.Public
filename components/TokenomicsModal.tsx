@@ -35,10 +35,17 @@ export function TokenomicsModal({ open, onClose }: { open: boolean; onClose: () 
     setLoading(true)
     async function load() {
       try {
-        const { data: row, error: queryError } = await createClient()
+        const supabase = createClient()
+        const { data: rpcRow, error: rpcError } = await supabase
           .rpc('get_public_mcg_tokenomics')
+        const { data: viewRow, error: viewError } = rpcError
+          ? await supabase.from('mcg_tokenomics')
+            .select('total_supply,minted,remaining,holders,total_awards')
+            .maybeSingle()
+          : { data: null, error: null }
         if (!active) return
-        if (queryError || !row) setError('Tokenomics data is unavailable.')
+        const row = rpcError ? viewRow : rpcRow
+        if ((rpcError && viewError) || !row) setError('Tokenomics data is unavailable.')
         else setData(row as Tokenomics)
       } catch {
         if (active) setError('Tokenomics data is unavailable.')

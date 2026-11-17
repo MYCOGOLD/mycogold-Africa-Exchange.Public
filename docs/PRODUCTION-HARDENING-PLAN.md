@@ -10,7 +10,7 @@ Discovery started 17 November 2026 against main at e3d43a6d32c4bced00dc7e1421d21
 - The three flagged SECURITY DEFINER functions still have no pinned search path. Their current EXECUTE grantees are the database owner and service_role.
 - Anonymous users have table-wide SELECT on public.listings. The listing RLS policy limits rows, not columns. Staff listing policies still query public.admins, whose RLS has no policies.
 - The current repository originally contained STK initiation, callback and escrow release code. Those routes now fail closed and the M-Pesa/escrow migration is held outside the deployable migration directory. The database migration required by the old routes is not deployed.
-- The listing-photo API uses the listing-photos bucket, which is created only by the unreleased GPS/camera migration. Production currently has the older produce-listings bucket, so listing uploads are not aligned until that additive migration is reviewed and deployed.
+- Production photo validation requires the `produce-listings` bucket. The upload route and pending GPS/camera migration are now aligned to that existing bucket; the migration no longer creates a parallel `listing-photos` bucket.
 - The latest production deployments for both linked Vercel projects are in ERROR. The failure log for the project linked to current main identifies a missing `mfpiFromListings` export; this reference is fixed locally. The duplicate mycogold-africa-exchange-public project lacks the app configuration needed by this code. Secret values were not inspected.
 - GitHub Application CI, CodeQL and MYCOGOLD CI have failed before executing steps. Existing workflow files use GitHub-hosted ubuntu-latest; the failure is runner allocation, not a reported source-code failure. Branch protection does not currently require passing checks.
 - The security advisor currently reports mutable search paths, the disabled leaked-password check, and the admins table without policies. The view warning is no longer present. Health advisor is clean.
@@ -44,7 +44,7 @@ Compared the live project, migration history, repository commit, current policie
 - Pin the three flagged SECURITY DEFINER functions and retain service-role-only execution.
 - Align database staff RLS with trusted Auth app_metadata.role; server routes may additionally use the server-only UUID allowlist.
 - Verify anonymous, authenticated, owner, staff and service-role behavior before production rollout.
-- Reconcile the listing-photo bucket and server route by reviewing the additive GPS/camera migration.
+- Keep the photo upload route, bucket policy, and photo-integrity trigger on the existing `produce-listings` bucket.
 
 ### Phase 3 — Ledger core — schema drafted locally; not deployed or integrated
 

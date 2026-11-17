@@ -63,6 +63,9 @@ check(uploadRoute.includes('const MAX_IMAGE_BYTES = 4 * 1024 * 1024')
   && /\.jpeg\(\{ quality:\s*82/.test(uploadRoute)
   && /upsert:\s*false/.test(uploadRoute),
   'Image upload API must enforce size/rate limits and decode, sanitize, and re-encode images.')
+check(/\.from\('produce-listings'\)/.test(uploadRoute)
+  && /bucket_id = 'produce-listings'/.test(read('supabase/migrations/20261113000000_add_listing_gps_and_camera_storage.sql')),
+  'Validated listing photo uploads must use the production bucket expected by the listing integrity trigger.')
 check(/auth\.getUser\(token\)/.test(staffRoute) && /app_metadata/.test(staffRoute)
   && /sellerContactConfirmed/.test(staffRoute) && /moderate_listing/.test(staffRoute)
   && /seller_verified_at/.test(moderationMigration),

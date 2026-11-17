@@ -118,7 +118,7 @@ export async function POST(request: NextRequest) {
 
     const objectPath = `${data.user.id}/${Date.now()}.jpg`
     const { error: uploadError } = await admin.storage
-      .from('listing-photos')
+      .from('produce-listings')
       .upload(objectPath, sanitizedImage, {
         contentType: 'image/jpeg',
         cacheControl: '3600',
