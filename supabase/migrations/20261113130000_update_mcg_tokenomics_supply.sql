@@ -1,4 +1,6 @@
-create or replace view public.mcg_tokenomics as
+create or replace view public.mcg_tokenomics
+with (security_invoker = true)
+as
 select
   67000000::numeric as total_supply,
   coalesce((select sum(amount) from public.mcg_ledger), 0)::numeric as minted,

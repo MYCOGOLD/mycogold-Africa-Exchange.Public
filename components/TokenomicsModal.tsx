@@ -35,9 +35,8 @@ export function TokenomicsModal({ open, onClose }: { open: boolean; onClose: () 
     setLoading(true)
     async function load() {
       try {
-        const { data: row, error: queryError } = await createClient().from('mcg_tokenomics')
-          .select('total_supply,minted,remaining,holders,total_awards')
-          .maybeSingle()
+        const { data: row, error: queryError } = await createClient()
+          .rpc('get_public_mcg_tokenomics')
         if (!active) return
         if (queryError || !row) setError('Tokenomics data is unavailable.')
         else setData(row as Tokenomics)
