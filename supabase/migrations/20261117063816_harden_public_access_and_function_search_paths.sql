@@ -145,10 +145,10 @@ begin
   values (p_user_id, p_amount, p_reason, p_trade_id, v_new_hash, v_prev_hash)
   returning id into v_id;
 
-  insert into public.mcg_balances (user_id, balance, updated_at)
+  insert into public.mcg_balances as current_balance (user_id, balance, updated_at)
   values (p_user_id, p_amount, now())
   on conflict (user_id) do update set
-    balance = public.mcg_balances.balance + excluded.balance,
+    balance = current_balance.balance + excluded.balance,
     updated_at = now();
 
   return v_id;
