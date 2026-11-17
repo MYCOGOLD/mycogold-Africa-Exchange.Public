@@ -4,7 +4,7 @@ import './globals.css'
 
 export const metadata: Metadata = {
   title: 'MYCOGOLD Africa Exchange',
-  description: 'A Kenya produce marketplace for listings and non-binding order requests. In-app payments and escrow are not available.',
+  description: 'A Kenya produce marketplace with M-Pesa STK checkout and delivery-verified escrow.',
 }
 export const viewport: Viewport = { themeColor: '#050505', width: 'device-width', initialScale: 1 }
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
