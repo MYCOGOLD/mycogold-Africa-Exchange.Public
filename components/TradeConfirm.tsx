@@ -12,13 +12,11 @@ export function TradeConfirm({
   listingId: string
   price: number
   kg: number
-  onConfirmed?: (trade: { id: string; listingId: string; price: number; kg: number; confirmed_at: string }) => void
 }) {
   const [quantity, setQuantity] = useState('1')
   const [loading, setLoading] = useState(false)
   const [message, setMessage] = useState('')
   const [pendingOrderId, setPendingOrderId] = useState<string | null>(null)
-  const [paymentPending, setPaymentPending] = useState(false)
   const available = Number(kg)
   const unitPrice = Number(price)
   const requested = Number(quantity)
@@ -56,11 +54,7 @@ export function TradeConfirm({
       }
       if (!orderId) throw new Error('The order could not be created.')
 
-      const response = await fetch(`/api/orders/${encodeURIComponent(orderId)}/stk`, { method: 'POST' })
-      const result = await response.json()
-      if (!response.ok) throw new Error(result.error || 'Could not start M-Pesa payment.')
-      setPaymentPending(true)
-      setMessage(`M-Pesa prompt sent for KES ${total.toLocaleString()}. Enter your PIN on your phone; funds remain in escrow until delivery is verified.`)
+      setMessage('Order request saved. No payment has been taken. This is a non-binding interest request; arrange terms and contact independently.')
     } catch (error) {
       setMessage(error instanceof Error ? error.message : 'Could not submit the order request.')
     } finally {
@@ -81,6 +75,7 @@ export function TradeConfirm({
           max={Number.isFinite(available) ? available : undefined}
           step="0.01"
           value={quantity}
+          disabled={loading || Boolean(pendingOrderId)}
           onChange={(event) => setQuantity(event.target.value)}
           aria-label="Requested quantity in kilograms"
         />
@@ -92,13 +87,13 @@ export function TradeConfirm({
       <button
         type="button"
         className="gold-btn mt-3 min-h-10 w-full"
-        disabled={loading || !valid}
+        disabled={loading || !valid || Boolean(pendingOrderId)}
         onClick={requestOrder}
       >
-        {loading ? 'Sending STK Push…' : paymentPending ? 'STK prompt sent' : pendingOrderId ? 'Retry M-Pesa prompt' : 'Buy with M-Pesa'}
+        {loading ? 'Sending request…' : pendingOrderId ? 'Request sent' : 'Request order'}
       </button>
       <p className="mt-2 text-[11px] muted">
-        M-Pesa charges the displayed price × quantity. Payment stays in escrow until delivery verification.
+        This records interest only. The app does not take payment or provide escrow.
       </p>
       {message && <p className="mt-2 text-xs gold" role="status">{message}</p>}
     </div>

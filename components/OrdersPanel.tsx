@@ -12,7 +12,7 @@ type Order = {
   quantity: number
   unit_price: number
   total_amount: number
-  status: 'requested' | 'accepted' | 'rejected' | 'cancelled' | 'PAID_ESCROW' | 'DISPUTED' | 'COMPLETED'
+  status: 'requested' | 'accepted' | 'rejected' | 'cancelled'
   created_at: string
 }
 
@@ -73,7 +73,7 @@ export function OrdersPanel({ userId }: { userId: string }) {
 
   return (
     <div className="space-y-3 p-4">
-      <div className="rounded-xl border border-[#ffd60a]/20 bg-[#ffd60a]/5 p-3 text-xs muted">M-Pesa payments remain held in escrow until delivery confirmation, the dispute window, and admin verification are complete.</div>
+      <div className="rounded-xl border border-[#ffd60a]/20 bg-[#ffd60a]/5 p-3 text-xs muted">Order requests are non-binding. No payment or escrow is available in the app.</div>
       <div className="flex items-center justify-between gap-3">
         <h2 className="font-semibold">Order requests</h2>
         <button type="button" className="ghost-btn flex min-h-9 items-center gap-2 text-xs" onClick={() => void refresh()} disabled={loading}>
@@ -109,10 +109,7 @@ export function OrdersPanel({ userId }: { userId: string }) {
               </div>
             )}
             {order.status === 'accepted' && (
-              <p className="mt-3 text-xs muted">Seller accepted. The buyer can complete payment from the listing order action.</p>
-            )}
-            {['PAID_ESCROW', 'DISPUTED', 'COMPLETED'].includes(order.status) && (
-              <a className="ghost-btn mt-3 inline-flex min-h-10 items-center" href={`/orders/${encodeURIComponent(order.id)}`}>Manage delivery</a>
+              <p className="mt-3 text-xs muted">Seller accepted. This request is not a paid sale; arrange terms and contact independently.</p>
             )}
           </article>
         )
