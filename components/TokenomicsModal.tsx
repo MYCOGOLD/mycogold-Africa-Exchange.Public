@@ -17,8 +17,28 @@ const rules = [
   ['Delivery', '5 MCG'],
   ['Quality', '2 MCG'],
   ['Confirmation', '1 MCG'],
-  ['Future delivery discount', '10 MCG = 100 KES'],
 ]
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === 'object' && value !== null && !Array.isArray(value)
+}
+
+function parseTokenomics(value: unknown): Tokenomics | null {
+  const row: unknown = Array.isArray(value) && value.length === 1 ? value[0] : value
+  if (!isRecord(row)) return null
+  const record = row
+  const num = (input: unknown): number | null => {
+    const parsed = typeof input === 'number' ? input : typeof input === 'string' && input.trim() !== '' ? Number(input) : Number.NaN
+    return Number.isFinite(parsed) ? parsed : null
+  }
+  const total_supply = num(record.total_supply)
+  const minted = num(record.minted)
+  const remaining = num(record.remaining)
+  const holders = num(record.holders)
+  const total_awards = num(record.total_awards)
+  if (total_supply === null || minted === null || remaining === null || holders === null || total_awards === null) return null
+  return { total_supply, minted, remaining, holders, total_awards }
+}
 
 function amount(value: number | undefined) {
   return Number(value || 0).toLocaleString(undefined, { maximumFractionDigits: 2 })
@@ -36,17 +56,18 @@ export function TokenomicsModal({ open, onClose }: { open: boolean; onClose: () 
     async function load() {
       try {
         const supabase = createClient()
-        const { data: rpcRow, error: rpcError } = await supabase
-          .rpc('get_public_mcg_tokenomics')
-        const { data: viewRow, error: viewError } = rpcError
-          ? await supabase.from('mcg_tokenomics')
+        const { data: rpcData, error: rpcError } = await supabase.rpc('get_public_mcg_tokenomics')
+        if (!active) return
+        let parsed = rpcError ? null : parseTokenomics(rpcData)
+        if (!parsed) {
+          const { data: viewData } = await supabase.from('mcg_tokenomics')
             .select('total_supply,minted,remaining,holders,total_awards')
             .maybeSingle()
-          : { data: null, error: null }
-        if (!active) return
-        const row = rpcError ? viewRow : rpcRow
-        if ((rpcError && viewError) || !row) setError('Tokenomics data is unavailable.')
-        else setData(row as Tokenomics)
+          if (!active) return
+          parsed = parseTokenomics(viewData)
+        }
+        if (parsed) setData(parsed)
+        else setError('Tokenomics data is unavailable.')
       } catch {
         if (active) setError('Tokenomics data is unavailable.')
       } finally {
@@ -82,3 +103,4 @@ export function TokenomicsModal({ open, onClose }: { open: boolean; onClose: () 
     </div>
   )
 }
+
