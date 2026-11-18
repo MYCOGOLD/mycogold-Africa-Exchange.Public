@@ -1,4 +1,4 @@
-import { readFileSync, readdirSync, statSync } from 'node:fs'
+import { existsSync, readFileSync, readdirSync, statSync } from 'node:fs'
 import { join } from 'node:path'
 
 const root = process.cwd()
@@ -43,7 +43,8 @@ const moderationMigration = read('supabase/migrations/20261109071933_add_atomic_
 const staticDemo = read('index.html')
 const ignore = read('.gitignore')
 const envExample = read('.env.example')
-const nextConfig = read('next.config.ts')
+const nextConfig = read('next.config.mjs')
+const competingNextConfigs = ['next.config.ts', 'next.config.js', 'next.config.cjs'].filter((name) => existsSync(join(root, name)))
 const packageJson = JSON.parse(read('package.json'))
 const lock = JSON.parse(read('package-lock.json'))
 
@@ -128,7 +129,9 @@ check(/MFPI DEMO/.test(staticDemo) && !/TUSK AI RUNNING/i.test(staticDemo),
 check(/X-Content-Type-Options/.test(nextConfig) && /X-Frame-Options/.test(nextConfig)
   && /Referrer-Policy/.test(nextConfig) && /Permissions-Policy/.test(nextConfig)
   && /Strict-Transport-Security/.test(nextConfig) && /poweredByHeader:\s*false/.test(nextConfig),
-  'Next.js must send baseline security headers and disable the X-Powered-By header.')
+  'Next.js must send baseline security headers and disable the X-Powered-By header (checked in next.config.mjs, the active config).')
+check(competingNextConfigs.length === 0,
+  `Only next.config.mjs may exist; remove competing config: ${competingNextConfigs.join(', ')}.`)
 check(/node_modules\//.test(ignore) && /\.env\.\*/.test(ignore),
   'Git ignore must exclude dependencies and local environment files.')
 check(/SUPABASE_SERVICE_ROLE_KEY=/.test(envExample) && /SUPABASE_SECRET_KEY=/.test(envExample),
@@ -153,3 +156,4 @@ if (failures.length) {
 } else {
   console.log(`Production safety checks passed (${appFiles.length} application source files inspected).`)
 }
+
