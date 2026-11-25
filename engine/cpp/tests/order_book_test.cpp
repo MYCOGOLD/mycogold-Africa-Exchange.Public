@@ -154,6 +154,24 @@ int main() {
   }
   require(rejected, "zero database row version is rejected");
 
+  auto versioned_buy = order("versioned-buy", "buyer-v", Side::buy, 12'000, 1'000, 1);
+  auto versioned_sell = order("versioned-sell", "seller-v", Side::sell, 10'000, 1'000, 2);
+  versioned_buy.version = 7;
+  versioned_sell.version = 11;
+  const auto versioned = match_orders({versioned_buy, versioned_sell}, 1'000'000);
+  require(versioned.fills.size() == 1 &&
+          versioned.fills[0].buy_order_version == 7 &&
+          versioned.fills[0].sell_order_version == 11,
+          "each proposed fill preserves its exact source row versions");
+
+  const auto repeated = match_orders({versioned_buy, versioned_sell}, 1'000'000);
+  require(repeated.fills.size() == versioned.fills.size() &&
+          repeated.fills[0].buy_order_id == versioned.fills[0].buy_order_id &&
+          repeated.fills[0].sell_order_id == versioned.fills[0].sell_order_id &&
+          repeated.fills[0].execution_price_kes_cents_per_kg ==
+              versioned.fills[0].execution_price_kes_cents_per_kg,
+          "identical snapshots produce deterministic fill output");
+
   std::cout << "All C++ order-book tests passed.\n";
   return EXIT_SUCCESS;
 }
