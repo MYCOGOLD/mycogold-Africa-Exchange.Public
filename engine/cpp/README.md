@@ -24,6 +24,7 @@ ctest --test-dir build/engine --output-on-failure
 - Integer KES cents per kg and integer gram quantities; no floating-point price comparisons.
 - Maker-price execution proposals, partial fills, expiry filtering and self-trade prevention.
 - Globally unique priority-sequence validation, stale-snapshot row-version echoes, and a repeatable synthetic benchmark target.
+- Time-and-temperature freshness decay using a configurable Q10 model and continuous temperature-history validation.
 
 ## Matching engine contract
 
@@ -44,6 +45,16 @@ not a complete exchange-grade bid/ask order book. Do not route existing order
 requests through this engine until limit-price, open quantity, expiry, order
 version, product grade, market, and authorization semantics are explicitly
 modeled and tested.
+
+## Freshness-model governance
+
+The freshness model integrates a temperature-dependent decay hazard over
+continuous temperature intervals. The Q10 profile is an explicit mathematical
+assumption, not a universal biological constant. Each commodity / variety /
+packaging profile must be calibrated against observed quality and shelf-life
+measurements before it can drive a listing grade, price, delivery decision or
+automatic rejection. Missing temperature intervals are rejected rather than
+silently treated as safe storage.
 
 ## Market-index governance
 
