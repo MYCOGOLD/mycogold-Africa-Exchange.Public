@@ -27,12 +27,12 @@ int main(int argc, char** argv) {
     orders.push_back({
         "buy-" + std::to_string(i), "buyer-" + std::to_string(i),
         "TOMATO", "GRADE_1", "NAIROBI", Side::buy,
-        12'000, 1'000, sequence, 9'999'999'999
+        12'000, 1'000, sequence, 9'999'999'999, 1
     });
     orders.push_back({
         "sell-" + std::to_string(i), "seller-" + std::to_string(i),
         "TOMATO", "GRADE_1", "NAIROBI", Side::sell,
-        10'000, 1'000, sequence + 1, 9'999'999'999
+        10'000, 1'000, sequence + 1, 9'999'999'999, 1
     });
   }
 
