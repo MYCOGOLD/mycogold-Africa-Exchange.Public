@@ -109,6 +109,17 @@ int main() {
 
   rejected = false;
   try {
+    (void)match_orders({
+        order("buy-seq", "buyer", Side::buy, 12'000, 1'000, 7),
+        order("sell-seq", "seller", Side::sell, 10'000, 1'000, 7)
+    }, 1'000'000);
+  } catch (const std::invalid_argument&) {
+    rejected = true;
+  }
+  require(rejected, "duplicate priority sequences are rejected");
+
+  rejected = false;
+  try {
     auto wrong_book = order("other-market", "seller", Side::sell, 10'000, 1'000, 2);
     wrong_book.market_code = "NYERI";
     (void)match_orders({
