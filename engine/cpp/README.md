@@ -53,8 +53,9 @@ continuous temperature intervals. The Q10 profile is an explicit mathematical
 assumption, not a universal biological constant. Each commodity / variety /
 packaging profile must be calibrated against observed quality and shelf-life
 measurements before it can drive a listing grade, price, delivery decision or
-automatic rejection. Missing temperature intervals are rejected rather than
-silently treated as safe storage.
+automatic rejection. The supplied history must begin at harvest time and cover
+continuously through the calculation time. Missing temperature intervals are
+rejected rather than silently treated as safe storage.
 
 ## Market-index governance
 
