@@ -13,7 +13,8 @@
     "docker:up": "docker compose up -d",
     "check:safety": "node scripts/check-production-safety.mjs",
     "engine:build": "cmake -S engine/cpp -B build/engine -DCMAKE_BUILD_TYPE=Release && cmake --build build/engine --config Release",
-    "engine:test": "npm run engine:build && ctest --test-dir build/engine --output-on-failure"
+    "engine:test": "npm run engine:build && ctest --test-dir build/engine --output-on-failure",
+    "engine:benchmark": "npm run engine:build && ./build/engine/order_book_benchmark"
   },
   "dependencies": {
     "@supabase/ssr": "0.12.7",
