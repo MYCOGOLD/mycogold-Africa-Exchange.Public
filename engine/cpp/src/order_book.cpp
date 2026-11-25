@@ -57,13 +57,18 @@ MatchResult match_orders(
   if (active_orders.empty()) return result;
 
   std::unordered_set<std::string> seen_ids;
+  std::unordered_set<std::uint64_t> seen_priority_sequences;
   seen_ids.reserve(active_orders.size());
+  seen_priority_sequences.reserve(active_orders.size());
 
   const auto& first = active_orders.front();
   for (const auto& order : active_orders) {
     validate_order(order);
     if (!seen_ids.insert(order.order_id).second) {
       throw std::invalid_argument("Order IDs must be unique within a matching request");
+    }
+    if (!seen_priority_sequences.insert(order.priority_sequence).second) {
+      throw std::invalid_argument("Priority sequences must be globally unique within a matching request");
     }
     if (order.commodity_code != first.commodity_code ||
         order.grade_code != first.grade_code ||
