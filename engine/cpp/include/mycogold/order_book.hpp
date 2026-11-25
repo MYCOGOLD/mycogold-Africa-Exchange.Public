@@ -24,6 +24,8 @@ struct Order {
   std::int64_t quantity_grams{};
   std::uint64_t priority_sequence{};
   std::int64_t expires_at_epoch_ms{};
+  // Database row version captured with the matching snapshot.
+  std::uint64_t version{1};
 };
 
 struct Fill {
@@ -37,6 +39,8 @@ struct Fill {
   std::int64_t execution_price_kes_cents_per_kg{};
   std::int64_t quantity_grams{};
   std::uint64_t maker_priority_sequence{};
+  std::uint64_t buy_order_version{};
+  std::uint64_t sell_order_version{};
 };
 
 struct MatchResult {
@@ -49,7 +53,9 @@ struct MatchResult {
 
 // Matches one commodity + grade + market book using price-time priority.
 // Only active, authorized orders should be supplied by the caller.
-// Expired orders are ignored. The function is deterministic and side-effect free.
+// Expired orders are ignored. Proposed fills echo both input row versions so
+// the database can reject stale snapshots before committing a match.
+ // The function is deterministic and side-effect free.
 MatchResult match_orders(
     const std::vector<Order>& active_orders,
     std::int64_t now_epoch_ms
