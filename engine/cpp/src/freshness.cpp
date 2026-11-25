@@ -87,10 +87,14 @@ FreshnessResult estimate_freshness(
 
   double hours_remaining = 0.0;
   if (quality > static_cast<long double>(profile.marketability_threshold)) {
-    hours_remaining = static_cast<double>(
+    const long double remaining_hours =
         std::log(quality / static_cast<long double>(profile.marketability_threshold)) /
-        static_cast<long double>(current_rate)
-    );
+        static_cast<long double>(current_rate);
+    if (!std::isfinite(remaining_hours) || remaining_hours < 0.0L ||
+        remaining_hours > static_cast<long double>(std::numeric_limits<double>::max())) {
+      throw std::invalid_argument("Estimated time to marketability threshold exceeds the supported numeric range");
+    }
+    hours_remaining = static_cast<double>(remaining_hours);
   }
 
   return {
