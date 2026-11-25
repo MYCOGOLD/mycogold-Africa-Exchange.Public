@@ -30,7 +30,9 @@ create table public.ledger_entries (
   account_id uuid not null references public.ledger_accounts(id),
   asset_code text not null check (asset_code in ('KES', 'MCG')),
   side text not null check (side in ('debit', 'credit')),
-  amount numeric(24, 8) not null check (amount > 0),
+  amount numeric(24, 8) not null check (
+    amount > 0 and amount = round(amount, case when asset_code = 'KES' then 2 else 8 end)
+  ),
   created_at timestamptz not null default now()
 );
 
@@ -91,6 +93,10 @@ begin
     where e.transaction_id = v_transaction_id and e.asset_code <> a.asset_code
   ) then
     raise exception 'Ledger entry asset does not match its account';
+  end if;
+  if (select count(distinct e.asset_code) from public.ledger_entries e
+      where e.transaction_id = v_transaction_id) > 1 then
+    raise exception 'A ledger transaction cannot mix assets';
   end if;
   return null;
 end;
