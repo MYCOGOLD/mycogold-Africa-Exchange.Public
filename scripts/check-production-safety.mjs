@@ -116,16 +116,16 @@ check(/enabled:\s*false/.test(paymentConfigRoute)
   && /PAYMENT_CALLBACK_PROCESSING_DISABLED/.test(mpesaCallbackRoute)
   && /ORDER_SETTLEMENT_NOT_AVAILABLE/.test(orderSettlementRoute),
   'STK collection, payment callbacks and escrow settlement must remain fail-closed.')
-check(/ledger_transactions[\\s\\S]*?idempotency_key text not null unique/.test(ledgerMigration)
-  && /asset_code text not null check \\(asset_code in \\('KES', 'MCG'\\)\\)/.test(ledgerMigration)
+check(/ledger_transactions[\s\S]*?idempotency_key text not null unique/.test(ledgerMigration)
+  && /asset_code text not null check \(asset_code in \('KES', 'MCG'\)\)/.test(ledgerMigration)
   && /deferrable initially deferred/.test(ledgerMigration)
-  && /ledger_transactions_must_balance[\\s\\S]*?after insert on public\\.ledger_transactions/i.test(ledgerMigration)
-  && /p_lines is null or jsonb_typeof\\(p_lines\\) is distinct from 'array'/i.test(ledgerMigration)
-  && /jsonb_array_length\\(p_lines\\) > 100/.test(ledgerMigration)
-  && /jsonb_typeof\\(v_line\\) is distinct from 'object'/i.test(ledgerMigration)
+  && /ledger_transactions_must_balance[\s\S]*?after insert on public\.ledger_transactions/i.test(ledgerMigration)
+  && /p_lines is null or jsonb_typeof\(p_lines\) is distinct from 'array'/i.test(ledgerMigration)
+  && /jsonb_array_length\(p_lines\) > 100/.test(ledgerMigration)
+  && /jsonb_typeof\(v_line\) is distinct from 'object'/i.test(ledgerMigration)
   && /Ledger rows are immutable; post a reversal instead/.test(ledgerMigration)
   && /A reversal must exactly invert the referenced transaction/.test(ledgerMigration)
-  && /grant execute on function public\\.post_ledger_transaction[\\s\\S]*?to service_role/i.test(ledgerMigration),
+  && /grant execute on function public\.post_ledger_transaction[\s\S]*?to service_role/i.test(ledgerMigration),
   'Accounting ledger must reject empty/malformed journals, be append-only, idempotent, balanced per asset, and reversal-based.')
 check(/add_mpesa_stk_and_escrow\.sql/.test(read('supabase/held-migrations/README.md'))
   && !readdirSync(join(root, 'supabase/migrations')).some((name) => /mpesa_stk_and_escrow/i.test(name)),
