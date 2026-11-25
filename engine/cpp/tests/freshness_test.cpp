@@ -145,6 +145,20 @@ int main() {
   }
   require(rejected, "overflowing temperature response is rejected");
 
+  rejected = false;
+  try {
+    auto extreme_rate_profile = profile();
+    extreme_rate_profile.base_decay_rate_per_hour = 1e308;
+    (void)estimate_freshness(
+        extreme_rate_profile, 1'000,
+        {{1'000, 1'000 + 24 * 3'600'000LL, 10.0}},
+        1'000 + 24 * 3'600'000LL
+    );
+  } catch (const std::invalid_argument&) {
+    rejected = true;
+  }
+  require(rejected, "unrepresentable accumulated hazard is rejected");
+
   std::cout << "All C++ freshness tests passed.\n";
   return EXIT_SUCCESS;
 }
