@@ -31,7 +31,7 @@ Order order(
 ) {
   return {
       std::move(id), std::move(trader), "TOMATO", "GRADE_1", "NAIROBI",
-      side, price, quantity, sequence, expiry
+      side, price, quantity, sequence, expiry, 1
   };
 }
 
@@ -53,6 +53,9 @@ int main() {
           "older resting buy determines maker execution price");
   require(crossed.fills[0].buyer_id == "buyer-a" &&
           crossed.fills[0].seller_id == "seller-a", "fill identifies both counterparties");
+  require(crossed.fills[0].buy_order_version == 1 &&
+          crossed.fills[0].sell_order_version == 1,
+          "fill echoes the database versions used for matching");
 
   const auto price_priority = match_orders({
       order("buy-low", "buyer-low", Side::buy, 10'000, 1'000, 1),
@@ -140,6 +143,16 @@ int main() {
     rejected = true;
   }
   require(rejected, "zero quantity is rejected");
+
+  rejected = false;
+  try {
+    auto stale = order("zero-version", "buyer", Side::buy, 12'000, 1'000, 1);
+    stale.version = 0;
+    (void)match_orders({stale}, 1'000'000);
+  } catch (const std::invalid_argument&) {
+    rejected = true;
+  }
+  require(rejected, "zero database row version is rejected");
 
   std::cout << "All C++ order-book tests passed.\n";
   return EXIT_SUCCESS;
