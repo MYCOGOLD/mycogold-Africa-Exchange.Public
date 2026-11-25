@@ -8,6 +8,7 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 add_library(mycogold_market_engine
   src/market_index.cpp
   src/order_book.cpp
+  src/freshness.cpp
 )
 target_include_directories(mycogold_market_engine PUBLIC include)
 target_compile_options(mycogold_market_engine PRIVATE -Wall -Wextra -Wpedantic -Wconversion -Wshadow)
@@ -20,6 +21,10 @@ add_executable(order_book_tests tests/order_book_test.cpp)
 target_link_libraries(order_book_tests PRIVATE mycogold_market_engine)
 target_compile_options(order_book_tests PRIVATE -Wall -Wextra -Wpedantic -Wconversion -Wshadow)
 
+add_executable(freshness_tests tests/freshness_test.cpp)
+target_link_libraries(freshness_tests PRIVATE mycogold_market_engine)
+target_compile_options(freshness_tests PRIVATE -Wall -Wextra -Wpedantic -Wconversion -Wshadow)
+
 add_executable(order_book_benchmark benchmarks/order_book_benchmark.cpp)
 target_link_libraries(order_book_benchmark PRIVATE mycogold_market_engine)
 target_compile_options(order_book_benchmark PRIVATE -Wall -Wextra -Wpedantic -Wconversion -Wshadow)
@@ -27,3 +32,4 @@ target_compile_options(order_book_benchmark PRIVATE -Wall -Wextra -Wpedantic -Wc
 enable_testing()
 add_test(NAME market_index_tests COMMAND market_index_tests)
 add_test(NAME order_book_tests COMMAND order_book_tests)
+add_test(NAME freshness_tests COMMAND freshness_tests)
