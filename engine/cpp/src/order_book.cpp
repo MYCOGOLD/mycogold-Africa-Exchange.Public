@@ -26,6 +26,7 @@ void validate_order(const Order& order) {
       order.quantity_grams <= 0 ||
       order.priority_sequence == 0 ||
       order.expires_at_epoch_ms <= 0 ||
+      order.version == 0 ||
       (order.side != Side::buy && order.side != Side::sell)) {
     throw std::invalid_argument("Order contains invalid identity, book, price, quantity, side or time fields");
   }
@@ -158,7 +159,9 @@ MatchResult match_orders(
         buy.order->market_code,
         maker.limit_price_kes_cents_per_kg,
         fill_quantity,
-        maker.priority_sequence
+        maker.priority_sequence,
+        buy.order->version,
+        sell.order->version
     });
 
     buy.remaining_grams -= fill_quantity;
