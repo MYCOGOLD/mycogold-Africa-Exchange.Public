@@ -1,6 +1,7 @@
 #include "mycogold/freshness.hpp"
 
 #include <cmath>
+#include <limits>
 #include <stdexcept>
 
 namespace mycogold::freshness {
@@ -69,6 +70,11 @@ FreshnessResult estimate_freshness(
     cumulative_hazard += static_cast<long double>(rate) * duration_hours;
     observed_milliseconds += static_cast<long double>(duration_ms);
     expected_start = interval.end_epoch_ms;
+  }
+
+  if (!std::isfinite(cumulative_hazard) ||
+      cumulative_hazard > static_cast<long double>(std::numeric_limits<double>::max())) {
+    throw std::invalid_argument("Accumulated freshness hazard exceeds the supported numeric range");
   }
 
   if (expected_start != now_epoch_ms) {
