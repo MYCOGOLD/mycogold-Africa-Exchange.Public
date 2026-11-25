@@ -101,6 +101,39 @@ int main() {
   }
   require(rejected, "invalid marketability thresholds are rejected");
 
+  const auto below_threshold = estimate_freshness(
+      profile(), {{1'000, 1'000 + 1'000 * 3'600'000LL, 10.0}},
+      1'000 + 1'000 * 3'600'000LL
+  );
+  require(below_threshold.quality_remaining < profile().marketability_threshold,
+          "quality below the marketability threshold is reported");
+  require(near(below_threshold.hours_to_threshold_at_last_temperature, 0.0),
+          "no additional marketable time is reported after threshold crossing");
+
+  rejected = false;
+  try {
+    (void)estimate_freshness(
+        profile(), {{1'000, 1'000 + 3'600'000LL, 101.0}},
+        1'000 + 3'600'000LL
+    );
+  } catch (const std::invalid_argument&) {
+    rejected = true;
+  }
+  require(rejected, "temperatures outside the supported range are rejected");
+
+  rejected = false;
+  try {
+    auto overflow_profile = profile();
+    overflow_profile.q10 = 1e308;
+    (void)estimate_freshness(
+        overflow_profile, {{1'000, 1'000 + 3'600'000LL, 30.0}},
+        1'000 + 3'600'000LL
+    );
+  } catch (const std::invalid_argument&) {
+    rejected = true;
+  }
+  require(rejected, "overflowing temperature response is rejected");
+
   std::cout << "All C++ freshness tests passed.\n";
   return EXIT_SUCCESS;
 }
