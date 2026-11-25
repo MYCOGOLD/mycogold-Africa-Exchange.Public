@@ -61,9 +61,13 @@ IndexResult calculate_mfpi(
   IndexResult result;
   if (prices.empty()) return result;
 
-  const double reference = median(prices);
-  const double lower = reference * (1.0 - config.outlier_band);
-  const double upper = reference * (1.0 + config.outlier_band);
+  // Do not apply a statistical outlier filter to fewer than three observations.
+  // With tiny samples the median guard can incorrectly reject every valid trade.
+  const bool apply_outlier_guard = prices.size() >= 3;
+  const double reference = apply_outlier_guard ? median(prices) : 0.0;
+  const double lower = apply_outlier_guard ? reference * (1.0 - config.outlier_band) : 0.0;
+  const double upper = apply_outlier_guard ? reference * (1.0 + config.outlier_band)
+                                           : std::numeric_limits<double>::infinity();
   long double weighted_sum = 0.0L;
   long double volume_sum = 0.0L;
   std::set<std::string> counterparties;
