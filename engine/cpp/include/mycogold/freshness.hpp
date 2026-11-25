@@ -29,9 +29,10 @@ struct FreshnessResult {
 };
 
 // Computes quality_remaining = exp(-integral(decay_rate(T) * dt)).
-// Temperature intervals must be ordered, contiguous, and end exactly at now.
+// Temperature intervals must begin at harvest, be ordered and contiguous, and end exactly at now.
 FreshnessResult estimate_freshness(
     const DecayProfile& profile,
+    std::int64_t harvest_epoch_ms,
     const std::vector<TemperatureInterval>& temperature_history,
     std::int64_t now_epoch_ms
 );
