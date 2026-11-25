@@ -4,10 +4,9 @@
 #include <iostream>
 #include <stdexcept>
 #include <string>
+#include <utility>
 #include <vector>
 
-using mycogold::matching::Fill;
-using mycogold::matching::MatchResult;
 using mycogold::matching::Order;
 using mycogold::matching::Side;
 using mycogold::matching::match_orders;
