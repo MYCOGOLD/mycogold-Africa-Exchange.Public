@@ -20,6 +20,10 @@ add_executable(order_book_tests tests/order_book_test.cpp)
 target_link_libraries(order_book_tests PRIVATE mycogold_market_engine)
 target_compile_options(order_book_tests PRIVATE -Wall -Wextra -Wpedantic -Wconversion -Wshadow)
 
+add_executable(order_book_benchmark benchmarks/order_book_benchmark.cpp)
+target_link_libraries(order_book_benchmark PRIVATE mycogold_market_engine)
+target_compile_options(order_book_benchmark PRIVATE -Wall -Wextra -Wpedantic -Wconversion -Wshadow)
+
 enable_testing()
 add_test(NAME market_index_tests COMMAND market_index_tests)
 add_test(NAME order_book_tests COMMAND order_book_tests)
