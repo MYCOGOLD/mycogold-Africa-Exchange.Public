@@ -40,21 +40,18 @@ double decay_rate_at(const DecayProfile& profile, const double temperature_c) {
 
 FreshnessResult estimate_freshness(
     const DecayProfile& profile,
+    const std::int64_t harvest_epoch_ms,
     const std::vector<TemperatureInterval>& temperature_history,
     const std::int64_t now_epoch_ms
 ) {
   validate_profile(profile);
-  if (now_epoch_ms <= 0 || temperature_history.empty()) {
+  if (harvest_epoch_ms <= 0 || now_epoch_ms <= harvest_epoch_ms || temperature_history.empty()) {
     throw std::invalid_argument("Freshness calculation requires a positive time and temperature history");
   }
 
   long double cumulative_hazard = 0.0L;
   long double observed_milliseconds = 0.0L;
-  std::int64_t expected_start = temperature_history.front().start_epoch_ms;
-
-  if (expected_start <= 0) {
-    throw std::invalid_argument("Temperature history must start at a positive epoch timestamp");
-  }
+  std::int64_t expected_start = harvest_epoch_ms;
 
   for (const auto& interval : temperature_history) {
     if (interval.start_epoch_ms != expected_start ||
