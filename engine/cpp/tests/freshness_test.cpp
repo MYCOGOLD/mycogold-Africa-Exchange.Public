@@ -32,7 +32,7 @@ DecayProfile profile() {
 
 int main() {
   const auto reference = estimate_freshness(
-      profile(), {{1'000, 1'000 + 24 * 3'600'000LL, 10.0}},
+      profile(), 1'000, {{1'000, 1'000 + 24 * 3'600'000LL, 10.0}},
       1'000 + 24 * 3'600'000LL
   );
   require(near(reference.quality_remaining, std::exp(-0.24)),
@@ -40,7 +40,7 @@ int main() {
   require(near(reference.observed_hours, 24.0), "observed time is reported in hours");
 
   const auto warm = estimate_freshness(
-      profile(), {{1'000, 1'000 + 24 * 3'600'000LL, 20.0}},
+      profile(), 1'000, {{1'000, 1'000 + 24 * 3'600'000LL, 20.0}},
       1'000 + 24 * 3'600'000LL
   );
   require(near(warm.quality_remaining, std::exp(-0.48)),
@@ -49,7 +49,7 @@ int main() {
           "warmer handling reduces estimated remaining quality");
 
   const auto split = estimate_freshness(
-      profile(),
+      profile(), 1'000,
       {
           {1'000, 1'000 + 12 * 3'600'000LL, 10.0},
           {1'000 + 12 * 3'600'000LL, 1'000 + 24 * 3'600'000LL, 10.0}
@@ -65,7 +65,7 @@ int main() {
   bool rejected = false;
   try {
     (void)estimate_freshness(
-        profile(),
+        profile(), 1'000,
         {{1'000, 1'000 + 10 * 3'600'000LL, 10.0},
          {1'000 + 11 * 3'600'000LL, 1'000 + 24 * 3'600'000LL, 10.0}},
         1'000 + 24 * 3'600'000LL
@@ -78,7 +78,7 @@ int main() {
   rejected = false;
   try {
     (void)estimate_freshness(
-        profile(),
+        profile(), 1'000,
         {{1'000, 1'000 + 24 * 3'600'000LL,
           std::numeric_limits<double>::quiet_NaN()}},
         1'000 + 24 * 3'600'000LL
@@ -93,7 +93,7 @@ int main() {
     auto invalid = profile();
     invalid.marketability_threshold = 1.0;
     (void)estimate_freshness(
-        invalid, {{1'000, 1'000 + 3'600'000LL, 10.0}},
+        invalid, 1'000, {{1'000, 1'000 + 3'600'000LL, 10.0}},
         1'000 + 3'600'000LL
     );
   } catch (const std::invalid_argument&) {
@@ -102,7 +102,7 @@ int main() {
   require(rejected, "invalid marketability thresholds are rejected");
 
   const auto below_threshold = estimate_freshness(
-      profile(), {{1'000, 1'000 + 1'000 * 3'600'000LL, 10.0}},
+      profile(), 1'000, {{1'000, 1'000 + 1'000 * 3'600'000LL, 10.0}},
       1'000 + 1'000 * 3'600'000LL
   );
   require(below_threshold.quality_remaining < profile().marketability_threshold,
@@ -113,7 +113,7 @@ int main() {
   rejected = false;
   try {
     (void)estimate_freshness(
-        profile(), {{1'000, 1'000 + 3'600'000LL, 101.0}},
+        profile(), 1'000, {{1'000, 1'000 + 3'600'000LL, 101.0}},
         1'000 + 3'600'000LL
     );
   } catch (const std::invalid_argument&) {
@@ -123,10 +123,21 @@ int main() {
 
   rejected = false;
   try {
+    (void)estimate_freshness(
+        profile(), 500, {{1'000, 1'000 + 3'600'000LL, 10.0}},
+        1'000 + 3'600'000LL
+    );
+  } catch (const std::invalid_argument&) {
+    rejected = true;
+  }
+  require(rejected, "temperature history that starts after harvest is rejected");
+
+  rejected = false;
+  try {
     auto overflow_profile = profile();
     overflow_profile.q10 = 1e308;
     (void)estimate_freshness(
-        overflow_profile, {{1'000, 1'000 + 3'600'000LL, 30.0}},
+        overflow_profile, 1'000, {{1'000, 1'000 + 3'600'000LL, 30.0}},
         1'000 + 3'600'000LL
     );
   } catch (const std::invalid_argument&) {
