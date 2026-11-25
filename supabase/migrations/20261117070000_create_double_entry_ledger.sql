@@ -165,7 +165,16 @@ begin
     if jsonb_typeof(v_line) is distinct from 'object'
        or coalesce(v_line ->> 'asset', '') not in ('KES', 'MCG')
        or coalesce(v_line ->> 'side', '') not in ('debit', 'credit')
-       or coalesce(v_line ->> 'account_code', '') !~ '^[A-Za-z0-9_.:-]{1,64}
+       or coalesce(v_line ->> 'account_code', '') !~ '^[A-Za-z0-9_.:-]{1,64}$'
+       or coalesce(v_line ->> 'amount', '') !~ '^[0-9]{1,16}([.][0-9]{1,8})?$' then
+      raise exception 'Invalid ledger entry';
+    end if;
+    v_asset := v_line ->> 'asset';
+    v_side := v_line ->> 'side';
+    v_amount := (v_line ->> 'amount')::numeric;
+    if v_amount <= 0 then
+      raise exception 'Ledger entry amount must be greater than zero';
+    end if;
     select * into v_account from public.ledger_accounts
       where asset_code = v_asset and account_code = v_line ->> 'account_code' and is_active;
     if not found then raise exception 'Unknown or inactive ledger account'; end if;
