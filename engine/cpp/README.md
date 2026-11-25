@@ -11,6 +11,7 @@ source of truth for orders, verified trades and financial records.
 cmake -S engine/cpp -B build/engine
 cmake --build build/engine --config Release
 ctest --test-dir build/engine --output-on-failure
+./build/engine/order_book_benchmark 50000
 ```
 
 ## Current modules
@@ -22,17 +23,21 @@ ctest --test-dir build/engine --output-on-failure
 - Deterministic single-book price-time matching for buy and sell limit orders.
 - Integer KES cents per kg and integer gram quantities; no floating-point price comparisons.
 - Maker-price execution proposals, partial fills, expiry filtering and self-trade prevention.
+- Globally unique priority-sequence validation and a repeatable synthetic benchmark target.
 
 ## Matching engine contract
 
 The caller must provide only authenticated, authorized, active orders from one
-commodity + grade + market book, with a globally monotonic priority sequence.
+commodity + grade + market book, with a globally unique, monotonically assigned priority sequence.
 The engine returns proposed fills and self-trade-prevention instructions. It
 does not persist order state, reserve inventory, create trades, post ledger
 entries, authenticate users, or execute payments. The API/database layer must
 revalidate order versions and availability and commit accepted fills atomically
 in PostgreSQL using idempotency and row locking. A returned fill is not a
 completed or settled trade.
+
+Priority sequence values must be unique within each matching request; duplicate
+sequences are rejected rather than silently imposing an arbitrary time order.
 
 The current request model in the application represents buyer order requests,
 not a complete exchange-grade bid/ask order book. Do not route existing order
