@@ -121,6 +121,8 @@ check(/ledger_transactions[\s\S]*?idempotency_key text not null unique/.test(led
   && /deferrable initially deferred/.test(ledgerMigration)
   && /ledger_transactions_must_balance[\s\S]*?after insert on public\.ledger_transactions/i.test(ledgerMigration)
   && /p_lines is null or jsonb_typeof\(p_lines\) is distinct from 'array'/i.test(ledgerMigration)
+  && /amount = round\(amount, case when asset_code = 'KES' then 2 else 8 end\)/.test(ledgerMigration)
+  && /A ledger transaction cannot mix assets/.test(ledgerMigration)
   && /jsonb_array_length\(p_lines\) > 100/.test(ledgerMigration)
   && /jsonb_typeof\(v_line\) is distinct from 'object'/i.test(ledgerMigration)
   && /Ledger rows are immutable; post a reversal instead/.test(ledgerMigration)
