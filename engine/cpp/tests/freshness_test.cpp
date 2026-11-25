@@ -159,6 +159,19 @@ int main() {
   }
   require(rejected, "unrepresentable accumulated hazard is rejected");
 
+  rejected = false;
+  try {
+    auto tiny_rate_profile = profile();
+    tiny_rate_profile.base_decay_rate_per_hour = std::numeric_limits<double>::denorm_min();
+    (void)estimate_freshness(
+        tiny_rate_profile, 1'000, {{1'000, 1'000 + 3'600'000LL, 10.0}},
+        1'000 + 3'600'000LL
+    );
+  } catch (const std::invalid_argument&) {
+    rejected = true;
+  }
+  require(rejected, "unrepresentable time to threshold is rejected");
+
   std::cout << "All C++ freshness tests passed.\n";
   return EXIT_SUCCESS;
 }
