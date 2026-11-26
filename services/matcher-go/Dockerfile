@@ -12,7 +12,7 @@ RUN go test ./... \
     && go build -trimpath -ldflags="-s -w" -o /src/build/mycogold-matcher .
 
 FROM debian:bookworm-slim AS runtime
-RUN apt-get update && apt-get install -y --no-install-recommends libssl3 ca-certificates \
+RUN apt-get update && apt-get install -y --no-install-recommends libssl3 libstdc++6 libgcc-s1 ca-certificates \
     && rm -rf /var/lib/apt/lists/*
 WORKDIR /src
 COPY --from=build /src/build/mycogold-matcher /src/build/mycogold-matcher
