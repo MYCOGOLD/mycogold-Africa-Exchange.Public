@@ -15,7 +15,7 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/MYCOGOLD/mycogold-Africa-Exchange.Public/services/matcher-go/engine"
+	"github.com/mycogold/mycogold-africa-exchange.public/services/matcher-go/engine"
 )
 
 const maxBodyBytes = 16 << 20
