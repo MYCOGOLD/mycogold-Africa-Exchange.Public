@@ -60,3 +60,16 @@ The image builds the C++ shared library, runs CTest and Go tests in the builder,
 then copies only the gateway binary, native shared library and runtime OpenSSL
 library into a non-root runtime image. Keep the service behind a private
 network/TLS gateway; it has no public user authentication or database access.
+
+## Native bridge benchmark
+
+After building the shared library, run the cgo-to-C++ microbenchmark:
+
+```sh
+go test ./engine -run '^$' -bench BenchmarkMatchOneThousandOrders -benchmem
+```
+
+This measures Go-to-C ABI marshaling plus the native matcher for a fixed
+1,000-order book. It does not include HTTP, HMAC, JSON decoding or PostgreSQL
+transaction latency. Compare runs on the same host and compiler; do not use
+microbenchmark throughput as a production capacity claim.
