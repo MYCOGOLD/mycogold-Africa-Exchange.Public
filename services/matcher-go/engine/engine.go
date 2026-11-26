@@ -50,6 +50,8 @@ type Result struct {
 	Prevented []uint64 `json:"selfTradePreventedOrderIndices"`
 }
 
+func ABIVersion() uint32 { return uint32(C.mycogold_engine_abi_version()) }
+
 func Match(orders []Order, now int64) (Result, error) {
 	if len(orders) == 0 || len(orders) > maxOrders {
 		return Result{}, errors.New("order count must be between 1 and 50000")
