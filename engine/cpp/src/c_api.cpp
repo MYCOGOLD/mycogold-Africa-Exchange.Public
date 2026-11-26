@@ -27,6 +27,8 @@ std::string required_string(const char* value, const char* field) {
 
 }  // namespace
 
+extern "C" uint32_t mycogold_engine_abi_version(void) { return 1; }
+
 extern "C" int32_t mycogold_match_orders(
     const mycogold_order_input* orders,
     const size_t order_count,
