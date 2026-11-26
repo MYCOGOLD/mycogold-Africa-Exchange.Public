@@ -100,3 +100,41 @@ To install dependencies during the run, use `CI_LOCAL_INSTALL=1 npm run ci:local
 Cloud workflows remain manually runnable in GitHub Actions or can be triggered
 by pushing a version tag after local verification. Hosted runs still depend on
 the repository's available Actions allowance.
+
+## Native exchange compute service (experimental)
+
+The native engine under `engine/cpp/` provides deterministic order matching,
+market-index and freshness calculations, bounded policy evaluation, SHA-256
+fingerprints, a versioned internal message codec and a classical QUBO solver.
+It is built as a C++20 shared library and exposes a side-effect-free C ABI.
+
+A Go 1.23+ gateway under `services/matcher-go/` invokes the C ABI using cgo.
+It accepts signed internal requests only, enforces request-size/order-count
+limits, and returns proposed fills with source row versions. It has no database,
+inventory, payment, escrow or ledger write access.
+
+Build and test from the repository root:
+
+```bash
+npm run matcher:test
+npm run matcher:build
+```
+
+Run locally with a private HMAC secret:
+
+```bash
+export MYCOGOLD_MATCHER_HMAC_SECRET="$(openssl rand -hex 32)"
+npm run matcher:run
+```
+
+Build the isolated service container:
+
+```bash
+docker build -f services/matcher-go/Dockerfile -t mycogold-matcher:local .
+```
+
+**Integration boundary:** the Next.js order workflow does not yet call this
+service. Before any live routing, implement a private authenticated caller and
+a PostgreSQL transaction that locks the exchange book, revalidates order
+versions/status/expiry and shared inventory reservations, then commits every
+fill atomically. A matcher response alone is never a trade or settlement.
