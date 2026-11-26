@@ -67,6 +67,18 @@ int main() {
           "invalid C ABI side is rejected");
   require(std::strlen(error) > 0, "C ABI returns a bounded diagnostic");
 
+  char oversized_id[130];
+  for (size_t i = 0; i < sizeof(oversized_id) - 1; ++i) oversized_id[i] = 'x';
+  oversized_id[sizeof(oversized_id) - 1] = '\0';
+  orders[0].side = 0;
+  orders[0].order_id = oversized_id;
+  const auto oversized_status = mycogold_match_orders(
+      orders, 2, 1'000'000,
+      fills, 2, &fill_count,
+      prevented, 2, &prevented_count,
+      error, sizeof(error));
+  require(oversized_status == MYCOGOLD_ENGINE_INVALID_ARGUMENT,
+          "oversized C ABI strings are rejected before unbounded allocation");
   std::cout << "All C ABI tests passed.\n";
   return EXIT_SUCCESS;
 }
