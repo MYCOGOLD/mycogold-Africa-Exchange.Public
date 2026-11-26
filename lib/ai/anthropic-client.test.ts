@@ -168,3 +168,30 @@ test("unknown tools are never executed", async () => {
   assert.equal(executed, false);
   assert.equal(calls, 2);
 });
+
+test("does not execute inherited object properties as tool handlers", async () => {
+  let calls = 0;
+  const client = new AnthropicClient({
+    apiKey: "test-key",
+    fetcher: async () => {
+      calls += 1;
+      if (calls === 1) return new Response(JSON.stringify({
+        id: "msg_tool", type: "message", role: "assistant", model: "claude-test",
+        content: [{ type: "tool_use", id: "tool_1", name: "toString", input: {} }],
+        stop_reason: "tool_use",
+      }), { status: 200, headers: { "content-type": "application/json" } });
+      return new Response(JSON.stringify({
+        id: "msg_final", type: "message", role: "assistant", model: "claude-test",
+        content: [{ type: "text", text: "No permitted tool was executed." }],
+        stop_reason: "end_turn",
+      }), { status: 200, headers: { "content-type": "application/json" } });
+    },
+  });
+  let executed = false;
+  const handlers = Object.create({
+    toString: () => { executed = true; return "unsafe"; },
+  }) as Record<string, (args: Record<string, unknown>) => unknown>;
+  await client.runWithTools(input, handlers);
+  assert.equal(executed, false);
+  assert.equal(calls, 2);
+});
