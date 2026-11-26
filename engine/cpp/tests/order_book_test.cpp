@@ -5,6 +5,7 @@
 #include <stdexcept>
 #include <string>
 #include <utility>
+#include <unordered_map>
 #include <vector>
 
 using mycogold::matching::Order;
@@ -171,6 +172,62 @@ int main() {
           repeated.fills[0].execution_price_kes_cents_per_kg ==
               versioned.fills[0].execution_price_kes_cents_per_kg,
           "identical snapshots produce deterministic fill output");
+
+  std::vector<Order> property_orders;
+  property_orders.reserve(40);
+  std::unordered_map<std::string, const Order*> orders_by_id;
+  for (std::int64_t i = 0; i < 20; ++i) {
+    property_orders.push_back(order(
+        "property-buy-" + std::to_string(i),
+        "property-buyer-" + std::to_string(i),
+        Side::buy, 12'000 + (i % 7) * 100, 1'000 + (i % 3) * 500,
+        static_cast<std::uint64_t>(i * 2 + 1)));
+    property_orders.push_back(order(
+        "property-sell-" + std::to_string(i),
+        "property-seller-" + std::to_string(i),
+        Side::sell, 10'000 + (i % 9) * 100, 1'000 + (i % 4) * 400,
+        static_cast<std::uint64_t>(i * 2 + 2)));
+  }
+  for (const auto& item : property_orders) {
+    orders_by_id.emplace(item.order_id, &item);
+  }
+
+  const auto property_result = match_orders(property_orders, 1'000'000);
+  std::unordered_map<std::string, std::int64_t> buy_filled;
+  std::unordered_map<std::string, std::int64_t> sell_filled;
+  for (const auto& fill : property_result.fills) {
+    const auto buy = orders_by_id.at(fill.buy_order_id);
+    const auto sell = orders_by_id.at(fill.sell_order_id);
+    require(fill.quantity_grams > 0, "property fill quantity is positive");
+    require(buy->side == Side::buy && sell->side == Side::sell,
+            "property fill preserves buy and sell sides");
+    require(buy->limit_price_kes_cents_per_kg >= fill.execution_price_kes_cents_per_kg &&
+            fill.execution_price_kes_cents_per_kg >= sell->limit_price_kes_cents_per_kg,
+            "property fill execution price respects both limit prices");
+    require(fill.buy_order_version == buy->version &&
+            fill.sell_order_version == sell->version,
+            "property fill preserves source versions");
+    buy_filled[fill.buy_order_id] += fill.quantity_grams;
+    sell_filled[fill.sell_order_id] += fill.quantity_grams;
+  }
+  for (const auto& item : property_orders) {
+    const auto& totals = item.side == Side::buy ? buy_filled : sell_filled;
+    const auto found = totals.find(item.order_id);
+    const std::int64_t filled = found == totals.end() ? 0 : found->second;
+    require(filled <= item.quantity_grams, "aggregate fills never exceed source order quantity");
+  }
+
+  const auto property_repeat = match_orders(property_orders, 1'000'000);
+  require(property_repeat.fills.size() == property_result.fills.size(),
+          "larger deterministic snapshot returns a stable fill count");
+  for (std::size_t i = 0; i < property_result.fills.size(); ++i) {
+    require(property_repeat.fills[i].buy_order_id == property_result.fills[i].buy_order_id &&
+            property_repeat.fills[i].sell_order_id == property_result.fills[i].sell_order_id &&
+            property_repeat.fills[i].quantity_grams == property_result.fills[i].quantity_grams &&
+            property_repeat.fills[i].execution_price_kes_cents_per_kg ==
+                property_result.fills[i].execution_price_kes_cents_per_kg,
+            "larger deterministic snapshot reproduces every proposed fill");
+  }
 
   std::cout << "All C++ order-book tests passed.\n";
   return EXIT_SUCCESS;
