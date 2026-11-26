@@ -26,7 +26,7 @@ function(mycogold_configure_target target)
   endif()
 endfunction()
 
-add_library(mycogold_market_engine
+add_library(mycogold_market_engine SHARED
   src/market_index.cpp
   src/order_book.cpp
   src/freshness.cpp
