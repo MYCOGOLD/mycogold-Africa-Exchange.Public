@@ -118,6 +118,14 @@ int main() {
   wrong_book.fills[0].market_code = "NYERI";
   must_throw([&] { persistence::validate_commit_intent(snapshot, wrong_book); },
              "cross-market fill rejected");
+  auto off_maker_price = intent;
+  off_maker_price.fills[0].execution_price_kes_cents_per_kg = 11'000;
+  must_throw([&] { persistence::validate_commit_intent(snapshot, off_maker_price); },
+             "non-maker execution price rejected");
+  auto wrong_maker = intent;
+  wrong_maker.fills[0].maker_priority_sequence = 99;
+  must_throw([&] { persistence::validate_commit_intent(snapshot, wrong_maker); },
+             "unknown maker priority rejected");
 
   std::cout << "All native core module tests passed.\n";
   return EXIT_SUCCESS;
