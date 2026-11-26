@@ -161,8 +161,11 @@ export class SimulatedAnnealingBackend implements OptimizationBackend {
         current[index] = 1 - current[index]
         currentEnergy = candidateEnergy
         if (currentEnergy < bestEnergy) {
-          bestEnergy = currentEnergy
-          best = current.slice()
+          const exactEnergy = energy(problem, current)
+          if (exactEnergy < bestEnergy) {
+            bestEnergy = exactEnergy
+            best = current.slice()
+          }
         }
       }
 
