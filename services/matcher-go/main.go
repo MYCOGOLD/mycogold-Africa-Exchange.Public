@@ -8,6 +8,7 @@ import (
 	"errors"
 	"io"
 	"log"
+	"mime"
 	"net/http"
 	"os"
 	"strconv"
@@ -43,7 +44,8 @@ func main() {
 		writeJSON(w, http.StatusOK, map[string]string{"status": "ok", "engine": "cpp20"})
 	})
 	mux.HandleFunc("POST /v1/match", func(w http.ResponseWriter, r *http.Request) {
-		if r.Header.Get("Content-Type") != "application/json" {
+		mediaType, _, mediaErr := mime.ParseMediaType(r.Header.Get("Content-Type"))
+		if mediaErr != nil || mediaType != "application/json" {
 			writeJSON(w, http.StatusUnsupportedMediaType, apiError{"application/json required"}); return
 		}
 		body, err := io.ReadAll(http.MaxBytesReader(w, r.Body, maxBodyBytes))
