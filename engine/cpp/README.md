@@ -100,12 +100,13 @@ actual target hardware before choosing CPU-specific compiler flags.
 
 ## Runtime integration status
 
-The native library now exposes a stable C ABI suitable for a Go/Rust/Python
-service adapter, but it remains an isolated compute component. The Next.js
-application does not yet invoke it in its live order path. Do not describe the
-exchange as C++-accelerated end to end until a versioned internal service or
-native binding has been implemented, benchmarked, authenticated, and connected
-to a PostgreSQL transaction that revalidates every proposed fill.
+A Go 1.23+ private HTTP gateway now invokes the native C ABI through cgo. The
+gateway signs requests with HMAC-SHA256, enforces body/order limits and returns
+proposed fills with source versions. The Next.js application does not yet invoke
+it in its live order path. Do not describe the exchange as C++-accelerated end
+to end until the gateway is deployed privately, load-tested, called by a trusted
+server-side adapter, and connected to a PostgreSQL transaction that revalidates
+every proposed fill and shared inventory reservation.
 
 ## Modular core layout (adapted from the reference architecture)
 
