@@ -34,3 +34,9 @@ test("supports a single binary variable", () => {
   assert.deepEqual(result.variables, [1]);
   assert.equal(result.energy, -1);
 });
+
+test("rejects invalid iteration counts rather than returning a NaN result", () => {
+  const backend = new SimulatedAnnealingBackend();
+  assert.throws(() => backend.solve({ linear: [1] }, { iterations: Number.NaN }), /Iterations/);
+  assert.throws(() => backend.solve({ linear: [1] }, { iterations: 0 }), /Iterations/);
+});
