@@ -1,14 +1,13 @@
 name: Application CI
 
-# Single main gate: install -> typecheck -> test -> production safety -> build.
-# Node 24.x matches the Vercel project runtime (24.x). Keep these two in step.
-
+# Cloud verification is intentionally opt-in while the repository is on a
+# constrained Actions allowance. Local verification lives in scripts/ci-local.sh.
+# Version tags are the explicit release gate; do not trigger on every PR/push.
 on:
-  push:
-    branches: [main]
-  pull_request:
-    branches: [main]
   workflow_dispatch:
+  push:
+    tags:
+      - "v*"
 
 permissions:
   contents: read
@@ -19,9 +18,9 @@ concurrency:
 
 jobs:
   verify:
-    name: Typecheck, test, safety and production build
+    name: Typecheck, tests, safety and production build
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 25
     steps:
       - name: Checkout
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
@@ -49,4 +48,3 @@ jobs:
 
       - name: Build Next.js application
         run: npm run build
-
