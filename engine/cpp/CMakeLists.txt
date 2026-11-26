@@ -78,3 +78,4 @@ add_test(NAME freshness_tests COMMAND freshness_tests)
 add_test(NAME c_api_tests COMMAND c_api_tests)
 
 add_test(NAME core_modules_tests COMMAND core_modules_tests)
+add_test(NAME engine_self_check COMMAND mycogold-engine --self-check)
