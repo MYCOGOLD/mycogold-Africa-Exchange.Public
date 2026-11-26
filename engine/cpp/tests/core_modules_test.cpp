@@ -1,5 +1,6 @@
 #include "mycogold/db.hpp"
 #include "mycogold/net.hpp"
+#include "mycogold/optimization.hpp"
 #include "mycogold/script.hpp"
 #include "mycogold/sha.hpp"
 #include "mycogold/util.hpp"
@@ -66,6 +67,22 @@ int main() {
   must_throw([] {
     (void)workers::Registry({{"bad-worker", "http://untrusted.local", "matching"}});
   }, "non-TLS worker endpoint rejected");
+
+  optimization::QuboProblem qubo{{-1.0, -0.5}, {{0, 1, 2.0}}, 0.0};
+  optimization::Options annealing;
+  annealing.iterations = 30000;
+  annealing.seed = 20261126;
+  const auto solution = optimization::solve_simulated_annealing(qubo, annealing);
+  const auto repeated_solution = optimization::solve_simulated_annealing(qubo, annealing);
+  require(solution.variables == repeated_solution.variables &&
+          solution.energy == repeated_solution.energy, "QUBO solve is repeatable for a fixed toolchain and seed");
+  require(solution.variables.size() == 2 && solution.energy <= -1.0,
+          "QUBO optimizer finds a low-energy binary assignment");
+  require(!solution.optimality_guaranteed, "classical heuristic does not claim global optimality");
+  must_throw([] {
+    optimization::QuboProblem invalid{{1.0, 2.0}, {{0, 1, 1.0}, {1, 0, 2.0}}, 0.0};
+    (void)optimization::solve_simulated_annealing(invalid);
+  }, "duplicate unordered QUBO pair rejected");
 
   persistence::Snapshot snapshot{
       "snapshot-001", 1'000'000,
