@@ -36,6 +36,9 @@ func writeJSON(w http.ResponseWriter, status int, value any) {
 
 func main() {
 	secret := os.Getenv("MYCOGOLD_MATCHER_HMAC_SECRET")
+	if engine.ABIVersion() != 1 {
+		log.Fatalf("unsupported native matcher ABI version: %d", engine.ABIVersion())
+	}
 	if len(secret) < 32 {
 		log.Fatal("MYCOGOLD_MATCHER_HMAC_SECRET must contain at least 32 characters")
 	}
