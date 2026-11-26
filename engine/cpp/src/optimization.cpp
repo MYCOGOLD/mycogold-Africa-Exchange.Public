@@ -5,6 +5,7 @@
 #include <random>
 #include <stdexcept>
 #include <unordered_set>
+#include <utility>
 namespace mycogold::optimization {
 namespace {
 struct Neighbor { std::size_t index; double coefficient; };
