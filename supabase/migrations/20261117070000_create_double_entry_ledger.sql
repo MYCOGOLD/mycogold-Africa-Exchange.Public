@@ -30,7 +30,9 @@ create table public.ledger_entries (
   account_id uuid not null references public.ledger_accounts(id),
   asset_code text not null check (asset_code in ('KES', 'MCG')),
   side text not null check (side in ('debit', 'credit')),
-  amount numeric(24, 8) not null check (amount > 0),
+  amount numeric(24, 8) not null check (
+    amount > 0 and amount = round(amount, case when asset_code = 'KES' then 2 else 8 end)
+  ),
   created_at timestamptz not null default now()
 );
 
@@ -64,7 +66,11 @@ returns trigger language plpgsql set search_path = '' as $function$
 declare
   v_transaction_id uuid;
 begin
-  v_transaction_id := coalesce(new.transaction_id, old.transaction_id);
+  if tg_table_name = 'ledger_transactions' then
+    v_transaction_id := new.id;
+  else
+    v_transaction_id := coalesce(new.transaction_id, old.transaction_id);
+  end if;
   if exists (
     select 1 from public.ledger_transactions t
     where t.id = v_transaction_id
@@ -88,9 +94,20 @@ begin
   ) then
     raise exception 'Ledger entry asset does not match its account';
   end if;
+  if (select count(distinct e.asset_code) from public.ledger_entries e
+      where e.transaction_id = v_transaction_id) > 1 then
+    raise exception 'A ledger transaction cannot mix assets';
+  end if;
   return null;
 end;
 $function$;
+
+-- Check the parent transaction too: otherwise a transaction inserted with
+-- zero entries would never fire the entry-side constraint trigger.
+create constraint trigger ledger_transactions_must_balance
+after insert on public.ledger_transactions
+deferrable initially deferred
+for each row execute function public.ledger_check_transaction_balance();
 
 create constraint trigger ledger_entries_must_balance
 after insert on public.ledger_entries
@@ -117,10 +134,18 @@ declare
   v_side text;
   v_amount numeric;
 begin
-  if p_idempotency_key is null or length(p_idempotency_key) not between 8 and 200
-     or p_reference_type is null or p_memo is null
-     or jsonb_typeof(p_lines) <> 'array' or jsonb_array_length(p_lines) < 2 then
+  if p_idempotency_key is null or length(btrim(p_idempotency_key)) not between 8 and 200
+     or p_reference_type is null or length(btrim(p_reference_type)) not between 1 and 80
+     or p_memo is null or length(btrim(p_memo)) not between 1 and 500 then
     raise exception 'Invalid ledger transaction request';
+  end if;
+  -- IS DISTINCT FROM also rejects SQL NULL. Keep array-length evaluation
+  -- separate so malformed JSON types cannot slip through SQL three-valued logic.
+  if p_lines is null or jsonb_typeof(p_lines) is distinct from 'array' then
+    raise exception 'Ledger lines must be a JSON array';
+  end if;
+  if jsonb_array_length(p_lines) < 2 or jsonb_array_length(p_lines) > 100 then
+    raise exception 'Ledger transaction must contain between 2 and 100 lines';
   end if;
   v_hash := encode(extensions.digest(
     jsonb_build_object('reference_type', p_reference_type, 'reference_id', p_reference_id,
@@ -143,11 +168,18 @@ begin
 
   for v_line in select value from jsonb_array_elements(p_lines)
   loop
+    if jsonb_typeof(v_line) is distinct from 'object'
+       or coalesce(v_line ->> 'asset', '') not in ('KES', 'MCG')
+       or coalesce(v_line ->> 'side', '') not in ('debit', 'credit')
+       or coalesce(v_line ->> 'account_code', '') !~ '^[A-Za-z0-9_.:-]{1,64}$'
+       or coalesce(v_line ->> 'amount', '') !~ '^[0-9]{1,16}([.][0-9]{1,8})?$' then
+      raise exception 'Invalid ledger entry';
+    end if;
     v_asset := v_line ->> 'asset';
     v_side := v_line ->> 'side';
     v_amount := (v_line ->> 'amount')::numeric;
-    if v_asset not in ('KES', 'MCG') or v_side not in ('debit', 'credit') or v_amount <= 0 then
-      raise exception 'Invalid ledger entry';
+    if v_amount <= 0 then
+      raise exception 'Ledger entry amount must be greater than zero';
     end if;
     select * into v_account from public.ledger_accounts
       where asset_code = v_asset and account_code = v_line ->> 'account_code' and is_active;

@@ -7,11 +7,20 @@
     "build": "next build",
     "start": "next start",
     "typecheck": "npx tsc --noEmit",
-    "test": "node --import tsx --test lib/mfpi.test.ts && npx tsx lib/mycg/mycogoldRequest.test.ts",
+    "test": "node --import tsx --test lib/mfpi.test.ts lib/exchange/order-contract.test.ts lib/ai/anthropic-client.test.ts lib/optimization/qubo.test.ts lib/tuskPricing.test.ts && npx tsx lib/mycg/mycogoldRequest.test.ts",
     "test:ci": "npm run typecheck && npm test",
     "docker:build": "docker compose build",
     "docker:up": "docker compose up -d",
-    "check:safety": "node scripts/check-production-safety.mjs"
+    "check:safety": "node scripts/check-production-safety.mjs",
+    "engine:build": "cmake -S engine/cpp -B build/engine -DCMAKE_BUILD_TYPE=Release -DMYCOGOLD_ENABLE_IPO=ON && cmake --build build/engine --config Release --parallel",
+    "engine:test": "npm run engine:build && ctest --test-dir build/engine --output-on-failure",
+    "engine:benchmark": "npm run engine:build && ./build/engine/order_book_benchmark",
+    "ci:local": "bash scripts/ci-local.sh",
+    "ci:local:offline": "CI_LOCAL_AUDIT=0 bash scripts/ci-local.sh",
+    "hooks:install": "chmod +x .githooks/pre-commit && git config core.hooksPath .githooks",
+    "matcher:build": "npm run engine:build && cd services/matcher-go && go build -o ../../build/mycogold-matcher .",
+    "matcher:test": "npm run engine:build && cd services/matcher-go && go vet ./... && go test ./...",
+    "matcher:run": "npm run engine:build && cd services/matcher-go && go run ."
   },
   "dependencies": {
     "@supabase/ssr": "0.12.7",

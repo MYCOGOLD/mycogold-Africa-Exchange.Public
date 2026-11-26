@@ -13,7 +13,7 @@ Do not point the production customer domain at the static demo if you expect aut
 
 ## Local development
 
-Requirements: Node.js 22 and npm.
+Requirements: Node.js 22 and npm for the web app. Full native verification additionally requires Go 1.23+, CMake 3.20+, a C++20 compiler and OpenSSL development headers.
 
 ```bash
 npm ci
@@ -68,3 +68,73 @@ Do not release until those checks execute successfully. A GitHub Actions job tha
 - Test signup, profile creation, listing upload, order requests and seller responses with separate test accounts.
 - Add payment processing only after verified Daraja callback handling, idempotency, B2C result verification and reconciliation are implemented.
 - Perform end-to-end, abuse, accessibility, backup/restore and load tests before accepting real customers or funds.
+
+
+## Local-first engineering
+
+Cloud GitHub Actions are intentionally limited to manual `workflow_dispatch` runs
+and version tags (`v*`) while hosted runner usage is constrained. Ordinary pull
+requests and branch pushes do not start hosted jobs.
+
+Run the local verification pipeline before pushing:
+
+```bash
+npm ci
+npm run ci:local
+```
+
+The local runner executes native C++ build/tests, TypeScript checks, unit tests,
+production safety contracts and the Next.js production build. The production
+dependency audit runs by default and requires registry access. For a fully
+offline run, use `npm run ci:local:offline`; this explicitly
+skips the network-dependent audit and does not report it as passed.
+
+Enable the local pre-commit hook once per clone:
+
+```bash
+npm run hooks:install
+```
+
+Optional Docker verification: `CI_LOCAL_DOCKER=1 npm run ci:local`.
+To install dependencies during the run, use `CI_LOCAL_INSTALL=1 npm run ci:local`.
+Cloud workflows remain manually runnable in GitHub Actions or can be triggered
+by pushing a version tag after local verification. Hosted runs still depend on
+the repository's available Actions allowance.
+
+## Native exchange compute service (experimental)
+
+The native engine under `engine/cpp/` provides deterministic order matching,
+market-index and freshness calculations, bounded policy evaluation, SHA-256
+fingerprints, a versioned internal message codec and a classical QUBO solver.
+It is built as a C++20 shared library and exposes a side-effect-free C ABI.
+
+A Go 1.23+ gateway under `services/matcher-go/` invokes the C ABI using cgo.
+It accepts signed internal requests only, enforces request-size/order-count
+limits, and returns proposed fills with source row versions. It has no database,
+inventory, payment, escrow or ledger write access.
+
+Build and test from the repository root:
+
+```bash
+npm run matcher:test
+npm run matcher:build
+```
+
+Run locally with a private HMAC secret:
+
+```bash
+export MYCOGOLD_MATCHER_HMAC_SECRET="$(openssl rand -hex 32)"
+npm run matcher:run
+```
+
+Build the isolated service container:
+
+```bash
+docker build -f services/matcher-go/Dockerfile -t mycogold-matcher:local .
+```
+
+**Integration boundary:** the Next.js order workflow does not yet call this
+service. Before any live routing, implement a private authenticated caller and
+a PostgreSQL transaction that locks the exchange book, revalidates order
+versions/status/expiry and shared inventory reservations, then commits every
+fill atomically. A matcher response alone is never a trade or settlement.

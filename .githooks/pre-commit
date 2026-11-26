@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+set -Eeuo pipefail
+ROOT="$(git rev-parse --show-toplevel)"
+cd "$ROOT"
+command -v go >/dev/null 2>&1 || { echo "Go 1.23+ is required for matcher tests." >&2; exit 1; }
+npm run typecheck
+npm test
+npm run check:safety
+npm run engine:test
+npm run matcher:test

@@ -1,6 +1,15 @@
+.git
+.github
 node_modules
 .next
-.git
-.env.local
+.vercel
+build
+coverage
 .env
+.env.*
+!.env.example
+!.env.template
+*.pem
+*.key
+*.crt
 *.log
