@@ -1,5 +1,7 @@
 #include "mycogold/net.hpp"
 #include "mycogold/util.hpp"
+#include <algorithm>
+#include <iterator>
 #include <stdexcept>
 namespace mycogold::protocol {
 namespace {
