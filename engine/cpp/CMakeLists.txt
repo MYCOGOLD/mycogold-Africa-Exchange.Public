@@ -9,6 +9,7 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
 include(CheckIPOSupported)
+find_package(OpenSSL REQUIRED COMPONENTS Crypto)
 if(MYCOGOLD_ENABLE_IPO)
   check_ipo_supported(RESULT MYCOGOLD_IPO_SUPPORTED OUTPUT MYCOGOLD_IPO_ERROR)
 else()
@@ -30,8 +31,15 @@ add_library(mycogold_market_engine
   src/order_book.cpp
   src/freshness.cpp
   src/c_api.cpp
+  src/util.cpp
+  src/sha.cpp
+  src/script.cpp
+  src/net.cpp
+  src/db.cpp
+  src/worker_discovery.cpp
 )
 target_include_directories(mycogold_market_engine PUBLIC include)
+target_link_libraries(mycogold_market_engine PUBLIC OpenSSL::Crypto)
 mycogold_configure_target(mycogold_market_engine)
 
 add_executable(market_index_tests tests/market_index_test.cpp)
@@ -50,6 +58,14 @@ add_executable(c_api_tests tests/c_api_test.cpp)
 target_link_libraries(c_api_tests PRIVATE mycogold_market_engine)
 mycogold_configure_target(c_api_tests)
 
+add_executable(core_modules_tests tests/core_modules_test.cpp)
+target_link_libraries(core_modules_tests PRIVATE mycogold_market_engine)
+mycogold_configure_target(core_modules_tests)
+
+add_executable(mycogold-engine src/main.cpp)
+target_link_libraries(mycogold-engine PRIVATE mycogold_market_engine)
+mycogold_configure_target(mycogold-engine)
+
 add_executable(order_book_benchmark benchmarks/order_book_benchmark.cpp)
 target_link_libraries(order_book_benchmark PRIVATE mycogold_market_engine)
 mycogold_configure_target(order_book_benchmark)
@@ -59,3 +75,5 @@ add_test(NAME market_index_tests COMMAND market_index_tests)
 add_test(NAME order_book_tests COMMAND order_book_tests)
 add_test(NAME freshness_tests COMMAND freshness_tests)
 add_test(NAME c_api_tests COMMAND c_api_tests)
+
+add_test(NAME core_modules_tests COMMAND core_modules_tests)
