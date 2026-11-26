@@ -74,6 +74,17 @@ int main() {
   require(calculate_mfpi(trades(10), volume_gate).status == PublicationStatus::unpublished,
           "minimum volume gate prevents publication");
 
+  IndexConfig large_price_config;
+  large_price_config.base_weighted_price_kes = 1.7e308;
+  const auto large_even_sample = calculate_mfpi({
+      {1.7e308, 1.0, "buyer-1", "seller-1"},
+      {1.7e308, 1.0, "buyer-2", "seller-2"},
+      {1.7e308, 1.0, "buyer-3", "seller-3"},
+      {1.7e308, 1.0, "buyer-4", "seller-4"},
+  }, large_price_config);
+  require(std::isfinite(large_even_sample.weighted_price_kes),
+          "even-sample median and VWAP remain finite for large finite values");
+
   IndexConfig overflow_config;
   overflow_config.base_weighted_price_kes = std::numeric_limits<double>::min();
   rejected = false;
