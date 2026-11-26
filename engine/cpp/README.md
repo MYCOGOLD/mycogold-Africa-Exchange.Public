@@ -106,3 +106,36 @@ application does not yet invoke it in its live order path. Do not describe the
 exchange as C++-accelerated end to end until a versioned internal service or
 native binding has been implemented, benchmarked, authenticated, and connected
 to a PostgreSQL transaction that revalidates every proposed fill.
+
+## Modular core layout (adapted from the reference architecture)
+
+The Bitcoin file names in the reference are an example of separation of concerns, not a feature list to copy. MycoGold is an agricultural exchange, not a blockchain. We deliberately do not add proof-of-work mining, consensus, wallet key generation, UTXO accounting, IRC peer gossip or a second ledger.
+
+| Reference responsibility | MycoGold implementation | Boundary |
+|---|---|---|
+| `main.cpp` | Native engine executable | Version and self-check entry point; not a public HTTP server |
+| `script.cpp` | Declarative agricultural policy evaluator | Bounded typed predicates; no arbitrary user code or bytecode VM |
+| `net.cpp` | Versioned internal message framing | Bounded codec only; TLS, authentication, rate limits and sockets belong to the service gateway |
+| `db.cpp` | Snapshot and match-commit contract validation | Validates versions, quantities, counterparties, book and price; performs no SQL or financial writes |
+| `sha.cpp` | OpenSSL SHA-256 content fingerprint | Integrity/deduplication fingerprints only; not signatures, identity, consensus or proof-of-work |
+| `util.cpp` | Identifier and input-boundary helpers | Rejects malformed identifiers and defines shared payload limits |
+| `irc.cpp` concept | `worker_discovery.cpp` | Registry of explicitly trusted HTTPS worker endpoints; no open peer-to-peer mesh or IRC dependency |
+
+### Native modules
+
+- `order_book.cpp`: price-time matching proposals with integer KES cents/kg and grams.
+- `market_index.cpp`: MFPI calculations from caller-supplied settled trades.
+- `freshness.cpp`: time/temperature decay integration with continuous-history requirements.
+- `optimization.cpp`: sparse QUBO simulated annealing in C++; each bit-flip proposal visits only the selected variable's neighbours.
+- `c_api.cpp`: bounded C ABI for Go/Rust/Python service integration.
+- `core_modules_test.cpp`: tests protocol framing, SHA-256 test vector, declarative rules, worker registry, database revalidation and QUBO behavior.
+
+### Quantum-ready optimization seam
+
+The native optimizer is a classical simulated-annealing backend. It returns the best binary assignment found and explicitly sets `optimality_guaranteed=false`. It does not claim to execute on a quantum processor. Domain services must validate all hard constraints after optimization; a low QUBO energy is not proof that a proposed delivery, inventory allocation or trade is feasible.
+
+A future QPU provider should implement the same provider-neutral problem/result contract behind a separately configured adapter. The default runtime remains local and classical, with no QPU credentials, cloud calls or paid quantum services required. Qiskit/PennyLane integration should be optional and isolated from the authoritative trade and inventory transaction path.
+
+### Build dependency
+
+The SHA-256 implementation uses OpenSSL EVP. Install the OpenSSL development package (for example `libssl-dev` on Debian/Ubuntu) before configuring CMake. CMake fails explicitly if the cryptographic dependency is missing.
