@@ -24,7 +24,7 @@ std::string required_string(const char* value, const char* field) {
   }
   constexpr size_t kMaximumFieldBytes = 128;
   size_t length = 0;
-  while (length <= kMaximumFieldBytes && value[length] != '\\0') ++length;
+  while (length <= kMaximumFieldBytes && value[length] != '\0') ++length;
   if (length == 0 || length > kMaximumFieldBytes) {
     throw std::invalid_argument(std::string(field) + " must contain 1 to 128 bytes");
   }
