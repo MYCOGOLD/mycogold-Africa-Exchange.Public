@@ -39,6 +39,7 @@ add_library(mycogold_market_engine SHARED
   src/worker_discovery.cpp
   src/optimization.cpp
 )
+set_target_properties(mycogold_market_engine PROPERTIES VERSION 1.1.0 SOVERSION 1)
 target_include_directories(mycogold_market_engine PUBLIC include)
 target_link_libraries(mycogold_market_engine PUBLIC OpenSSL::Crypto)
 mycogold_configure_target(mycogold_market_engine)
