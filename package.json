@@ -19,7 +19,7 @@
     "ci:local:offline": "CI_LOCAL_AUDIT=0 bash scripts/ci-local.sh",
     "hooks:install": "chmod +x .githooks/pre-commit && git config core.hooksPath .githooks",
     "matcher:build": "npm run engine:build && cd services/matcher-go && go build -o ../../build/mycogold-matcher .",
-    "matcher:test": "npm run engine:build && cd services/matcher-go && go test ./...",
+    "matcher:test": "npm run engine:build && cd services/matcher-go && go vet ./... && go test ./...",
     "matcher:run": "npm run engine:build && cd services/matcher-go && go run ."
   },
   "dependencies": {
