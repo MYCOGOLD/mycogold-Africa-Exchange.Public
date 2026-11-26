@@ -37,6 +37,7 @@ add_library(mycogold_market_engine
   src/net.cpp
   src/db.cpp
   src/worker_discovery.cpp
+  src/optimization.cpp
 )
 target_include_directories(mycogold_market_engine PUBLIC include)
 target_link_libraries(mycogold_market_engine PUBLIC OpenSSL::Crypto)
