@@ -68,3 +68,35 @@ Do not release until those checks execute successfully. A GitHub Actions job tha
 - Test signup, profile creation, listing upload, order requests and seller responses with separate test accounts.
 - Add payment processing only after verified Daraja callback handling, idempotency, B2C result verification and reconciliation are implemented.
 - Perform end-to-end, abuse, accessibility, backup/restore and load tests before accepting real customers or funds.
+
+
+## Local-first engineering
+
+Cloud GitHub Actions are intentionally limited to manual `workflow_dispatch` runs
+and version tags (`v*`) while hosted runner usage is constrained. Ordinary pull
+requests and branch pushes do not start hosted jobs.
+
+Run the local verification pipeline before pushing:
+
+```bash
+npm ci
+bash scripts/ci-local.sh
+```
+
+The local runner executes native C++ build/tests, TypeScript checks, unit tests,
+production safety contracts and the Next.js production build. The production
+dependency audit runs by default and requires registry access. For a fully
+offline run, use `CI_LOCAL_AUDIT=0 bash scripts/ci-local.sh`; this explicitly
+skips the network-dependent audit and does not report it as passed.
+
+Enable the local pre-commit hook once per clone:
+
+```bash
+git config core.hooksPath .githooks
+```
+
+Optional Docker verification: `CI_LOCAL_DOCKER=1 bash scripts/ci-local.sh`.
+To install dependencies during the run, use `CI_LOCAL_INSTALL=1 bash scripts/ci-local.sh`.
+Cloud workflows remain manually runnable in GitHub Actions or can be triggered
+by pushing a version tag after local verification. Hosted runs still depend on
+the repository's available Actions allowance.
