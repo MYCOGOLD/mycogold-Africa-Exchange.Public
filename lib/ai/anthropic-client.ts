@@ -188,8 +188,9 @@ export class AnthropicClient {
         }
         try {
           const result = await handler(call.input);
+          const serialized = JSON.stringify(result) ?? String(result);
           results.push({ type: "tool_result", tool_use_id: call.id,
-            content: JSON.stringify(result).slice(0, 20_000) });
+            content: serialized.slice(0, 20_000) });
         } catch (error) {
           const message = error instanceof Error ? error.message : "Tool execution failed";
           results.push({ type: "tool_result", tool_use_id: call.id, is_error: true,
