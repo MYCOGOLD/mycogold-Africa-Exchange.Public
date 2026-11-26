@@ -29,6 +29,7 @@ add_library(mycogold_market_engine
   src/market_index.cpp
   src/order_book.cpp
   src/freshness.cpp
+  src/c_api.cpp
 )
 target_include_directories(mycogold_market_engine PUBLIC include)
 mycogold_configure_target(mycogold_market_engine)
@@ -45,6 +46,10 @@ add_executable(freshness_tests tests/freshness_test.cpp)
 target_link_libraries(freshness_tests PRIVATE mycogold_market_engine)
 mycogold_configure_target(freshness_tests)
 
+add_executable(c_api_tests tests/c_api_test.cpp)
+target_link_libraries(c_api_tests PRIVATE mycogold_market_engine)
+mycogold_configure_target(c_api_tests)
+
 add_executable(order_book_benchmark benchmarks/order_book_benchmark.cpp)
 target_link_libraries(order_book_benchmark PRIVATE mycogold_market_engine)
 mycogold_configure_target(order_book_benchmark)
@@ -53,3 +58,4 @@ enable_testing()
 add_test(NAME market_index_tests COMMAND market_index_tests)
 add_test(NAME order_book_tests COMMAND order_book_tests)
 add_test(NAME freshness_tests COMMAND freshness_tests)
+add_test(NAME c_api_tests COMMAND c_api_tests)
