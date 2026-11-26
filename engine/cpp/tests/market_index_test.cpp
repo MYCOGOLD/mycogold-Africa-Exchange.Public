@@ -74,6 +74,16 @@ int main() {
   require(calculate_mfpi(trades(10), volume_gate).status == PublicationStatus::unpublished,
           "minimum volume gate prevents publication");
 
+  IndexConfig overflow_config;
+  overflow_config.base_weighted_price_kes = std::numeric_limits<double>::min();
+  rejected = false;
+  try {
+    (void)calculate_mfpi(trades(3), overflow_config);
+  } catch (const std::overflow_error&) {
+    rejected = true;
+  }
+  require(rejected, "MFPI rejects an unrepresentable final index instead of publishing infinity");
+
   std::cout << "All C++ market-index tests passed.\n";
   return EXIT_SUCCESS;
 }
