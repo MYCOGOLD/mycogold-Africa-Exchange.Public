@@ -10,11 +10,13 @@ import { StaffPanel } from './staff-panel'
 import { TokenomicsModal } from './TokenomicsModal'
 
 type ProfileTab = 'My Listings' | 'My Trades' | 'My Orders' | 'Settings'
+type ListingSummary = Pick<Listing, 'id' | 'product' | 'category' | 'price' | 'created_at'>
+type TradeSummary = Pick<Trade, 'id' | 'type' | 'created_at'>
 
 export function ProfileLoggedIn({ userId, isStaff, onSignOut }: { userId: string; isStaff: boolean; onSignOut: () => void }) {
   const [profile, setProfile] = useState<Profile | null>(null)
-  const [listings, setListings] = useState<Listing[]>([])
-  const [trades, setTrades] = useState<Trade[]>([])
+  const [listings, setListings] = useState<ListingSummary[]>([])
+  const [trades, setTrades] = useState<TradeSummary[]>([])
   const [mcgBalance, setMcgBalance] = useState(0)
   const [tab, setTab] = useState<ProfileTab>('My Listings')
   const [showPassword, setShowPassword] = useState(false)
@@ -53,14 +55,17 @@ export function ProfileLoggedIn({ userId, isStaff, onSignOut }: { userId: string
         setProfile(row as Profile)
 
         const [listingResult, tradeResult, balanceResult] = await Promise.all([
-          supabase.from('listings').select('*').eq('seller_id', userId).order('created_at', { ascending: false }),
-          supabase.from('trades').select('*').eq('user_id', userId).order('created_at', { ascending: false }),
+          supabase.from('listings').select('id,product,category,price,created_at').eq('seller_id', userId).order('created_at', { ascending: false }).limit(50),
+          supabase.from('trades').select('id,type,created_at').eq('user_id', userId).order('created_at', { ascending: false }).limit(50),
           supabase.from('mcg_balances').select('balance').eq('user_id', userId).maybeSingle(),
         ])
         if (!active) return
-        setListings((listingResult.data || []) as Listing[])
-        setTrades((tradeResult.data || []) as Trade[])
-        setMcgBalance(balanceResult.error ? 0 : Number(balanceResult.data?.balance ?? 0))
+        if (listingResult.error) throw listingResult.error
+        if (tradeResult.error) throw tradeResult.error
+        if (balanceResult.error) throw balanceResult.error
+        setListings((listingResult.data || []) as ListingSummary[])
+        setTrades((tradeResult.data || []) as TradeSummary[])
+        setMcgBalance(Number(balanceResult.data?.balance ?? 0))
         setMessage('')
       } catch (error) {
         if (active) setMessage(error instanceof Error ? error.message : 'Could not load profile. Please refresh.')
@@ -121,8 +126,8 @@ export function ProfileLoggedIn({ userId, isStaff, onSignOut }: { userId: string
             <p className="mt-1 text-xl font-bold gold">{mcgBalance.toLocaleString()} MCG</p>
             <p className="mt-3 text-xs muted">View tokenomics</p>
           </button>
-          <div className="glass p-4"><p className="muted text-xs">My Listings</p><p className="mt-2 text-2xl font-bold">{listings.length}</p></div>
-          <div className="glass p-4"><p className="muted text-xs">My Trades</p><p className="mt-2 text-2xl font-bold">{trades.length}</p></div>
+          <div className="glass p-4"><p className="muted text-xs">Latest listings · max 50</p><p className="mt-2 text-2xl font-bold">{listings.length}</p></div>
+          <div className="glass p-4"><p className="muted text-xs">Latest trades · max 50</p><p className="mt-2 text-2xl font-bold">{trades.length}</p></div>
         </div>
         {message && <p className="mt-3 text-sm gold" role="status">{message}</p>}
       </div>
@@ -139,8 +144,8 @@ export function ProfileLoggedIn({ userId, isStaff, onSignOut }: { userId: string
         ) : (
           <div className="space-y-2 p-4">
             {(tab === 'My Listings' ? listings : trades).length ? (tab === 'My Listings' ? listings : trades).map((row, index) => {
-              const label = tab === 'My Listings' ? String((row as Listing).product || (row as Listing).category || 'Produce') : String((row as Trade).type || 'Trade')
-              const value = tab === 'My Listings' ? formatKES((row as Listing).price) : String((row as Trade).type || 'Trade')
+              const label = tab === 'My Listings' ? String((row as ListingSummary).product || (row as ListingSummary).category || 'Produce') : String((row as TradeSummary).type || 'Trade')
+              const value = tab === 'My Listings' ? formatKES((row as ListingSummary).price) : String((row as TradeSummary).type || 'Trade')
               return <div className="flex items-center justify-between rounded-xl bg-white/[.04] p-3 text-sm" key={String(row.id || index)}><span>{label}</span><span className="gold">{value}</span></div>
             }) : <p className="muted p-3 text-sm">Nothing here yet.</p>}
           </div>
