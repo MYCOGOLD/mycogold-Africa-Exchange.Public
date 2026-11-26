@@ -2,6 +2,7 @@
 #include "mycogold/util.hpp"
 #include <algorithm>
 #include <stdexcept>
+#include <utility>
 #include <unordered_set>
 namespace mycogold::workers {
 Registry::Registry(std::vector<Worker> trusted_workers) : workers_(std::move(trusted_workers)) {
