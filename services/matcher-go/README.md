@@ -1,5 +1,7 @@
 # MycoGold C++ matching gateway
 
+Requirements: Go 1.23+, CMake 3.20+, a C++20 compiler, OpenSSL development headers, and (for the container build) Docker.
+
 A small Go HTTP boundary that invokes the deterministic C++20 matching engine
 through its stable C ABI. It is a private compute service, not a public API and
 not a settlement service.
@@ -17,7 +19,9 @@ go build -o ../../build/mycogold-matcher .
 ```
 
 The C++ shared library must remain discoverable at
-`build/engine/libmycogold_market_engine.so` when the service starts.
+`build/engine/libmycogold_market_engine.so` when the service starts. The cgo
+bridge marshals bounded strings into one native arena rather than allocating
+five C strings per order.
 
 ## Run
 
@@ -40,3 +44,19 @@ to the public internet.
 source versions and inventory reservations inside a single PostgreSQL
 transaction before persisting trades. No database writes, payments, escrow,
 or ledger operations occur here.
+
+## Container image
+
+From the repository root:
+
+```sh
+docker build -f services/matcher-go/Dockerfile -t mycogold-matcher:local .
+docker run --rm -p 8081:8081 \
+  -e MYCOGOLD_MATCHER_HMAC_SECRET="$(openssl rand -hex 32)" \
+  mycogold-matcher:local
+``
+
+The image builds the C++ shared library, runs CTest and Go tests in the builder,
+then copies only the gateway binary, native shared library and runtime OpenSSL
+library into a non-root runtime image. Keep the service behind a private
+network/TLS gateway; it has no public user authentication or database access.
