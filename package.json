@@ -14,7 +14,10 @@
     "check:safety": "node scripts/check-production-safety.mjs",
     "engine:build": "cmake -S engine/cpp -B build/engine -DCMAKE_BUILD_TYPE=Release && cmake --build build/engine --config Release",
     "engine:test": "npm run engine:build && ctest --test-dir build/engine --output-on-failure",
-    "engine:benchmark": "npm run engine:build && ./build/engine/order_book_benchmark"
+    "engine:benchmark": "npm run engine:build && ./build/engine/order_book_benchmark",
+    "ci:local": "bash scripts/ci-local.sh",
+    "ci:local:offline": "CI_LOCAL_AUDIT=0 bash scripts/ci-local.sh",
+    "hooks:install": "chmod +x .githooks/pre-commit && git config core.hooksPath .githooks"
   },
   "dependencies": {
     "@supabase/ssr": "0.12.7",
