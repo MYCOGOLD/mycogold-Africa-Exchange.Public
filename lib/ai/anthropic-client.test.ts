@@ -83,3 +83,66 @@ test("does not retry permanent client errors", async () => {
   await assert.rejects(client.generate(input), /\(400\)/);
   assert.equal(calls, 1);
 });
+
+test("executes only registered tools and feeds results into the next model turn", async () => {
+  let calls = 0;
+  let invoked = 0;
+  let secondRequest: Record<string, unknown> | undefined;
+  const client = new AnthropicClient({
+    apiKey: "test-key",
+    fetcher: async (_url, init) => {
+      calls += 1;
+      if (calls === 1) {
+        return new Response(JSON.stringify({
+          id: "msg_tool", type: "message", role: "assistant", model: "claude-test",
+          content: [{ type: "tool_use", id: "tool_1", name: "get_market_prices",
+            input: { market: "NAIROBI" } }],
+          stop_reason: "tool_use",
+        }), { status: 200, headers: { "content-type": "application/json" } });
+      }
+      secondRequest = JSON.parse(String(init?.body));
+      return new Response(JSON.stringify({
+        id: "msg_final", type: "message", role: "assistant", model: "claude-test",
+        content: [{ type: "text", text: "Prices retrieved and summarized." }],
+        stop_reason: "end_turn",
+      }), { status: 200, headers: { "content-type": "application/json" } });
+    },
+  });
+  const result = await client.runWithTools(input, {
+    get_market_prices: (args) => {
+      invoked += 1;
+      assert.equal(args.market, "NAIROBI");
+      return [{ commodity: "TOMATO", priceKesPerKg: 80, verified: true }];
+    },
+  });
+  assert.equal(invoked, 1);
+  assert.equal(result.id, "msg_final");
+  const messages = secondRequest?.messages as Array<{ role: string; content: Array<Record<string, unknown>> }>;
+  assert.equal(messages[2].role, "user");
+  assert.equal(messages[2].content[0].type, "tool_result");
+  assert.match(String(messages[2].content[0].content), /TOMATO/);
+});
+
+test("unknown tools are never executed", async () => {
+  let calls = 0;
+  const client = new AnthropicClient({
+    apiKey: "test-key",
+    fetcher: async () => {
+      calls += 1;
+      if (calls === 1) return new Response(JSON.stringify({
+        id: "msg_tool", type: "message", role: "assistant", model: "claude-test",
+        content: [{ type: "tool_use", id: "tool_1", name: "dangerous_tool", input: {} }],
+        stop_reason: "tool_use",
+      }), { status: 200, headers: { "content-type": "application/json" } });
+      return new Response(JSON.stringify({
+        id: "msg_final", type: "message", role: "assistant", model: "claude-test",
+        content: [{ type: "text", text: "I cannot use that tool." }],
+        stop_reason: "end_turn",
+      }), { status: 200, headers: { "content-type": "application/json" } });
+    },
+  });
+  let executed = false;
+  await client.runWithTools(input, { safe_tool: () => { executed = true; } });
+  assert.equal(executed, false);
+  assert.equal(calls, 2);
+});
