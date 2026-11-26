@@ -21,6 +21,7 @@ ctest --test-dir build/engine --output-on-failure
 - Configurable minimum-volume and publication thresholds.
 - Explicit UNPUBLISHED / INDICATIVE / VERIFIED_LIVE output states.
 - Deterministic single-book price-time matching for buy and sell limit orders.
+- Stable C ABI (`c_api.h`) with caller-owned output buffers and input-index mapping for Go, Rust, Python ctypes and other runtimes.
 - Integer KES cents per kg and integer gram quantities; no floating-point price comparisons.
 - Maker-price execution proposals, partial fills, expiry filtering and self-trade prevention.
 - Globally unique priority-sequence validation, stale-snapshot row-version echoes, and a randomized seven-run benchmark reporting median latency and throughput.
@@ -99,8 +100,9 @@ actual target hardware before choosing CPU-specific compiler flags.
 
 ## Runtime integration status
 
-The native library currently builds and tests as an isolated compute component.
-The Next.js application does not yet invoke it in its live order path. Do not
-describe the exchange as C++-accelerated end to end until a versioned internal
-service or native binding has been implemented, benchmarked, authenticated,
-and connected to a PostgreSQL transaction that revalidates every proposed fill.
+The native library now exposes a stable C ABI suitable for a Go/Rust/Python
+service adapter, but it remains an isolated compute component. The Next.js
+application does not yet invoke it in its live order path. Do not describe the
+exchange as C++-accelerated end to end until a versioned internal service or
+native binding has been implemented, benchmarked, authenticated, and connected
+to a PostgreSQL transaction that revalidates every proposed fill.
