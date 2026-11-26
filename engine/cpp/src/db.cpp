@@ -44,6 +44,10 @@ void validate_commit_intent(const Snapshot& snapshot, const CommitIntent& intent
   for (const auto& fill : intent.fills) {
     const auto buy = by_id.find(fill.buy_order_id);
     const auto sell = by_id.find(fill.sell_order_id);
+    const bool buy_is_maker = buy != by_id.end() &&
+        fill.maker_priority_sequence == buy->second->priority_sequence;
+    const bool sell_is_maker = sell != by_id.end() &&
+        fill.maker_priority_sequence == sell->second->priority_sequence;
     if (buy == by_id.end() || sell == by_id.end() || fill.quantity_grams <= 0 ||
         buy->second->side != matching::Side::buy ||
         sell->second->side != matching::Side::sell ||
@@ -58,6 +62,10 @@ void validate_commit_intent(const Snapshot& snapshot, const CommitIntent& intent
         sell->second->commodity_code != buy->second->commodity_code ||
         sell->second->grade_code != buy->second->grade_code ||
         sell->second->market_code != buy->second->market_code ||
+        buy_is_maker == sell_is_maker ||
+        fill.execution_price_kes_cents_per_kg !=
+            (buy_is_maker ? buy->second->limit_price_kes_cents_per_kg
+                          : sell->second->limit_price_kes_cents_per_kg) ||
         fill.execution_price_kes_cents_per_kg <= 0 ||
         fill.execution_price_kes_cents_per_kg > buy->second->limit_price_kes_cents_per_kg ||
         fill.execution_price_kes_cents_per_kg < sell->second->limit_price_kes_cents_per_kg) {
