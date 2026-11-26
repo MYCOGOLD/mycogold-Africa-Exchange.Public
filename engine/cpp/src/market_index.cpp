@@ -3,7 +3,7 @@
 #include <algorithm>
 #include <cmath>
 #include <limits>
-#include <set>
+#include <unordered_set>
 #include <stdexcept>
 #include <utility>
 #include <vector>
@@ -29,7 +29,7 @@ double median(std::vector<double> values) {
   if (values.size() % 2 != 0) return upper;
   std::nth_element(values.begin(), values.begin() + static_cast<std::ptrdiff_t>(middle - 1),
                    values.begin() + static_cast<std::ptrdiff_t>(middle));
-  return (values[middle - 1] + upper) / 2.0;
+  return values[middle - 1] / 2.0 + upper / 2.0;
 }
 
 }  // namespace
@@ -70,7 +70,8 @@ IndexResult calculate_mfpi(
                                            : std::numeric_limits<double>::infinity();
   long double weighted_sum = 0.0L;
   long double volume_sum = 0.0L;
-  std::set<std::string> counterparties;
+  std::unordered_set<std::string> counterparties;
+  counterparties.reserve(settled_trades.size() * 2);
 
   for (const auto& trade : settled_trades) {
     if (trade.price_kes_per_kg < lower || trade.price_kes_per_kg > upper) {
@@ -98,9 +99,19 @@ IndexResult calculate_mfpi(
   }
 
   result.weighted_price_kes = static_cast<double>(weighted_sum / volume_sum);
-  result.mfpi = config.base_index +
-      ((result.weighted_price_kes - config.base_weighted_price_kes) /
-       config.base_weighted_price_kes * 100.0);
+  if (!std::isfinite(result.weighted_price_kes) || result.weighted_price_kes <= 0.0) {
+    throw std::overflow_error("VWAP is outside the supported numeric range");
+  }
+
+  const long double index = static_cast<long double>(config.base_index) +
+      ((static_cast<long double>(result.weighted_price_kes) -
+        static_cast<long double>(config.base_weighted_price_kes)) /
+       static_cast<long double>(config.base_weighted_price_kes) * 100.0L);
+  if (!std::isfinite(index) ||
+      std::abs(index) > static_cast<long double>(std::numeric_limits<double>::max())) {
+    throw std::overflow_error("MFPI result is outside the supported numeric range");
+  }
+  result.mfpi = static_cast<double>(index);
 
   if (result.accepted_trades >= config.verified_trade_count &&
       result.distinct_counterparties >= config.verified_counterparty_count) {
