@@ -12,11 +12,13 @@ log "MycoGold Africa local CI"
 has node || fail "Node.js is required (see .nvmrc / package.json engines)."
 has npm || fail "npm is required."
 has cmake || fail "CMake is required for the native C++ engine."
+has go || fail "Go 1.23+ is required for the native matching gateway."
 has c++ || has g++ || has clang++ || fail "A C++20 compiler is required."
 
 node --version
 npm --version
 cmake --version | head -n 1
+go version
 
 if [[ "${CI_LOCAL_INSTALL:-0}" == "1" ]]; then
   log "Installing exactly from package-lock.json"
@@ -38,6 +40,7 @@ else
 fi
 
 run npm run engine:test
+run npm run matcher:test
 run npm run typecheck
 run npm test
 run npm run check:safety
