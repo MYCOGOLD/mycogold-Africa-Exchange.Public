@@ -16,7 +16,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends libssl3 ca-cert
     && rm -rf /var/lib/apt/lists/*
 WORKDIR /src
 COPY --from=build /src/build/mycogold-matcher /src/build/mycogold-matcher
-COPY --from=build /src/build/engine/libmycogold_market_engine.so /src/build/engine/libmycogold_market_engine.so
+COPY --from=build /src/build/engine/libmycogold_market_engine.so* /src/build/engine/
 ENV PORT=8081
 EXPOSE 8081
 USER 65532:65532
