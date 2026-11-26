@@ -2,6 +2,7 @@ package main
 
 import (
 	"bytes"
+	"context"
 	"crypto/hmac"
 	"crypto/sha256"
 	"encoding/hex"
@@ -12,13 +13,16 @@ import (
 	"mime"
 	"net/http"
 	"os"
+	"os/signal"
 	"strconv"
 	"time"
+	"syscall"
 
 	"github.com/mycogold/mycogold-africa-exchange.public/services/matcher-go/engine"
 )
 
 const maxBodyBytes = 16 << 20
+const maxConcurrentMatches = 32
 
 type matchRequest struct {
 	NowEpochMs int64          `json:"nowEpochMs"`
@@ -43,6 +47,7 @@ func main() {
 		log.Fatal("MYCOGOLD_MATCHER_HMAC_SECRET must contain at least 32 characters")
 	}
 	mux := http.NewServeMux()
+	matchSlots := make(chan struct{}, maxConcurrentMatches)
 	mux.HandleFunc("GET /healthz", func(w http.ResponseWriter, r *http.Request) {
 		writeJSON(w, http.StatusOK, map[string]string{"status": "ok", "engine": "cpp20"})
 	})
@@ -55,6 +60,13 @@ func main() {
 		if err != nil { writeJSON(w, http.StatusRequestEntityTooLarge, apiError{"request body too large"}); return }
 		if !authenticate(secret, r, body) {
 			writeJSON(w, http.StatusUnauthorized, apiError{"invalid internal request signature"}); return
+		}
+		select {
+		case matchSlots <- struct{}{}:
+			defer func() { <-matchSlots }()
+		default:
+			w.Header().Set("Retry-After", "1")
+			writeJSON(w, http.StatusTooManyRequests, apiError{"matcher is at capacity"}); return
 		}
 		var request matchRequest
 		decoder := json.NewDecoder(bytes.NewReader(body))
@@ -83,12 +95,30 @@ func main() {
 		MaxHeaderBytes: 16 << 10,
 	}
 	log.Printf("MycoGold C++ matcher gateway listening on %s", server.Addr)
-	log.Fatal(server.ListenAndServe())
+	serverErrors := make(chan error, 1)
+	go func() { serverErrors <- server.ListenAndServe() }()
+	stop, stopSignal := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
+	defer stopSignal()
+	select {
+	case err := <-serverErrors:
+		if !errors.Is(err, http.ErrServerClosed) { log.Fatal(err) }
+	case <-stop.Done():
+		shutdownContext, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+		defer cancel()
+		if err := server.Shutdown(shutdownContext); err != nil {
+			log.Printf("graceful shutdown failed: %v", err)
+			_ = server.Close()
+		}
+		if err := <-serverErrors; err != nil && !errors.Is(err, http.ErrServerClosed) {
+			log.Printf("HTTP server stopped with error: %v", err)
+		}
+	}
 }
 
 func authenticate(secret string, r *http.Request, body []byte) bool {
 	timestamp := r.Header.Get("X-MycoGold-Timestamp")
 	signature := r.Header.Get("X-MycoGold-Signature")
+	if len(signature) != 64 { return false }
 	seconds, err := strconv.ParseInt(timestamp, 10, 64)
 	if err != nil || time.Since(time.Unix(seconds, 0)) > 30*time.Second ||
 		time.Until(time.Unix(seconds, 0)) > 30*time.Second { return false }
