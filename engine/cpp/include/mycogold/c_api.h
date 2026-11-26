@@ -50,6 +50,8 @@ enum mycogold_engine_status {
  * and no partial output is written. Database persistence and authorization are
  * outside this library.
  */
+uint32_t mycogold_engine_abi_version(void);
+
 int32_t mycogold_match_orders(
     const mycogold_order_input* orders,
     size_t order_count,
