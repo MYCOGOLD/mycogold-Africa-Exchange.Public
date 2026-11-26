@@ -20,7 +20,7 @@
     "hooks:install": "chmod +x .githooks/pre-commit && git config core.hooksPath .githooks",
     "matcher:build": "npm run engine:build && cd services/matcher-go && go build -o ../../build/mycogold-matcher .",
     "matcher:test": "npm run engine:build && cd services/matcher-go && go test ./...",
-    "matcher:run": "cd services/matcher-go && go run ."
+    "matcher:run": "npm run engine:build && cd services/matcher-go && go run ."
   },
   "dependencies": {
     "@supabase/ssr": "0.12.7",
