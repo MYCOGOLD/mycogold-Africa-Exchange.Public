@@ -33,6 +33,9 @@ int main() {
   require(core::is_safe_identifier("TOMATO_GRADE-1"), "safe identifier accepted");
   require(!core::is_safe_identifier("../orders"), "path traversal identifier rejected");
   require(!core::is_safe_identifier(""), "empty identifier rejected");
+  require(!core::is_safe_identifier("TOMAT\xC3\x93"), "non-ASCII identifier rejected");
+  require(core::is_hex_digest(std::string(64, 'a')), "lowercase SHA-256 hex accepted");
+  require(!core::is_hex_digest(std::string(63, 'a')), "short digest rejected");
   require(core::sha256_hex("") ==
       "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
       "SHA-256 matches standard empty-string test vector");
@@ -68,6 +71,12 @@ int main() {
   must_throw([] {
     (void)workers::Registry({{"bad-worker", "http://untrusted.local", "matching"}});
   }, "non-TLS worker endpoint rejected");
+  must_throw([] {
+    (void)workers::Registry({{"empty-host", "https://", "matching"}});
+  }, "empty worker host rejected");
+  must_throw([] {
+    (void)workers::Registry({{"userinfo", "https://worker@evil.internal/match", "matching"}});
+  }, "worker endpoint userinfo rejected");
 
   optimization::QuboProblem qubo{{-1.0, -0.5}, {{0, 1, 2.0}}, 0.0};
   optimization::Options annealing;
