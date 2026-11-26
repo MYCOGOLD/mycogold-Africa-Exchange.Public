@@ -12,7 +12,7 @@ log "MycoGold Africa local CI"
 has node || fail "Node.js is required (see .nvmrc / package.json engines)."
 has npm || fail "npm is required."
 has cmake || fail "CMake is required for the native C++ engine."
-has c++ || has g++ || has clang++ || fail "A C++17 compiler is required."
+has c++ || has g++ || has clang++ || fail "A C++20 compiler is required."
 
 node --version
 npm --version
