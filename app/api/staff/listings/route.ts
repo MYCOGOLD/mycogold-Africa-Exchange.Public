@@ -45,8 +45,8 @@ export async function GET(request: NextRequest) {
       auth: { autoRefreshToken: false, persistSession: false, detectSessionInUrl: false },
     })
     const [listingsResult, tradesResult] = await Promise.all([
-      admin.from('listings').select('*').order('created_at', { ascending: false }).limit(100),
-      admin.from('trades').select('*').order('created_at', { ascending: false }).limit(100),
+      admin.from('listings').select('id,seller_id,category,product,location,price,quantity,seller,status,seller_verified_at,created_at').order('created_at', { ascending: false }).limit(100),
+      admin.from('trades').select('id,type,status,kg,total,price,created_at').order('created_at', { ascending: false }).limit(100),
     ])
 
     if (listingsResult.error || tradesResult.error) {
