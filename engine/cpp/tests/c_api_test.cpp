@@ -16,6 +16,7 @@ void require(bool condition, const char* message) {
 }  // namespace
 
 int main() {
+  require(mycogold_engine_abi_version() == 1, "C ABI version is explicitly exposed");
   mycogold_order_input orders[] = {
       {"buy-1", "buyer-1", "TOMATO", "GRADE_1", "NAIROBI",
        0, 12'000, 2'000, 1, 2'000'000, 7},
