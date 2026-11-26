@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bytes"
 	"crypto/hmac"
 	"crypto/sha256"
 	"encoding/hex"
@@ -12,7 +13,6 @@ import (
 	"net/http"
 	"os"
 	"strconv"
-	"strings"
 	"time"
 
 	"github.com/MYCOGOLD/mycogold-Africa-Exchange.Public/services/matcher-go/engine"
@@ -54,7 +54,7 @@ func main() {
 			writeJSON(w, http.StatusUnauthorized, apiError{"invalid internal request signature"}); return
 		}
 		var request matchRequest
-		decoder := json.NewDecoder(strings.NewReader(string(body)))
+		decoder := json.NewDecoder(bytes.NewReader(body))
 		decoder.DisallowUnknownFields()
 		if err := decoder.Decode(&request); err != nil {
 			writeJSON(w, http.StatusBadRequest, apiError{"invalid request JSON"}); return
@@ -62,8 +62,10 @@ func main() {
 		if err := ensureEOF(decoder); err != nil {
 			writeJSON(w, http.StatusBadRequest, apiError{"request must contain one JSON object"}); return
 		}
-		if request.NowEpochMs <= 0 || len(request.Orders) == 0 || len(request.Orders) > 50_000 {
-			writeJSON(w, http.StatusBadRequest, apiError{"invalid matching timestamp or order count"}); return
+		now := time.Now().UnixMilli()
+		delta := request.NowEpochMs - now
+		if delta < -30_000 || delta > 30_000 || len(request.Orders) == 0 || len(request.Orders) > 50_000 {
+			writeJSON(w, http.StatusBadRequest, apiError{"matching timestamp must be current and order count must be between 1 and 50000"}); return
 		}
 		result, err := engine.Match(request.Orders, request.NowEpochMs)
 		if err != nil {
