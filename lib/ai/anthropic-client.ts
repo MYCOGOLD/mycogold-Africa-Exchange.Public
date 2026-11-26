@@ -62,6 +62,10 @@ const API_URL = "https://api.anthropic.com/v1/messages";
 const API_VERSION = "2023-06-01";
 const DEFAULT_MODEL = "claude-sonnet-4-20250514";
 
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === "object" && value !== null && !Array.isArray(value);
+}
+
 function retryDelay(response: Response, attempt: number): number {
   const retryAfter = response.headers.get("retry-after");
   if (retryAfter) {
@@ -185,18 +189,23 @@ export class AnthropicClient {
     const rounds = Math.max(0, Math.min(requestedRounds, 8));
     for (let round = 0; round <= rounds; round += 1) {
       const response = await this.generate({ ...input, messages });
-      const calls = response.content.filter(
-        (block): block is AnthropicToolUseBlock =>
-          block.type === "tool_use" && typeof (block as AnthropicToolUseBlock).name === "string",
-      );
+      const calls = response.content.filter((block): block is AnthropicToolUseBlock => {
+        if (!isRecord(block)) return false;
+        return block.type === "tool_use" &&
+          typeof block.id === "string" && block.id.length > 0 &&
+          typeof block.name === "string" && block.name.length > 0 &&
+          isRecord(block.input);
+      });
       if (response.stop_reason !== "tool_use" || calls.length === 0) return response;
       if (round === rounds) throw new Error("Anthropic tool-use round limit reached");
 
       messages.push({ role: "assistant", content: response.content as Array<Record<string, unknown>> });
       const results: Array<Record<string, unknown>> = [];
       for (const call of calls) {
-        const handler = handlers[call.name];
-        if (!handler) {
+        const handler = Object.prototype.hasOwnProperty.call(handlers, call.name)
+          ? handlers[call.name]
+          : undefined;
+        if (typeof handler !== "function") {
           results.push({ type: "tool_result", tool_use_id: call.id, is_error: true,
             content: `Tool '${call.name}' is not permitted by this service.` });
           continue;
