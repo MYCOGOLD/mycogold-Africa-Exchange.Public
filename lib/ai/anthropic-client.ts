@@ -1,0 +1,180 @@
+/**
+ * Server-side Anthropic Messages API adapter.
+ *
+ * Keep API keys in server-only environment variables. This module intentionally
+ * has no SDK dependency: it uses the platform fetch API and can be tested with
+ * an injected fetch implementation. Mock mode is explicit, never an automatic
+ * production fallback.
+ */
+
+export type AnthropicRole = "user" | "assistant";
+export interface AnthropicMessage {
+  role: AnthropicRole;
+  content: string;
+}
+export interface AnthropicTool {
+  name: string;
+  description: string;
+  input_schema: {
+    type: "object";
+    properties: Record<string, unknown>;
+    required?: string[];
+    additionalProperties?: boolean;
+  };
+}
+export interface AnthropicTextBlock {
+  type: "text";
+  text: string;
+}
+export interface AnthropicToolUseBlock {
+  type: "tool_use";
+  id: string;
+  name: string;
+  input: Record<string, unknown>;
+}
+export type AnthropicContentBlock = AnthropicTextBlock | AnthropicToolUseBlock | Record<string, unknown>;
+export interface AnthropicResponse {
+  id: string;
+  type: "message";
+  role: "assistant";
+  model: string;
+  content: AnthropicContentBlock[];
+  stop_reason: string | null;
+  usage?: { input_tokens: number; output_tokens: number };
+}
+export interface AnthropicConfig {
+  apiKey?: string;
+  model?: string;
+  mode?: "anthropic" | "mock";
+  maxRetries?: number;
+  timeoutMs?: number;
+  fetcher?: typeof fetch;
+}
+export interface GenerateInput {
+  system: string;
+  messages: AnthropicMessage[];
+  tools?: AnthropicTool[];
+  maxTokens?: number;
+  cacheSystemPrompt?: boolean;
+}
+
+const API_URL = "https://api.anthropic.com/v1/messages";
+const API_VERSION = "2023-06-01";
+const DEFAULT_MODEL = "claude-sonnet-4-20250514";
+
+function retryDelay(response: Response, attempt: number): number {
+  const retryAfter = response.headers.get("retry-after");
+  if (retryAfter) {
+    const seconds = Number(retryAfter);
+    if (Number.isFinite(seconds) && seconds >= 0) return Math.min(seconds * 1000, 8_000);
+  }
+  return Math.min(250 * 2 ** attempt, 4_000);
+}
+
+export class AnthropicClient {
+  private readonly config: Required<Pick<AnthropicConfig, "model" | "mode" | "maxRetries" | "timeoutMs">> &
+    Pick<AnthropicConfig, "apiKey"> & { fetcher: typeof fetch };
+
+  constructor(config: AnthropicConfig = {}) {
+    this.config = {
+      apiKey: config.apiKey,
+      model: config.model ?? DEFAULT_MODEL,
+      mode: config.mode ?? "anthropic",
+      maxRetries: Math.max(0, Math.min(config.maxRetries ?? 2, 5)),
+      timeoutMs: Math.max(1_000, config.timeoutMs ?? 20_000),
+      fetcher: config.fetcher ?? fetch,
+    };
+    if (this.config.mode === "anthropic" && !this.config.apiKey) {
+      throw new Error("ANTHROPIC_API_KEY is required when AI mode is anthropic");
+    }
+  }
+
+  async generate(input: GenerateInput): Promise<AnthropicResponse> {
+    if (!input.system.trim() || input.messages.length === 0) {
+      throw new Error("A non-empty system prompt and at least one message are required");
+    }
+    if (this.config.mode === "mock") {
+      const last = input.messages[input.messages.length - 1];
+      return {
+        id: "mock-message",
+        type: "message",
+        role: "assistant",
+        model: "mycogold-local-mock",
+        content: [{ type: "text", text: this.mockReply(last.content) }],
+        stop_reason: "end_turn",
+        usage: { input_tokens: 0, output_tokens: 0 },
+      };
+    }
+
+    const system: Array<Record<string, unknown>> = [{
+      type: "text",
+      text: input.system,
+      ...(input.cacheSystemPrompt ? { cache_control: { type: "ephemeral" } } : {}),
+    }];
+    const body: Record<string, unknown> = {
+      model: this.config.model,
+      max_tokens: Math.max(1, Math.min(input.maxTokens ?? 1_024, 8_192)),
+      system,
+      messages: input.messages,
+    };
+    if (input.tools?.length) body.tools = input.tools;
+
+    for (let attempt = 0; attempt <= this.config.maxRetries; attempt += 1) {
+      const controller = new AbortController();
+      const timeout = setTimeout(() => controller.abort(), this.config.timeoutMs);
+      let response: Response;
+      try {
+        response = await this.config.fetcher(API_URL, {
+          method: "POST",
+          headers: {
+            "content-type": "application/json",
+            "x-api-key": this.config.apiKey as string,
+            "anthropic-version": API_VERSION,
+          },
+          body: JSON.stringify(body),
+          signal: controller.signal,
+        });
+      } catch (error) {
+        if (attempt < this.config.maxRetries && !(error instanceof Error && error.name === "AbortError")) {
+          await new Promise((resolve) => setTimeout(resolve, retryDelay(new Response(null), attempt)));
+          continue;
+        }
+        throw error;
+      } finally {
+        clearTimeout(timeout);
+      }
+
+      if (response.ok) return await response.json() as AnthropicResponse;
+      const retryable = response.status === 429 || response.status === 500 ||
+        response.status === 502 || response.status === 503 || response.status === 529;
+      if (retryable && attempt < this.config.maxRetries) {
+        await new Promise((resolve) => setTimeout(resolve, retryDelay(response, attempt)));
+        continue;
+      }
+      const detail = (await response.text()).slice(0, 500);
+      throw new Error(`Anthropic API request failed (${response.status}): ${detail}`);
+    }
+    throw new Error("Anthropic API retry budget exhausted");
+  }
+
+  private mockReply(prompt: string): string {
+    const normalized = prompt.toLowerCase();
+    if (normalized.includes("mushroom")) {
+      return "LOCAL MOCK: review harvest time, substrate batch, temperature history, grade and buyer demand before recommending a mushroom handling action.";
+    }
+    if (normalized.includes("price") || normalized.includes("market")) {
+      return "LOCAL MOCK: compare recent verified trades by market, grade and unit; label sparse observations as indicative rather than verified live prices.";
+    }
+    return "LOCAL MOCK: TUSK is running without external AI. Provide verified produce, location, quantity and timing data for a grounded recommendation.";
+  }
+}
+
+/** Construct explicitly from server environment; never expose this result to a client component. */
+export function createAnthropicClient(env: Record<string, string | undefined> = process.env): AnthropicClient {
+  const mode = env.MYCOGOLD_AI_MODE === "mock" ? "mock" : "anthropic";
+  return new AnthropicClient({
+    mode,
+    apiKey: env.ANTHROPIC_API_KEY,
+    model: env.ANTHROPIC_MODEL,
+  });
+}
