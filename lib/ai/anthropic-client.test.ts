@@ -14,6 +14,28 @@ test("mock mode works offline without an API key", async () => {
   assert.match((result.content[0] as { text: string }).text, /LOCAL MOCK/);
 });
 
+test("mock mode accepts Anthropic text-block message content", async () => {
+  const client = new AnthropicClient({ mode: "mock" });
+  const result = await client.generate({
+    system: input.system,
+    messages: [{ role: "user", content: [{ type: "text", text: "Compare market prices." }] }],
+  });
+  assert.match((result.content[0] as { text: string }).text, /verified trades/);
+});
+
+test("rejects invalid max-token values before making a request", async () => {
+  let calls = 0;
+  const client = new AnthropicClient({
+    apiKey: "test-key",
+    fetcher: async () => {
+      calls += 1;
+      return new Response("{}");
+    },
+  });
+  await assert.rejects(client.generate({ ...input, maxTokens: Number.NaN }), /maxTokens/);
+  assert.equal(calls, 0);
+});
+
 test("Anthropic mode requires a server API key", () => {
   assert.throws(() => new AnthropicClient({ mode: "anthropic" }), /ANTHROPIC_API_KEY/);
 });
