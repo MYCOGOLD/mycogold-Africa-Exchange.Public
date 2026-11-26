@@ -13,7 +13,7 @@ Do not point the production customer domain at the static demo if you expect aut
 
 ## Local development
 
-Requirements: Node.js 22 and npm.
+Requirements: Node.js 22 and npm for the web app. Full native verification additionally requires Go 1.23+, CMake 3.20+, a C++20 compiler and OpenSSL development headers.
 
 ```bash
 npm ci
