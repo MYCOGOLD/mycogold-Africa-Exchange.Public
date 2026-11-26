@@ -6,9 +6,12 @@
 #include <chrono>
 #include <cstdint>
 #include <cstdlib>
+#include <exception>
 #include <iostream>
 #include <random>
+#include <stdexcept>
 #include <string>
+#include <string_view>
 #include <system_error>
 #include <vector>
 
