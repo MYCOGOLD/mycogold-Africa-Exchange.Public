@@ -135,24 +135,32 @@ export class AnthropicClient {
           signal: controller.signal,
         });
       } catch (error) {
+        clearTimeout(timeout);
         if (attempt < this.config.maxRetries && !(error instanceof Error && error.name === "AbortError")) {
           await new Promise((resolve) => setTimeout(resolve, retryDelay(new Response(null), attempt)));
           continue;
         }
         throw error;
+      }
+
+      // Keep the abort timer active until the response body has been consumed.
+      // Fetch resolves when headers arrive; clearing here would leave a stalled
+      // JSON/error body unbounded by timeoutMs.
+      try {
+        if (response.ok) return await response.json() as AnthropicResponse;
+        const retryable = response.status === 429 || response.status === 500 ||
+          response.status === 502 || response.status === 503 || response.status === 529;
+        if (retryable && attempt < this.config.maxRetries) {
+          const delay = retryDelay(response, attempt);
+          clearTimeout(timeout);
+          await new Promise((resolve) => setTimeout(resolve, delay));
+          continue;
+        }
+        const detail = (await response.text()).slice(0, 500);
+        throw new Error("Anthropic API request failed (" + response.status + "): " + detail);
       } finally {
         clearTimeout(timeout);
       }
-
-      if (response.ok) return await response.json() as AnthropicResponse;
-      const retryable = response.status === 429 || response.status === 500 ||
-        response.status === 502 || response.status === 503 || response.status === 529;
-      if (retryable && attempt < this.config.maxRetries) {
-        await new Promise((resolve) => setTimeout(resolve, retryDelay(response, attempt)));
-        continue;
-      }
-      const detail = (await response.text()).slice(0, 500);
-      throw new Error(`Anthropic API request failed (${response.status}): ${detail}`);
     }
     throw new Error("Anthropic API retry budget exhausted");
   }
