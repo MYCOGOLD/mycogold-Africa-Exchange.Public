@@ -10,7 +10,7 @@
 export type AnthropicRole = "user" | "assistant";
 export interface AnthropicMessage {
   role: AnthropicRole;
-  content: string;
+  content: string | Array<Record<string, unknown>>;
 }
 export interface AnthropicTool {
   name: string;
@@ -155,6 +155,50 @@ export class AnthropicClient {
       throw new Error(`Anthropic API request failed (${response.status}): ${detail}`);
     }
     throw new Error("Anthropic API retry budget exhausted");
+  }
+
+  /**
+   * Execute Claude tool-use turns against an explicit allowlist of server-side
+   * handlers. Tool names absent from the registry are never executed.
+   */
+  async runWithTools(
+    input: GenerateInput,
+    handlers: Record<string, (args: Record<string, unknown>) => Promise<unknown> | unknown>,
+    maxToolRounds = 4,
+  ): Promise<AnthropicResponse> {
+    const messages: AnthropicMessage[] = input.messages.slice();
+    const rounds = Math.max(0, Math.min(Math.floor(maxToolRounds), 8));
+    for (let round = 0; round <= rounds; round += 1) {
+      const response = await this.generate({ ...input, messages });
+      const calls = response.content.filter(
+        (block): block is AnthropicToolUseBlock =>
+          block.type === "tool_use" && typeof (block as AnthropicToolUseBlock).name === "string",
+      );
+      if (response.stop_reason !== "tool_use" || calls.length === 0) return response;
+      if (round === rounds) throw new Error("Anthropic tool-use round limit reached");
+
+      messages.push({ role: "assistant", content: response.content as Array<Record<string, unknown>> });
+      const results: Array<Record<string, unknown>> = [];
+      for (const call of calls) {
+        const handler = handlers[call.name];
+        if (!handler) {
+          results.push({ type: "tool_result", tool_use_id: call.id, is_error: true,
+            content: `Tool '${call.name}' is not permitted by this service.` });
+          continue;
+        }
+        try {
+          const result = await handler(call.input);
+          results.push({ type: "tool_result", tool_use_id: call.id,
+            content: JSON.stringify(result).slice(0, 20_000) });
+        } catch (error) {
+          const message = error instanceof Error ? error.message : "Tool execution failed";
+          results.push({ type: "tool_result", tool_use_id: call.id, is_error: true,
+            content: message.slice(0, 1_000) });
+        }
+      }
+      messages.push({ role: "user", content: results });
+    }
+    throw new Error("Anthropic tool-use loop terminated unexpectedly");
   }
 
   private mockReply(prompt: string): string {
