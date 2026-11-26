@@ -80,13 +80,13 @@ Run the local verification pipeline before pushing:
 
 ```bash
 npm ci
-bash scripts/ci-local.sh
+npm run ci:local
 ```
 
 The local runner executes native C++ build/tests, TypeScript checks, unit tests,
 production safety contracts and the Next.js production build. The production
 dependency audit runs by default and requires registry access. For a fully
-offline run, use `CI_LOCAL_AUDIT=0 bash scripts/ci-local.sh`; this explicitly
+offline run, use `npm run ci:local:offline`; this explicitly
 skips the network-dependent audit and does not report it as passed.
 
 Enable the local pre-commit hook once per clone:
@@ -95,8 +95,8 @@ Enable the local pre-commit hook once per clone:
 npm run hooks:install
 ```
 
-Optional Docker verification: `CI_LOCAL_DOCKER=1 bash scripts/ci-local.sh`.
-To install dependencies during the run, use `CI_LOCAL_INSTALL=1 bash scripts/ci-local.sh`.
+Optional Docker verification: `CI_LOCAL_DOCKER=1 npm run ci:local`.
+To install dependencies during the run, use `CI_LOCAL_INSTALL=1 npm run ci:local`.
 Cloud workflows remain manually runnable in GitHub Actions or can be triggered
 by pushing a version tag after local verification. Hosted runs still depend on
 the repository's available Actions allowance.
