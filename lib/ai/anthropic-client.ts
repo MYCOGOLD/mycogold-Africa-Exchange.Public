@@ -76,12 +76,14 @@ export class AnthropicClient {
     Pick<AnthropicConfig, "apiKey"> & { fetcher: typeof fetch };
 
   constructor(config: AnthropicConfig = {}) {
+    const requestedRetries = Number.isFinite(config.maxRetries) ? Math.trunc(config.maxRetries as number) : 2;
+    const requestedTimeout = Number.isFinite(config.timeoutMs) ? Math.trunc(config.timeoutMs as number) : 20_000;
     this.config = {
       apiKey: config.apiKey,
-      model: config.model ?? DEFAULT_MODEL,
+      model: config.model?.trim() || DEFAULT_MODEL,
       mode: config.mode ?? "anthropic",
-      maxRetries: Math.max(0, Math.min(config.maxRetries ?? 2, 5)),
-      timeoutMs: Math.max(1_000, config.timeoutMs ?? 20_000),
+      maxRetries: Math.max(0, Math.min(requestedRetries, 5)),
+      timeoutMs: Math.max(1_000, requestedTimeout),
       fetcher: config.fetcher ?? fetch,
     };
     if (this.config.mode === "anthropic" && !this.config.apiKey) {
@@ -111,9 +113,13 @@ export class AnthropicClient {
       text: input.system,
       ...(input.cacheSystemPrompt ? { cache_control: { type: "ephemeral" } } : {}),
     }];
+    const requestedMaxTokens = input.maxTokens ?? 1_024;
+    if (!Number.isSafeInteger(requestedMaxTokens) || requestedMaxTokens < 1) {
+      throw new Error("maxTokens must be a positive safe integer");
+    }
     const body: Record<string, unknown> = {
       model: this.config.model,
-      max_tokens: Math.max(1, Math.min(input.maxTokens ?? 1_024, 8_192)),
+      max_tokens: Math.min(requestedMaxTokens, 8_192),
       system,
       messages: input.messages,
     };
@@ -175,7 +181,8 @@ export class AnthropicClient {
     maxToolRounds = 4,
   ): Promise<AnthropicResponse> {
     const messages: AnthropicMessage[] = input.messages.slice();
-    const rounds = Math.max(0, Math.min(Math.floor(maxToolRounds), 8));
+    const requestedRounds = Number.isFinite(maxToolRounds) ? Math.floor(maxToolRounds) : 4;
+    const rounds = Math.max(0, Math.min(requestedRounds, 8));
     for (let round = 0; round <= rounds; round += 1) {
       const response = await this.generate({ ...input, messages });
       const calls = response.content.filter(
@@ -210,7 +217,13 @@ export class AnthropicClient {
     throw new Error("Anthropic tool-use loop terminated unexpectedly");
   }
 
-  private mockReply(prompt: string): string {
+  private mockReply(content: AnthropicMessage["content"]): string {
+    const prompt = typeof content === "string"
+      ? content
+      : content
+          .filter((block) => block.type === "text" && typeof block.text === "string")
+          .map((block) => String(block.text))
+          .join(" ");
     const normalized = prompt.toLowerCase();
     if (normalized.includes("mushroom")) {
       return "LOCAL MOCK: review harvest time, substrate batch, temperature history, grade and buyer demand before recommending a mushroom handling action.";
