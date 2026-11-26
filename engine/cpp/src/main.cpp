@@ -16,7 +16,8 @@ namespace {
 
 void self_check() {
   using namespace mycogold;
-  if (core::sha256_hex("mycogold-engine-self-check").size() != 64) {
+  if (core::sha256_hex("mycogold-engine-self-check").size() != 64 ||
+      !core::is_hex_digest(core::sha256_hex("mycogold-engine-self-check"))) {
     throw std::runtime_error("SHA-256 self-check failed");
   }
 
