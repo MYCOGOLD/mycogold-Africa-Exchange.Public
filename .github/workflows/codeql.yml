@@ -1,13 +1,11 @@
 name: CodeQL
 
+# Run on demand or as part of a versioned release while Actions usage is limited.
 on:
-  push:
-    branches: [main]
-  pull_request:
-    branches: [main]
-  schedule:
-    - cron: '32 2 * * 1'
   workflow_dispatch:
+  push:
+    tags:
+      - "v*"
 
 permissions:
   contents: read
@@ -40,4 +38,3 @@ jobs:
         uses: github/codeql-action/analyze@9418214df1f2c4b8128c770156c409013b07d6b9 # v3.39.3
         with:
           category: /language:${{ matrix.language }}
-
