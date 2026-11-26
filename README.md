@@ -92,7 +92,7 @@ skips the network-dependent audit and does not report it as passed.
 Enable the local pre-commit hook once per clone:
 
 ```bash
-git config core.hooksPath .githooks
+npm run hooks:install
 ```
 
 Optional Docker verification: `CI_LOCAL_DOCKER=1 bash scripts/ci-local.sh`.
