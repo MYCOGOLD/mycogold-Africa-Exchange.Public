@@ -63,8 +63,8 @@ func main() {
 			writeJSON(w, http.StatusBadRequest, apiError{"request must contain one JSON object"}); return
 		}
 		now := time.Now().UnixMilli()
-		delta := request.NowEpochMs - now
-		if delta < -30_000 || delta > 30_000 || len(request.Orders) == 0 || len(request.Orders) > 50_000 {
+		if request.NowEpochMs < now-30_000 || request.NowEpochMs > now+30_000 ||
+			len(request.Orders) == 0 || len(request.Orders) > 50_000 {
 			writeJSON(w, http.StatusBadRequest, apiError{"matching timestamp must be current and order count must be between 1 and 50000"}); return
 		}
 		result, err := engine.Match(request.Orders, request.NowEpochMs)
