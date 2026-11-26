@@ -22,3 +22,7 @@ func TestMatchReturnsMakerPriceAndVersions(t *testing.T) {
 		t.Fatalf("unexpected fill: %+v", fill)
 	}
 }
+
+func TestNativeABIVersion(t *testing.T) {
+	if version := ABIVersion(); version != 1 { t.Fatalf("expected ABI version 1, got %d", version) }
+}
